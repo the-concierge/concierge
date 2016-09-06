@@ -31,7 +31,10 @@ This effectively means the browser targets are current major version minus one (
 - Allows you to provision new containers with custom application data
 - Monitors memory and CPU usage of containers
 - Runs a central web server to proxy requests to container
-- Provides free SSL/HTTPS via the proxy      
+- Provides free SSL/HTTPS via the proxy
+
+## How can I contribute?      
+See the [Contribution Guide](./CONTRIBUTING.md)
 
 ## How do I set up a Concierge from scratch?
 
@@ -39,7 +42,8 @@ This effectively means the browser targets are current major version minus one (
 - Docker Registry
  - The registry isn't needed for the Concierge to run, but is needed for Variant and Container operations
  - This registry should be private. I.e., only accessible inside a private network
-- NodeJS 4+
+- NodeJS 6.4+
+ - This is to use the native V8 debugger
 
 **Installation**
 - Clone the code
