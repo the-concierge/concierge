@@ -1,0 +1,6 @@
+<ul class="list-group" data-bind="foreach: info">
+	<li class="list-group-item" style="margin: 0; padding: 2px">
+		<span data-bind="text: name"></span>
+		<span data-bind="text: value, css: $parent.labelClass(value)" style="float: right; vertical-align: middle"></span>
+	</li>
+</ul>

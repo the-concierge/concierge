@@ -1,0 +1,130 @@
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr class="active">
+            <th>Name</th>
+            <th title="namespace/repository">Repository</th>
+            <th title="github or gitlab">API Type</th>
+            <th>Private Token</th>
+            <th>Private Key</th>
+            <th>Docker Namespace</th>
+            <th>Variables</th>
+            <th>
+                <div class="btn-group">
+                    <a href="#" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown">
+                        <span style="white-space: nowrap;">Actions
+                  <span class="caret"></span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li><a data-bind="click: createItem.execute, visible: createItem.canExecute">Create</a></li>
+                        <li><a data-bind="click: saveAll.execute, visible: saveAll.canExecute">Save All</a></li>
+                        <li><a data-bind="click: discardAll.execute, visible: discardAll.canExecute">Discard Changes</a></li>
+                    </ul>
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: allItems">
+        <tr>
+            <td>
+                <input type="text" class="form-control input-sm" data-bind="textInput: item.name, enable: isEditing" />
+
+            </td>
+
+            <td>
+                <input type="text" class="form-control input-sm" data-bind="textInput: item.gitRepository, enable: isEditing" />
+            </td>
+
+            <td>
+                <select class="form-control input-sm" data-bind="
+                    options: item.availableApis,
+                    value: item.selectedApi,
+                    enable: isEditing">
+                </select>
+
+            </td>
+
+            <td>
+                <input type="text" class="form-control input-sm" data-bind="textInput: item.gitPrivateToken, enable: isEditing" />
+            </td>
+
+            <td>
+                <textarea class="form-control input-sm" data-bind="textInput: item.gitPrivateKey, enable: isEditing" rows="1" cols="20"></textarea>
+            </td>
+
+            <td>
+                <input type="text" class="form-control input-sm" data-bind="textInput: item.dockerNamespace, enable: isEditing" />
+            </td>
+            <td>
+                <a style="cursor: pointer"><span data-bind="click: $parent.editVariables">View/Edit</span></a>
+            </td>
+
+            <td style="vertical-align: middle;">
+                <div class="btn-group" style="margin: 0px">
+                    <a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                        <span style="white-space: nowrap;">Actions
+                    <span class="caret"></span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                        <li><a data-bind="click: startEditing, visible: startEditing.canExecute">Edit</a></li>
+                        <li><a data-bind="click: stopEditing, visible: stopEditing.canExecute">Stop Editing</a></li>
+                        <li><a data-bind="click: undoEditing, visible: undoEditing.canExecute">Undo Changes</a></li>
+                        <li><a data-bind="click: $data.delete, visible: $data.delete.canExecute">Delete</a></li>
+                        <li><a data-bind="click: undelete, visible: undelete.canExecute">Undelete</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<div class="modal fade" data-bind="showModal: isVariablesModalOpen">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                <h4 class="modal-title">
+                    Environment Variables for <span data-bind="text: currentApplication().name"></span>
+                </h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <div class="col-sm-6">
+                        Key
+                    </div>
+                    <div class="col-sm-6">
+                        Value
+                    </div>
+                </div>
+
+                <!-- ko foreach: currentVariables -->
+                <div class="form-group">
+                    <div class="col-sm-5">
+                        <input class="form-control input-sm" data-bind="textInput: key" placeholder="Key..." />
+                    </div>
+                    <div class="col-sm-5">
+                        <input class="form-control input-sm" data-bind="textInput: value" placeholder="Value..." />
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-sm btn-danger" data-bind="click: $parent.deleteVariable">Delete</button>
+                    </div>
+                </div>
+                <!-- /ko -->                
+                <button style="margin-top: 5px" class="btn btn-default" data-bind="click: addVariable">Add</button>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" data-bind="click: cancelVariables">
+                    Cancel
+                </button>
+                <button class="btn btn-default btn-sm" data-bind="click: saveVariables">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

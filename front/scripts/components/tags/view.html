@@ -1,0 +1,17 @@
+<form class="form-inline">
+
+	<select class="form-control" data-bind="
+		options: applications,
+		value: selectedApplication,
+		optionsText: 'name',
+		optionsCaption: 'Choose Application'" />
+
+	<select class="form-control" data-bind="
+		options: tags,
+		value: selectedTag,
+		optionsCaption: 'Choose Tag'" />
+
+	</select>
+	<button class="btn btn-sm btn-primary" data-bind="click: deploy, enable: canDeploy">Deploy</button>
+	<button class="btn btn-sm btn-primary" data-bind="click: loadTags">Refresh</button>
+</form>

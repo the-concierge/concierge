@@ -1,0 +1,153 @@
+<table class="table table-condensed table-hover">
+  <tr class="active">
+    <th>Label</th>
+    <th>Hostname</th>
+    <th>Port</th>
+    <th>
+      <div class="btn-group">
+        <a href="#" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown">
+          <span style="white-space: nowrap;">Actions
+                  <span class="caret"></span>
+          </span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><a data-bind="click: createItem.execute, visible: createItem.canExecute">Create</a></li>
+          <li><a data-bind="click: saveAll.execute, visible: saveAll.canExecute">Save All</a></li>
+          <li><a data-bind="click: discardAll.execute, visible: discardAll.canExecute">Discard Changes</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-xs btn-primary" data-bind="click: loadFromServer">
+          <span class="glyphicon glyphicon-refresh"></span>
+      </button>
+    </th>
+  </tr>
+  <tbody data-bind="foreach: allItems">
+    <tr>
+      <td>
+        <input type="text" class="form-control input-sm" data-bind="textInput: item.label, enable: isEditing">
+      </td>
+      <td>
+        <input type="text" class="form-control input-sm" data-bind="textInput: item.hostname, enable: isEditing">
+      </td>
+      <td>
+        <input type="text" class="form-control input-sm" data-bind="textInput: item.port, enable: isEditing">
+      </td>
+
+      <td style="vertical-align: middle;">
+        <div class="btn-group" style="margin: 0px">
+          <a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+            <span style="white-space: nowrap;">Actions
+                    <span class="caret"></span>
+            </span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <li><a data-bind="click: function() { $parent.getContainers(item); }">View Containers</a></li>
+            <li><a data-bind="click: startEditing, visible: startEditing.canExecute">Edit</a></li>
+            <li><a data-bind="click: stopEditing, visible: stopEditing.canExecute">Stop Editing</a></li>
+            <li><a data-bind="click: undoEditing, visible: undoEditing.canExecute">Undo Changes</a></li>
+            <li><a data-bind="click: $data.delete, visible: $data.delete.canExecute">Delete</a></li>
+            <li><a data-bind="click: undelete, visible: undelete.canExecute">Undelete</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div class="modal fade" data-bind="showModal: isContainersModalOpen">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Remote Containers:
+          <span data-bind="text: currentConcierge().label"></span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-condensed table-hover">
+          <tr>
+            <th>Company</th>
+            <th>Subdomain</th>
+            <th>Location</th>
+            <th>Actions</th>
+          </tr>
+          <tbody data-bind="foreach: containers">
+            <tr>
+              <td>
+                <span data-bind="text: label"></span>
+              </td>
+              <td>
+                <span data-bind="text: subdomain"></span>
+              </td>
+              <td>
+                <a data-bind="attr: { href: 'http://' + host + ':' + port }" target="_blank">
+                  <span data-bind="text: host + ':' + port"></span>
+                </a>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <a href="#" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    <span style="white-space: nowrap;">Actions <span class="caret"></span></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    <li>
+                      <a data-bind="attr: { href: $parent.volumeUrl($parent.currentConcierge(), $data) }">Download Volume</a>
+                    </li>
+                    <li>
+                      <a data-bind="click: function() { $parent.cloneContainer($parent.currentConcierge(), $data) }">Clone Container</a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" data-bind="showModal: isCloneModalOpen">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Clone Container:
+          <span data-bind="text: currentContainer.variant + '/' + currentContainer.label"></span>
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <label class="control-label col-sm-3">Subdomain</label>
+          <div class="col-sm-9">
+            <input class="form-control input-sm" data-bind="textInput: containerSubdomain" />
+          </div>
+        </div>
+
+        <!-- ko foreach: currentVariables -->
+        <div class="form-group row">
+          <label class="control-label col-sm-3" data-bind="text: key"></label>
+          <div class="col-sm-9">
+            <input class="form-control input-sm" data-bind="textInput: value" />
+          </div>
+        </div>
+        <!-- /ko -->
+
+      </div>
+      <div class="modal-footer">
+        </button>
+        <button class="btn btn-default btn-sm" data-bind="click: closeCloneModal">Cancel</button>
+        <button class="btn btn-success btn-sm" data-bind="click: createCloneContainer, enable: canCloneContainer">
+            Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

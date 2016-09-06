@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Concierge Dashboard</title>
+    <link href="/styles/bootstrap.slate.css" rel="stylesheet">
+    <link href="/styles/knockout-file-bindings.css" rel="stylesheet">
+</head>
+
+<body style="height: 100vh">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+            aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="javascript:void(0)">
+                        Concierge
+                    </a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <p class="navbar-text" style="color: white">
+                > <span data-bind="text: activeModel().name">
+                        </span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="container-fluid main">
+        <div class="row" style="margin-top: 70px">
+            <div class="col-sm-3 col-md-2 sidebar" style="padding-left: 0">
+
+                <div class="btn-group-vertical" data-bind="foreach: availableModels" style="width: 100%">
+                                            
+                        <a data-bind="css: $parent.modelClass($data), click: function() { $parent.loadModel($data); }">
+                            <span data-bind="text: name"></span>
+                        </a>
+                    
+
+                </div>
+            </div>
+            <div class="col-sm-9 col-md-10">
+                <div id="content-pane">
+                    <br/>
+                    <div data-bind="component: activeModel().model">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: absolute; left: 25px; bottom: 25px">
+        <button class="btn btn-primary" data-bind="click: isEventModalOpen">
+            <span class="glyphicon glyphicon-stats"></span>
+            Event Log
+            <span class="badge" data-bind="text: totalUnread"></span>
+        </button>
+    </div>
+
+    <div class="modal fade" data-bind="showModal: isEventModalOpen">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <ul data-bind="foreach: entityTypes" class="nav nav-tabs">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <span data-bind="text: $data"></span>
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" data-bind="foreach: $parent.entitiesByType($data)">
+                                <li>
+                                    <a href="#" data-bind="click: $parents[1].setEntity($data)">
+                                        <span data-bind="text: name"></span>
+                                        <span class="badge" data-bind="text: unread" style="float:right"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <b><span data-bind="text: eventEntity().type"></span>:</b>
+                            <span data-bind="text: eventEntity().name"></span>
+                            <span data-bind="text: emitText"></span>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2">
+                            <label>Log Length: </label>
+                            <input class="form-control input-sm" data-bind="textInput: logLengthLimit" style="width: 35px; display: inline; text-align: right">
+                        </div>
+                        <div class="col-md-2">
+                            Reverse Log
+                            <input type="checkbox" data-bind="checked: eventLogReverse" />
+                        </div>
+
+                        <div class="col-md-1" id="eventLogTop">
+                            <a href="#eventLogBottom">
+                                <span class="glyphicon glyphicon-arrow-down"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <pre data-bind="text: eventEntityLog" style="font-size:0.8em">                                
+            </pre>
+                    <div class="row">
+                        <div class="col-md-11"></div>
+                        <div class="col-md-1">
+                            <div id="eventLogBottom">
+                                <a href="#eventLogTop">
+                                    <span class="glyphicon glyphicon-arrow-up"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/libs/cajon.js" data-main="scripts/config.js"></script>
+</body>
+
+</html>
