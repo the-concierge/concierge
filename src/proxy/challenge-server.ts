@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as log from '../logger';
 import getConfigCache, {get as getConfig} from '../api/configurations/get';
-import * as IP from 'ip';
+import getIP from './get-ip';
 import { get as getChallengeValue } from './challenge-server';
 import getDomainInfo from './domain-info';
 var webServer: http.Server;
@@ -27,7 +27,7 @@ export const startServer = async(() => {
         response.end();
     });
     
-    const serverIp = process.env.PROXY_IP || IP.address() || '127.0.0.1';
+    const serverIp = await(getIP());
     webServer.listen(config.httpPort, err => {
         if (err) {
             return log.error(`Failed to start Challenge server: ${err}`);
