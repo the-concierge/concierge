@@ -5,6 +5,13 @@
 - [Creating Variants](./docs/variant.md)
 - [Creating Containers](./docs/container.md)
 
+## Browser Targets
+TypeScript is compiled to ES2015.  
+This effectively means the browser targets are current major version minus one (-1) of:
+- Chrome 
+- Firefox
+- Edge
+
 ## What should I know before starting?
 - [How to create an SSH key pair](https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key)
 - [How to add a public key to `authorized_keys` of a user account](http://askubuntu.com/questions/46424/adding-ssh-keys-to-authorized-keys)
