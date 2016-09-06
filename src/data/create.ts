@@ -36,6 +36,7 @@ function configurationTable() {
         tbl.integer('httpsPort').defaultTo(5358);
         tbl.integer('useHttps').defaultTo(0);
         tbl.integer('useProductionCertificates').defaultTo(0);
+        tbl.text('certificateEmail').defaultTo('user@email.com.invalid');
         tbl.integer('debug').defaultTo(1);
         tbl.integer('containerMinimumUptime').defaultTo(2000);
         tbl.integer('containerMaximumRetries').defaultTo(3);

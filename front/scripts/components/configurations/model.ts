@@ -23,7 +23,8 @@ class ConfigModel implements Lists.ViewModel {
     heartbeatFrequency = ko.observable(0);
     heartbeatBinSize = ko.observable(0);
     isActive = ko.observable(false);
-    dockerRegistry = ko.observable('');        
+    dockerRegistry = ko.observable('');
+    certificateEmail = ko.observable('');        
 
     loadFromModel(model: Concierge.Configuration) {
         this.id(model.id);
@@ -36,6 +37,7 @@ class ConfigModel implements Lists.ViewModel {
         this.proxyIp(model.proxyIp);
         this.useHttps(Number(model.useHttps) === 1);
         this.useProductionCertificates(Number(model.useProductionCertificates) === 1);
+        this.certificateEmail(model.certificateEmail);
         this.debug(Number(model.debug) === 1);
         this.containerMinimumUptime(model.containerMinimumUptime);
         this.containerMaximumRetries(model.containerMaximumRetries);
@@ -55,6 +57,7 @@ class ConfigModel implements Lists.ViewModel {
             httpPort: this.httpPort(),
             httpsPort: this.httpsPort(),
             proxyHostname: this.proxyHostname(),
+            certificateEmail: this.certificateEmail(),
             proxyIp: this.proxyIp(),
             subdomainBlacklist: this.subdomainBlacklist(),
             debug: num(this.debug()),

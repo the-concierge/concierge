@@ -85,6 +85,7 @@ declare module Concierge {
         httpPort: number;
         httpsPort: number;
         useProductionCertificates: number;
+        certificateEmail: string;
         useHttps: number;
         debug: number;
         containerMinimumUptime: number;

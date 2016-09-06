@@ -20,6 +20,7 @@ class ConfigList extends ListEx<ConfigModel> {
         { key: 'Concierge: Web Port', value: 'conciergePort', checkbox: false },
         { key: 'Concierge: Use HTTPS', value: 'useHttps', checkbox: true },
         { key: 'Concierge: Use Production Certificates', value: 'useProductionCertificates', checkbox: true },
+        { key: 'Concierge: Certificate Registrant Email', value: 'certficateEmail', checkbox: false },
         { key: 'Concierge: HTTP Proxy Port', value: 'httpPort', checkbox: false },
         { key: 'Concierge: HTTPS Proxy Port', value: 'httpsPort', checkbox: false },
         { key: 'Concierge: Proxy Hostname', value: 'proxyHostname', checkbox: false },
