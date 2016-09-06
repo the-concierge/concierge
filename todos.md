@@ -7,7 +7,7 @@
 - Remove Bootstrap
 - Remove performance monitoring from performance history plot
  - This is to remove the memory leak introduced by the c3.js library
-- Move subdomain blacklist to Configuration table
+- ~Move subdomain blacklist to Configuration table~
 
 ## Features
 - Enable downloading of historical performance data in for consumption by statistics programs
