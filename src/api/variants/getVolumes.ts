@@ -6,7 +6,7 @@ import getImageInfo from './getImageInfo';
 export default async((host: Concierge.Host, dockerImage: string) => {
     const info = await(getImageInfo(host, dockerImage));
     const config = info.ContainerConfig;
-    const volumes = config.Volumes;
+    const volumes = config.Volumes || {};
 
     return Object.keys(volumes);
 });
