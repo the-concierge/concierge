@@ -5,7 +5,7 @@ import Sidebar from '../sidebar/index';
 
 const Concierge = () => (
     <div style={styles}>
-        <Header height={60} />
+        <Header height={50} />
         <Sidebar width={200} />
     </div>
 )

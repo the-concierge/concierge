@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as DOM from 'react-dom';
 import {StyleSheet, css} from 'aphrodite';
 
 const Anchor = (props: { text: string, href: string }) => (

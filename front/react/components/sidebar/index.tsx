@@ -5,7 +5,7 @@ const Sidebar = (props: { width: number } = { width: 200 }) => (
         width: props.width,
         flex: 1,
         overflow: 'auto',
-        backgroundColor: '#444',
+        backgroundColor: '#303030',
     }}>
     </div>
 )

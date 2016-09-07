@@ -10,7 +10,6 @@ const NavItem = (props: { text: string, href: string }) => (
 const headerStyle: React.CSSProperties = {
     color: 'white',
     fontSize: '1.2em',
-    fontWeight: 'bold',
     paddingRight: '20px',
     height: '20px',
     display: 'block'

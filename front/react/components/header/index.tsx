@@ -4,7 +4,7 @@ import Brand from './brand';
 const Header = (props: { height: number }) => (
     <div style={getStyles(props)}>
         <Brand brandName={"Concierge"}/>
-        {navItems.map((text, key) => <NavItem text={text} href={''} key={key} />)}
+        {navItems.map(([text, href], key) => <NavItem text={text} href={''} key={key} />)}
     </div>
 )
 
@@ -16,10 +16,12 @@ const getStyles = (props: { height: number }): React.CSSProperties => ({
 })
 
 const navItems = [
-    'Hosts',
-    'Containers',
-    'Images',
-    'Configuration'
+    ['Hosts', '/hosts'],
+    ['Containers', '/containers'],
+    ['Images', '/images'],
+    ['Applications', '/applications'],
+    ['Administration', '/admin'],
+    ['Archive', '/archive']
 ]
 
 export default Header;
