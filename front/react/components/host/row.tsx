@@ -1,24 +1,16 @@
 import * as React from 'react';
 
-export default (props: Concierge.APIHost) => (
+export default ({hostname, ip, operatingSystem, dockerVersion, storageSpace}: Concierge.APIHost) => (
     <tr>
-        <td>${props.hostname}</td>
-        <td>${props.ip}</td>
-        <td>${props.operatingSystem}</td>
-        <td>${props.dockerVersion}</td>
-        <td>${props.storageSpace}</td>
+        <td>${hostname}</td>
+        <td>${ip}</td>
+        <td>${operatingSystem}</td>
+        <td>${dockerVersion}</td>
+        <td>${storageSpace}</td>
 
     </tr>
 )
 
 type Updaters = {
     cpu: (value: string) => {},
-
 }
-
-const foo = ({bar}: { bar: string }) => {
-    return (
-        {bar}
-    )
-}
-foo({bar:'foo'})

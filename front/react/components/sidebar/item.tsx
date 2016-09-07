@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const Item = (props: { text: string, href: string}) => (
+const Item = ({text, href}: { text: string, href: string}) => (
     // TODO: Implement
     <div />
 )

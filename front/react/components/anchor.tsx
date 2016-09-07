@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {StyleSheet, css} from 'aphrodite';
 
-const Anchor = (props: { text: string, href: string }) => (
+const Anchor = ({text, href}: { text: string, href: string }) => (
     <a
         className={css(styles.anchor, styles.hover)}
-        href={props.href}>
-        {props.text}
+        href={href}>
+        {text}
     </a>
 )
 

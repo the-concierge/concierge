@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-const Sidebar = (props: { width: number } = { width: 200 }) => (
+const Sidebar = ({width}: { width: number } = { width: 200 }) => (
     <div style={{
-        width: props.width,
+        width,
         flex: 1,
         overflow: 'auto',
         backgroundColor: '#303030',

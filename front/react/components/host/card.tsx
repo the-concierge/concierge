@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-export default (props: Concierge.APIHost) => (
+export default ({}: Concierge.APIHost) => (
     <div>
-        
+
     </div>
 )

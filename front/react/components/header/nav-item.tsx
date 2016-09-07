@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Anchor from '../anchor';
 
-const NavItem = (props: { text: string, href: string }) => (
+const NavItem = ({text, href}: { text: string, href: string }) => (
     <div style={headerStyle}>
-        <Anchor href={props.href} text={props.text} />
+        <Anchor href={href} text={text} />
     </div>
 )
 

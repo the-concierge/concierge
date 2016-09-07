@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-export default (props: { brandName: string }) => (
+export default ({brandName}: { brandName: string }) => (
     <div style={styles}>
-        <span style={{ marginLeft: 10 }}>{props.brandName}</span>
+        <span style={{ marginLeft: 10 }}>{brandName}</span>
     </div>
 )
 

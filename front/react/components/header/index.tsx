@@ -1,15 +1,15 @@
 import * as React from 'react';
 import NavItem from './nav-item';
 import Brand from './brand';
-const Header = (props: { height: number }) => (
-    <div style={getStyles(props)}>
+const Header = ({height}: { height: number }) => (
+    <div style={getStyles({height})}>
         <Brand brandName={"Concierge"}/>
         {navItems.map(([text, href], key) => <NavItem text={text} href={''} key={key} />)}
     </div>
 )
 
-const getStyles = (props: { height: number }): React.CSSProperties => ({
-    height: props.height,
+const getStyles = ({height}: { height: number }): React.CSSProperties => ({
+    height,
     backgroundColor: '#02578d',
     display: 'flex',
     alignItems: 'center',
