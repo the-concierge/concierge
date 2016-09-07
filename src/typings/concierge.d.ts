@@ -151,7 +151,7 @@ declare module Concierge {
     }
 
     interface Host {
-        id?: number;
+        id?: number;        
         hostname: string;
         capacity: number;
         dockerPort: number;
@@ -159,6 +159,14 @@ declare module Concierge {
         sshUsername: string;
         // volumesPath: string;
         privateKey?: string;
+    }
+
+    interface APIHost extends Host {
+        ip: string;
+        dockerVersion: string;
+        operatingSystem: string;
+        containerCount: number;
+        storageSpace: string;
     }
 
 
