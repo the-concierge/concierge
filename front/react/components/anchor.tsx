@@ -8,8 +8,8 @@ const Anchor = (props: { text: string, href: string }) => {
         <a
             style={styles}
             href={props.href}
-            onMouseEnter={hover('underline')} // hover('bold')
-            onMouseLeave={hover('none')}>
+            onMouseEnter={enter} // hover('bold')
+            onMouseLeave={leave}>
             {props.text}
         </a>)
 }
@@ -19,10 +19,9 @@ let styles: React.CSSProperties = {
     fontWeight: 'normal',
     textDecoration: 'none'
 }
+type MouseEvent = React.MouseEvent<any> & { target: HTMLAnchorElement }
 
-const hover = (state: 'underline' | 'none') => (event: React.MouseEvent<any>) => {
-    const target = event.target as HTMLAnchorElement;
-    target.style.textDecoration = state;
-} 
+const enter = (event: MouseEvent) => event.target.style.textDecoration = 'underline';
+const leave = (event: MouseEvent) => event.target.style.textDecoration = 'none'; 
 
 export default Anchor;
