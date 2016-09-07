@@ -3,7 +3,6 @@
         "module": "commonjs",
         "target": "es6",
         "sourceMap": true,
-        "lib": ["es5", "es2015.promise", "dom"],
         "jsx": "react"
     },
     "exclude": [
