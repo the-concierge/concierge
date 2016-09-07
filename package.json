@@ -33,7 +33,7 @@
     "@types/whatwg-fetch": "0.0.30",
     "chai": "^3.4.1",
     "mocha": "^2.2.5",
-    "typescript": "^2.1.0-dev.20160905"
+    "typescript": "^2.1.0-dev.20160906"
   },
   "scripts": {
     "test": "mocha",
@@ -41,8 +41,8 @@
     "start": "node .",
     "build": "tsc",
     "react": "cp node_modules/react/dist/react.js front/react/libs/react.js",
-    "reactdom": "cp node_modules/react-dom/dist/react.js front/react/libs/react-dom.js",
-    "aphrodite": "cp node_modules/aphrodite/dist/react.js front/react/libs/aphrodite.js",
+    "reactdom": "cp node_modules/react-dom/dist/react-dom.js front/react/libs/react-dom.js",
+    "aphrodite": "cp node_modules/aphrodite/dist/aphrodite.js front/react/libs/aphrodite.js",
     "install": "npm run react && npm run reactdom && npm run aphrodite"
   },
   "author": "Carl Winkler",
