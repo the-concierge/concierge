@@ -33,7 +33,7 @@ export default function watchAll() {
     binSize = config.heartbeatBinSize;
     binTrimTime = binFrequency * binSize;
 
-    var monitorAll = (containers: Concierge.Container[]) => containers.forEach(watchContainer);
+    var monitorAll = (containers: Concierge.Container[]) => containers.map(watchContainer);
 
     if (!timer) timer = setTimeout(() => flush(), binFrequency);
 
