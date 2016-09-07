@@ -30,6 +30,7 @@
     "@types/node": "^6.0.38",
     "@types/react": "^0.14.33",
     "@types/react-dom": "^0.14.16",
+    "@types/whatwg-fetch": "0.0.30",
     "chai": "^3.4.1",
     "mocha": "^2.2.5",
     "typescript": "^2.1.0-dev.20160905"
