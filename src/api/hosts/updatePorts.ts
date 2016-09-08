@@ -25,7 +25,7 @@ export default async(() => {
 	}
 	catch (ex) {
 		await(trx.rollback());
-		throw new Error(`Failed ot updates ports: ${ex.message}`);
+		throw new Error(`Failed to updates ports: ${ex.message}`);
 	}
 });
 
