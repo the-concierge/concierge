@@ -1,36 +1,27 @@
+import { ContainerInfo } from 'dockerode-ts'
 import getDockerClient from '../dockerClient';
 import * as getHosts from './get';
 
-export default function getContainers(host?: Concierge.Host) {
-    if (host) return getContainersForHost(host);
+export default async function getContainers(id?: number) {
+    if (id) return getContainersForHost(await getHosts.one(id));
 
-    return getHosts.all()
-        .then((hosts: Concierge.Host[]) => {
-            var requests = hosts.map(toRequest);
-            return Promise.all(requests);
-        })
-        .then((results: any[]) => {
-            var containers = results.reduce((prev, curr) => prev.concat(curr), []);
-            return Promise.resolve(containers);
-        });
+    const hosts = await getHosts.all();
+    const allInfo = await Promise.all(hosts.map(getContainersForHost));
+    const infos = allInfo.reduce<ContainerInfo[]>((list, info: ContainerInfo[]) => list.concat(info), []);
+    return infos;
 }
 
 function getContainersForHost(host: Concierge.Host) {
-    var promise = new Promise((resolve, reject) => {
-
-        var handler = (error, containers) => {
+    const promise = new Promise<ContainerInfo[]>((resolve, reject) => {
+        const handler = (error, containers: ContainerInfo[]) => {
             if (error) return reject(error);
             resolve(containers);
         }
-        setTimeout(() => reject('Connection to docker host timed out'), 750);
+
+        setTimeout(() => reject('Connection to docker host timed out'), 1500);
+
         getDockerClient(host)
             .listContainers({ all: 1 }, handler);
-    })
-        .catch(err => []);
+    });
     return promise;
-}
-
-
-function toRequest(host: Concierge.Host) {
-    return getContainersForHost(host);
 }
