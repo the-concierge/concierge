@@ -19,6 +19,7 @@
     "observers": "^0.5.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
+    "react-redux": "^4.4.5",
     "react-router": "^2.7.0",
     "redux": "^3.6.0",
     "rimraf": "^2.5.3",
@@ -32,6 +33,7 @@
     "@types/node": "^6.0.38",
     "@types/react": "^0.14.33",
     "@types/react-dom": "^0.14.16",
+    "@types/react-redux": "^4.4.31",
     "@types/react-router": "^2.0.33",
     "@types/redux": "^3.5.29",
     "@types/whatwg-fetch": "0.0.30",
@@ -46,6 +48,7 @@
     "build": "tsc",
     "react": "cp node_modules/react/dist/react.js front/react/libs/react.js",
     "reactdom": "cp node_modules/react-dom/dist/react-dom.js front/react/libs/react-dom.js",
+    "react-redux": "cp node_modules/react-redux/dist/react-redux.js front/react/libs/react-redux.js",
     "aphrodite": "cp node_modules/aphrodite/dist/aphrodite.js front/react/libs/aphrodite.js",
     "redux": "cp node_modules/redux/dist/redux.js front/react/libs/redux.js",
     "install": "npm run react && npm run reactdom && npm run aphrodite && npm run redux"
