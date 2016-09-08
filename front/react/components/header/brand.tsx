@@ -7,7 +7,7 @@ export default ({brandName}: { brandName: string }) => (
 )
 
 const styles = {
-    width: 200,
+    width: 220,
     fontSize: '1.4em',
     textShadow: '1px 1px 1px rgba(0, 0, 0, 0, 3)',
     color: '#ccc'
