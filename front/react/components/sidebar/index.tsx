@@ -1,13 +1,15 @@
 import * as React from 'react';
 
-const Sidebar = ({width}: { width: number } = { width: 200 }) => (
-    <div style={{
-        width,
-        flex: 1,
-        overflow: 'auto',
-        backgroundColor: '#303030',
-    }}>
+export default ({content}: {content: () => JSX.Element}) => (
+    <div style={styles}>
+        {content || <div>No Options!</div>}
     </div>
 )
 
-export default Sidebar
+const styles: React.CSSProperties = {
+    padding: 10,
+    minWidth: 200,
+    float: 'left', 
+    backgroundColor: '#303030',
+    color: '#fff'
+}

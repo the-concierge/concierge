@@ -1,12 +1,13 @@
 import * as React from 'react';
+import {Link} from 'react-router';
 import {StyleSheet, css} from 'aphrodite';
 
-const Anchor = ({text, href}: { text: string, href: string }) => (
-    <a
+export default ({text, href}: { text: string, href: string }) => (
+    <Link
         className={css(styles.anchor, styles.hover)}
-        href={href}>
+        to={href}>
         {text}
-    </a>
+    </Link>
 )
 
 let styles = StyleSheet.create({
@@ -20,5 +21,3 @@ let styles = StyleSheet.create({
         }
     }
 });
-
-export default Anchor;

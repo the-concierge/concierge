@@ -7,10 +7,5 @@ export default ({hostname, ip, operatingSystem, dockerVersion, storageSpace}: Co
         <td>${operatingSystem}</td>
         <td>${dockerVersion}</td>
         <td>${storageSpace}</td>
-
     </tr>
 )
-
-type Updaters = {
-    cpu: (value: string) => {},
-}
