@@ -5,16 +5,22 @@ import Header from '../header/index';
 import Sidebar from '../sidebar/index';
 import Content from '../content/index';
 import Hosts from './hosts';
-import menuData, { MenuItem } from './menu-data';
+import * as menus from './menu-data';
 import Anchor from '../anchor';
+import Body from './body';
 
-const Concierge = ({ content, sidebar, header }: { content: any, sidebar: any, header: () => JSX.Element }) => (
+type ConciergeParams = {
+    params: { category: string },
+}
+const Concierge = ({ params }: ConciergeParams) => (
     <div style={styles}>
-        <Header items={menuData.map(({name, href}) => ({ name, href }))} />
-        <div style={{ display: 'flex', overflow: 'auto', flex: 1, justifyContent: 'flex-start' }}>
-            <Sidebar content={sidebar} />
-            <Content content={content} />
-        </div>
+        <Header items={menus.getTopLevel()} />
+        <Body>
+            <Sidebar options={menus.getOptions(params.category)} />
+            <Content>
+                {menus.getContent(params.category)}
+            </Content>
+        </Body>
     </div>
 )
 
