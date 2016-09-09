@@ -1,8 +1,9 @@
 import * as React from 'react';
+import Anchor from '../anchor';
 
-export default ({content}: {content: () => JSX.Element}) => (
+export default ({options}: {options: Array<{ text: string, href: string }>}) => (
     <div style={styles}>
-        {content || <div>No Options!</div>}
+        {options.map(({text, href}) => <p><Anchor text={text} href={href} /></p>)}
     </div>
 )
 
