@@ -4,7 +4,7 @@ import server from './server';
 import * as Boom from 'boom';
 
 var getRoute = {
-	path: '/configurations',
+	path: '/api/configurations',
 	method: 'GET',
 	handler: (request, reply) => {
 		get.get()
@@ -14,7 +14,7 @@ var getRoute = {
 }
 
 var postRoute = {
-	path: '/configurations',
+	path: '/api/configurations',
 	method: 'POST',
 	handler: (request, reply) => {
 		saveAll(request.payload)

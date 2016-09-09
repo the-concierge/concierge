@@ -4,7 +4,7 @@ import get from '../archive/get';
 import getVolume from '../archive/getVolume';
 
 var getRoute = {
-	path: '/archive',
+	path: '/api/archive',
 	method: 'GET',
 	handler: (request, reply) => {
 		get()
@@ -14,7 +14,7 @@ var getRoute = {
 }
 
 var getDbRoute = {
-	path: '/archive/{volume}',
+	path: '/api/archive/{volume}',
 	method: 'GET',
 	handler: (request, reply) => {
 		const filename = request.params.volume;

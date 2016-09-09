@@ -6,7 +6,7 @@ import {one as getApp} from '../applications/get';
 
 var getRemotesRoute = {
 	method: 'GET',
-	path: '/tags/remote/{id}',
+	path: '/api/tags/remote/{id}',
 	handler: async((request, reply) => {
 		try {
 			const app = await(getApp(request.params.id));			

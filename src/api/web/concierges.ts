@@ -7,7 +7,7 @@ import * as httpRequest from '../request';
 import saveAll from '../concierges/saveAll';
 
 var getRoute = {
-	path: '/concierges',
+	path: '/api/concierges',
 	method: 'GET',
 	handler: (request, reply) => {
 		getConcierges.all()
@@ -17,7 +17,7 @@ var getRoute = {
 }
 
 var containerRoute = {
-	path: '/concierges/containers/{id?}',
+	path: '/api/concierges/containers/{id?}',
 	method: 'GET',
 	handler: (request, reply) => {
 		var id = request.params.id
@@ -31,7 +31,7 @@ var containerRoute = {
 }
 
 var cloneRoute = {
-	path: '/concierges/clone',
+	path: '/api/concierges/clone',
 	method: 'POST',
 	handler: (request, reply) => {
 		cloneContainer(request.payload)
@@ -41,7 +41,7 @@ var cloneRoute = {
 }
 
 var saveAllRoute = {
-	path: '/concierges',
+	path: '/api/concierges',
 	method: 'POST',
 	handler: (request, reply) => {
 		saveAll(request.payload)

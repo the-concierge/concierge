@@ -9,7 +9,7 @@ import deleteVariant from '../variants/delete';
 
 var getVariants = {
 	method: 'GET',
-	path: '/variants',
+	path: '/api/variants',
 	handler: (request, reply) => {
 		get.all()
 			.then(reply)
@@ -19,7 +19,7 @@ var getVariants = {
 
 var getDeployedVariants = {
 	method: 'GET',
-	path: '/variants/deployed',
+	path: '/api/variants/deployed',
 	handler: (request, reply) => {
 		var variantName = null;
 		getDeployed()
@@ -30,7 +30,7 @@ var getDeployedVariants = {
 
 var getDeployedVariantsByApplication = {
 	method: 'GET',
-	path: '/variants/{id}/deployed',
+	path: '/api/variants/{id}/deployed',
 	handler: (request, reply) => {
 		var variantName = null;
 		getDeployed(request.params.id)
@@ -41,7 +41,7 @@ var getDeployedVariantsByApplication = {
 
 var saveAllRoute = {
 	method: 'POST',
-	path: '/variants',
+	path: '/api/variants',
 	handler: (request, reply) => {
 		saveAll(request.payload)
 			.then(reply)
@@ -51,7 +51,7 @@ var saveAllRoute = {
 
 var deleteRoute = {
 	method: 'DELETE',
-	path: '/variants/{name}',
+	path: '/api/variants/{name}',
 	handler: (request, reply) => {
 		var name = request.params.name;
 		deleteVariant(name)

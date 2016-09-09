@@ -6,7 +6,7 @@ import saveAll from '../applications/saveAll';
 import deploy from '../variants/deploy';
 
 const getRoute = {
-	path: '/applications',
+	path: '/api/applications',
 	method: 'GET',
 	handler: async((request, reply) => {
 		const apps = await(getApplications.all());
@@ -19,7 +19,7 @@ const getRoute = {
 }
 
 const saveAllRoute = {
-	path: '/applications',
+	path: '/api/applications',
 	method: 'POST',
 	handler: (request, reply) => {
 		saveAll(request.payload)
@@ -29,7 +29,7 @@ const saveAllRoute = {
 }
 
 const deployRoute = {
-    path: '/applications/{id}/deploy/{tag}',
+    path: '/api/applications/{id}/deploy/{tag}',
     method: 'POST',
     handler: async((request, reply) => {
         const id = request.params.id;

@@ -16,7 +16,7 @@ import getStats from '../containers/getStats';
 
 var get = {
 	method: 'GET',
-	path: '/containers',
+	path: '/api/containers',
 	handler: (request, reply) => {
 		getContainers.all()
 			.then(reply)
@@ -26,7 +26,7 @@ var get = {
 
 var getVolumeRoute = {
 	method: 'GET',
-	path: '/containers/{id}/volume',
+	path: '/api/containers/{id}/volume',
 	handler: async((request, reply) => {
 		const container = await(getContainers.one(request.params.id));		
 		const filename = `${container.subdomain}_${container.applicationName}_${container.variant}.tar`;
@@ -41,7 +41,7 @@ var getVolumeRoute = {
 
 var create = {
 	method: 'PUT',
-	path: '/containers',
+	path: '/api/containers',
 	handler: (request, reply) => {
 		createContainer(request.payload, null)
 			.then(reply)
@@ -54,7 +54,7 @@ var create = {
 
 var post = {
 	method: 'POST',
-	path: '/containers',
+	path: '/api/containers',
 	handler: (request, reply) => {
 		saveAll(request.payload)
 			.then(reply)
@@ -64,7 +64,7 @@ var post = {
 
 var forkRoute = {
 	method: 'PUT',
-	path: '/containers/{id}/fork',
+	path: '/api/containers/{id}/fork',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then((container: Concierge.Container) => fork(container, request.payload))
@@ -75,7 +75,7 @@ var forkRoute = {
 
 var containerInfo = {
 	method: 'GET',
-	path: '/containers/{id}/info',
+	path: '/api/containers/{id}/info',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then(getContainerInfo)
@@ -86,7 +86,7 @@ var containerInfo = {
 
 var stopRoute = {
 	method: 'POST',
-	path: '/containers/{id}/stop',
+	path: '/api/containers/{id}/stop',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then(stop)
@@ -97,7 +97,7 @@ var stopRoute = {
 
 var startRoute = {
 	method: 'POST',
-	path: '/containers/{id}/start',
+	path: '/api/containers/{id}/start',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then(start)
@@ -108,7 +108,7 @@ var startRoute = {
 
 var removeRoute = {
 	method: 'DELETE',
-	path: '/containers/{id}',
+	path: '/api/containers/{id}',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then((container: Concierge.Container) => remove(container, true))
@@ -122,7 +122,7 @@ var removeRoute = {
 
 var changeRoute = {
 	method: 'PUT',
-	path: '/containers/{id}/change',
+	path: '/api/containers/{id}/change',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then((container: Concierge.Container) => change(container, request.payload))
@@ -133,7 +133,7 @@ var changeRoute = {
 
 var logRoute = {
 	method: 'GET',
-	path: '/containers/{id}/log',
+	path: '/api/containers/{id}/log',
 	handler: (request, reply) => {
 		getContainers.one(request.params.id)
 			.then(getLog)
@@ -144,7 +144,7 @@ var logRoute = {
 
 var statsRoute = {
     method: 'GET',
-    path: '/containers/{id}/stats',
+    path: '/api/containers/{id}/stats',
     handler: (request, reply) => {
         getContainers.one(request.params.id)
             .then(getStats)

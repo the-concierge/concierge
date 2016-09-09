@@ -7,7 +7,7 @@ import * as Boom from 'boom';
 const REDACT = '********'
 var get = {
     method: 'GET',
-    path: '/hosts',
+    path: '/api/hosts',
     handler: async((request, reply) => {
         try {
             const hosts = await(getHosts.all());
@@ -23,7 +23,7 @@ var get = {
 
 var getOne = {
     method: 'GET',
-    path:'/hosts/{id}',
+    path:'/api/hosts/{id}',
     handler: async((request, reply) => {
         const host = await(getHosts.one(request.params.id as number));
         host.privateKey = REDACT;
@@ -33,7 +33,7 @@ var getOne = {
 
 var updateHosts = {
     method: 'POST',
-    path: '/hosts',
+    path: '/api/hosts',
     handler: (request, reply) => {
         saveAll(request.payload)
             .then(reply)
@@ -43,7 +43,7 @@ var updateHosts = {
 
 var getContainersRoute = {
     method: 'GET',
-    path: '/hosts/{id}/containers',
+    path: '/api/hosts/{id}/containers',
     handler: (request, reply) => {
         var id = request.params.id as number
          || null;
