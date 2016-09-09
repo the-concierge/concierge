@@ -1,5 +1,5 @@
 require.config({
-    baseUrl: '/react/libs',
+    baseUrl: '/libs',
     shim: {
         "c3": {
             deps: ["d3"]
