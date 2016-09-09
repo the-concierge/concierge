@@ -5,7 +5,8 @@
 		"**/.DS_Store": true,
 		"**/archive/*.db": true,
 		"**/archive/*.tar": true,
-		"**/repositories": true
+		"**/repositories": true,
+		"**/*.js" : { "when": "$(basename).tsx" }
 	},
     "typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 4,
