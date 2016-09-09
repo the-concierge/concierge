@@ -2,10 +2,10 @@ import * as React from 'react';
 import NavItem from './nav-item';
 import Brand from './brand';
 
-export default ({items}: { items: Array<{name: string, href: string}> }) => (
+export default ({items}: { items: Array<{text: string, href: string}> }) => (
     <div style={styles}>
         <Brand brandName={"Concierge"}/>
-        {items.map(({name, href}, key) => <NavItem text={name} href={href} key={key} />)}
+        {items.map(({text, href}, key) => <NavItem text={text} href={href} key={key} />)}
     </div>
 )
 
