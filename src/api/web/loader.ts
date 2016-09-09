@@ -1,4 +1,5 @@
 import server from './server';
+import { Request as HapiRequest } from 'hapi';
 import * as path from 'path';
 import * as inert from 'inert';
 
@@ -43,5 +44,21 @@ export default async(() => {
     }
 
     server.route(staticRoute);
-    return void(0);
+
+    // 404 handler -- Route to application entry point
+    type BoomRequest = {
+        response: {
+            output: {
+                statusCode: number;
+            }
+        }
+    };
+
+    server.ext('onPreResponse', (request: HapiRequest & BoomRequest, reply) => {
+        if (!request.response.isBoom) return reply.continue();
+        if (request.response.output.statusCode !== 404) reply.continue();        
+        reply.file(`${staticPath}/index.html`);    
+    });
+
+    return void (0);
 });
