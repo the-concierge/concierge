@@ -1,8 +1,12 @@
 import * as React from 'react';
+import { Link } from 'react-router';
+import Anchor from '../anchor';
 
 export default ({brandName}: { brandName: string }) => (
     <div style={styles}>
-        <span style={{ marginLeft: 10 }}>{brandName}</span>
+        <Anchor href='/'>
+            <span style={{ marginLeft: 10 }}>{brandName}</span>
+        </Anchor>
     </div>
 )
 
