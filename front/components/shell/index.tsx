@@ -5,13 +5,15 @@ import Header from '../header/index';
 import Sidebar from '../sidebar/index';
 import Content from '../content/index';
 import Hosts from './hosts';
+import menuData, { MenuItem } from './menu-data';
+import Anchor from '../anchor';
 
-const Concierge = ({ content, sidebar }: { content: any, sidebar: any }) => (
+const Concierge = ({ content, sidebar, header }: { content: any, sidebar: any, header: () => JSX.Element }) => (
     <div style={styles}>
-        <Header height={48} />
+        <Header items={menuData.map(({name, href}) => ({ name, href }))} />
         <div style={{ display: 'flex', overflow: 'auto', flex: 1, justifyContent: 'flex-start' }}>
             <Sidebar content={sidebar} />
-            <Content content={content} />            
+            <Content content={content} />
         </div>
     </div>
 )
@@ -19,14 +21,22 @@ const Concierge = ({ content, sidebar }: { content: any, sidebar: any }) => (
 export function render() {
     DOM.render(
         <Router history={browserHistory}>
-            <Route path="/react/index.html" component={Concierge}>
-                <Route path="/react/hosts" components={{ content: Hosts, sidebar: null }}>
+            <Route path="/" component={Concierge}>
+                <Route path="/:category" components={{ content: Content, sidebar: Sidebar }} >
+                    <Route path=":item" component={Item} />
                 </Route>
             </Route>
         </Router>,
         document.getElementById('content')
     )
 }
+
+const Item = ({ category, item }: { category: any, item: any }) => (
+    <div>
+        <p>{category}</p>
+        <p>{item}</p>
+    </div>
+)
 
 const styles: React.CSSProperties = {
     fontFamily: 'Helvetica',
