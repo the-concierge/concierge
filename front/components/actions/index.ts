@@ -1,5 +1,4 @@
 import {ContainerInfo} from 'dockerode-ts';
-import {connect} from 'react-redux';
 
 export function getHosts(): Promise<Concierge.APIHost[]> {
     return fetch('/hosts')
@@ -21,6 +20,4 @@ export function getHostContrainers(hostId: number): Promise<ContainerInfo[]> {
         .then(json);
 }
 
-const json = (r: Response) => r.json()
-
-connect()
+const json = (r: Response) => r.json();
