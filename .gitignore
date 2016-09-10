@@ -27,5 +27,4 @@ repositories/
 !repositories/.gitkeep
 .vagrant/
 *.js
-!front/scripts/libs/*.js
-!front/react/libs/*.js
+!front/libs/*.js
