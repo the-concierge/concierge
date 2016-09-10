@@ -3,7 +3,7 @@ import Anchor from '../anchor';
 
 export default ({options}: {options: Array<{ text: string, href: string }>}) => (
     <div style={styles}>
-        {options.map(({text, href}) => <p><Anchor text={text} href={href} /></p>)}
+        {options.map(({text, href}, key) => <p key={key}><Anchor text={text} href={href} /></p>)}
     </div>
 )
 
