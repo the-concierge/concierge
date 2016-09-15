@@ -14,18 +14,18 @@ export type ActionTypes = AddContainer
     | AddHost
     | RemoveHost
 
-interface AddContainer extends Action<ActionType.AddContainer> {
+export interface AddContainer extends Action<ActionType.AddContainer> {
     container: Concierge.APIContainer;
 }
 
-interface RemoveContainer extends Action<ActionType.RemoveContainer> {
+export interface RemoveContainer extends Action<ActionType.RemoveContainer> {
     id: number;
 }
 
-interface AddHost extends Action<ActionType.AddHost> {
+export interface AddHost extends Action<ActionType.AddHost> {
     host: Concierge.APIHost;
 }
 
-interface RemoveHost extends Action<ActionType.RemoveHost> {
+export interface RemoveHost extends Action<ActionType.RemoveHost> {
     id: number;
 }
