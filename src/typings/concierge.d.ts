@@ -136,18 +136,24 @@ declare module Concierge {
 
     interface Container {
         id?: number;        
+        dockerId: string;
         label: string;
         port: number;
         variant: string;
         subdomain: string;
         isProxying: number;
-        dockerId: string;
         host: string;
         applicationId: number;
         applicationName?: string;
         dockerImage: string;
         /** JSON representation of Array<string> */
         variables: string;
+    }
+
+    interface APIContainer extends Container {
+        memory: string;
+        cpu: string;
+        responseTime: string;
     }
 
     interface Host {
