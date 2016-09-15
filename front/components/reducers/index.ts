@@ -1,6 +1,6 @@
 import ActionType, { ActionTypes } from '../actions/types';
 
-function store(state: ApplicationState = { containers: [], hosts: [] }, action: ActionTypes): ApplicationState {
+export default function store(state: ApplicationState = { containers: [], hosts: [] }, action: ActionTypes): ApplicationState {
     switch (action.kind) {
         case ActionType.AddContainer:
             return Object.assign(
@@ -12,7 +12,7 @@ function store(state: ApplicationState = { containers: [], hosts: [] }, action: 
             return Object.assign(
                 {},
                 state,
-                { containers: [...state.containers, action.host] }
+                { hosts: [...state.hosts, action.host] }
             )
         case ActionType.RemoveContainer:
             return Object.assign(
