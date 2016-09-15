@@ -8,12 +8,12 @@ enum ActionType {
 
 export default ActionType;
 
-export interface Action<T> { kind: T }
+export interface Action<T extends ActionType> { kind: T }
 export type ActionTypes = AddContainer
     | RemoveContainer
     | AddHost
     | RemoveHost
-    
+
 interface AddContainer extends Action<ActionType.AddContainer> {
     container: Concierge.APIContainer;
 }
