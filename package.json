@@ -34,13 +34,13 @@
     "@types/whatwg-fetch": "0.0.30",
     "chai": "^3.4.1",
     "mocha": "^2.2.5",
-    "typescript": "^2.1.0-dev.20160906"
+    "typescript": "^2.1.0-dev.20160917"
   },
   "scripts": {
     "test": "mocha",
     "debug": "node --inspect start.js",
     "start": "node .",
-    "build": "tsc"  
+    "build": "tsc"
   },
   "author": "Carl Winkler",
   "license": "MIT",
