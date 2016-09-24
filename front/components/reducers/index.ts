@@ -1,26 +1,27 @@
-import {ActionType} from '../actions/types';
+import * as Actions from '../actions/types';
+import ActionType = Actions.ActionType;
 
 export default function store(state: ApplicationState = { containers: [], hosts: [] }, action: ActionType): ApplicationState {
     switch (action.kind) {
-        case 'ADD_CONTAINER':
+        case Actions.ADD_CONTAINER:
             return Object.assign(
                 {},
                 state,
                 { containers: [...state.containers, action.container] }
             )
-        case 'ADD_HOST':
+        case Actions.ADD_HOST:
             return Object.assign(
                 {},
                 state,
                 { hosts: [...state.hosts, action.host] }
             )
-        case 'REMOVE_CONTAINER':
+        case Actions.REMOVE_HOST:
             return Object.assign(
                 {},
                 state,
                 { containers: state.containers.filter(c => c.id !== action.id) }
             )
-        case 'REMOVE_CONTAINER':
+        case Actions.REMOVE_CONTAINER:
             return Object.assign(
                 {},
                 state,
