@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import VisibleHostList from '../containers/visible-hosts';
 const items: MenuItem[] = [
     {
         text: 'Containers', href: '/containers',
@@ -11,7 +11,7 @@ const items: MenuItem[] = [
     },
     {
         text: 'Hosts', href: '/hosts',
-        content: () => (<div>Hosts...</div>),
+        content: () => (<VisibleHostList />),
         options: [
             { text: 'Add Host', href: 'new' },
             // TODO: more...
@@ -63,7 +63,7 @@ const fallback: MenuItem = {
 
 
 export function getContent(category: string) {
-    return getItem(category).content;
+    return getItem(category).content();
 }
 
 export function getOptions(category: string) {
