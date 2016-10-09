@@ -1,9 +1,11 @@
 import * as React from 'react';
 import VisibleHostList from '../containers/visible-hosts';
+import VisibleContainerList from '../containers/visible-containers';
+
 const items: MenuItem[] = [
     {
         text: 'Containers', href: '/containers',
-        content: () => (<div>Containers...</div>),
+        content: () => (<VisibleContainerList />),
         options: [
             { text: 'Add Container', href: 'new' },
             // TODO: more...
