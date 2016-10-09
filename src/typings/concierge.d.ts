@@ -45,6 +45,11 @@ interface Toastr {
     options: any;
 }
 
+interface AppState {
+    containers: Array<Concierge.APIContainer>;
+    hosts: Array<Concierge.APIHost>;
+}
+
 declare module Concierge {
     interface Concierge {
         id: number;
