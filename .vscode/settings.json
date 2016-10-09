@@ -11,5 +11,6 @@
 	},
     "typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 4,
-	"files.eol": "\n"
+	"files.eol": "\n",
+	"tslint.enable": false
 }
