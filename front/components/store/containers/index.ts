@@ -1,0 +1,1 @@
+export {all, one} from './get';
