@@ -1,8 +1,8 @@
 import * as Actions from '../actions/types';
 import ActionType = Actions.ActionType;
 
-export default function store(state: ApplicationState = { containers: [], hosts: [] }, action: ActionType): ApplicationState {
-    switch (action.kind) {
+export default function reduce(state: AppState = { containers: [], hosts: [] }, action: ActionType): AppState {
+    switch (action.type) {
         case 'add-container':
             return Object.assign(
                 {},
@@ -19,19 +19,15 @@ export default function store(state: ApplicationState = { containers: [], hosts:
             return Object.assign(
                 {},
                 state,
-                { containers: state.containers.filter(c => c.id !== action.id) }
+                { hosts: state.hosts.filter(c => c.id !== action.id) }
             )
         case 'remove-container':
             return Object.assign(
                 {},
                 state,
-                { hosts: state.hosts.filter(c => c.id !== action.id) }
+                { containers: state.containers.filter(c => c.id !== action.id) }
             )
+        default:
+            return state;
     }
 }
-
-interface ApplicationState {
-    containers: Array<Concierge.APIContainer>;
-    hosts: Array<Concierge.APIHost>;
-}
-
