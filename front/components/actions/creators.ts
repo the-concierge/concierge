@@ -5,27 +5,27 @@ import Host = Concierge.APIHost;
 export function addContainer(container: Container): Actions.AddContainer {
     return {
         container,
-        kind: Actions.ADD_CONTAINER
+        kind: 'add-container'
     }
 }
 
 export function removeContainer(id: number): Actions.RemoveContainer {
     return {
         id,
-        kind: Actions.REMOVE_CONTAINER
+        kind: 'remove-container'
     }
 }
 
 export function addHost(host: Host): Actions.AddHost {
     return {
         host,
-        kind: Actions.ADD_HOST
+        kind: 'add-host'
     }
 }
 
 export function removeHost(id: number): Actions.RemoveHost {
     return {
         id,
-        kind: Actions.REMOVE_HOST
+        kind: 'remove-host'
     }
 }

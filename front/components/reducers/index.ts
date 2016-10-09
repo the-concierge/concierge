@@ -3,25 +3,25 @@ import ActionType = Actions.ActionType;
 
 export default function store(state: ApplicationState = { containers: [], hosts: [] }, action: ActionType): ApplicationState {
     switch (action.kind) {
-        case Actions.ADD_CONTAINER:
+        case 'add-container':
             return Object.assign(
                 {},
                 state,
                 { containers: [...state.containers, action.container] }
             )
-        case Actions.ADD_HOST:
+        case 'add-host':
             return Object.assign(
                 {},
                 state,
                 { hosts: [...state.hosts, action.host] }
             )
-        case Actions.REMOVE_HOST:
+        case 'remove-host':
             return Object.assign(
                 {},
                 state,
                 { containers: state.containers.filter(c => c.id !== action.id) }
             )
-        case Actions.REMOVE_CONTAINER:
+        case 'remove-container':
             return Object.assign(
                 {},
                 state,
