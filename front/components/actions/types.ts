@@ -4,21 +4,21 @@ export type ActionType = AddContainer
     | RemoveHost
 
 export interface AddContainer {
-    kind: 'add-container';
+    type: 'add-container';
     container: Concierge.APIContainer;
 }
 
 export interface RemoveContainer {
-    kind: 'remove-container';
+    type: 'remove-container';
     id: number;
 }
 
 export interface AddHost {
-    kind: 'add-host';
+    type: 'add-host';
     host: Concierge.APIHost;
 }
 
 export interface RemoveHost {
-    kind: 'remove-host';
+    type: 'remove-host';
     id: number;
 }
