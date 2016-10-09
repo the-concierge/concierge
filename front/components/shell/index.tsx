@@ -4,10 +4,11 @@ import * as DOM from 'react-dom';
 import Header from '../header/index';
 import Sidebar from '../sidebar/index';
 import Content from '../content/index';
-import Hosts from './hosts';
 import * as menus from './menu-data';
 import Anchor from '../anchor';
 import Body from './body';
+import store from '../store/index';
+import { Provider } from 'react-redux';
 
 type ConciergeParams = {
     params: { category: string },
@@ -26,13 +27,15 @@ const Concierge = ({ params }: ConciergeParams) => (
 
 export function render() {
     DOM.render(
-        <Router history={browserHistory}>
-            <Route path="/" component={Concierge}>
-                <Route path="/:category" components={{ content: Content, sidebar: Sidebar }} >
-                    <Route path=":item" component={Item} />
+        <Provider store={store}>
+            <Router history={browserHistory}>
+                <Route path="/" component={Concierge}>
+                    <Route path="/:category" components={{ content: Content, sidebar: Sidebar }} >
+                        <Route path=":item" component={Item} />
+                    </Route>
                 </Route>
-            </Route>
-        </Router>,
+            </Router>
+        </Provider>,
         document.getElementById('content')
     )
 }
