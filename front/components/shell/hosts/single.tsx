@@ -1,21 +1,12 @@
 import * as React from 'react';
+import Block from '../../block';
 
 export default ({ host }: { host: Concierge.APIHost }) => (
     <div>
-        <div style={{ display: 'inline-block' }}>
-            {host.id}
-        </div>
-        <div style={{ display: 'inline-block' }}>
-            {host.hostname}
-        </div>
-        <div style={{ display: 'inline-block' }}>
-            {host.ip}
-        </div>
-        <div style={{ display: 'inline-block' }}>
-            {host.dockerVersion}
-        </div>
-        <div style={{ display: 'inline-block' }}>
-            {host.containerCount}
-        </div>
+        <Block text={host.id} />
+        <Block text={host.hostname} />
+        <Block text={host.ip} />
+        <Block text={host.dockerVersion} />
+        <Block text={host.containerCount} />
     </div>
 )
