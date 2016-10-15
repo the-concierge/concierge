@@ -20,14 +20,18 @@ const menuItems = [
 
 export function getContent(category: string, item: string = '') {
     try {
-        return double.dispatch(category, item);        
+        return double.dispatch(category, item);
     }
     catch (ex) {
         // Ambiguous call
-        return dashboard.content();
-        
+        try {
+            return double.dispatch(category, '');
+        }
+        catch (ex) {
+            return dashboard.content();
         // Or return a 404?
         // return (<div>404: Resource not found</div>);
+        }
     }
 }
 
@@ -40,7 +44,7 @@ export function getItem(category: string): TopLevelItem {
 }
 
 export function getTopLevel() {
-    const categories = menuItems.map(({text, href}) => ({ text, href })); 
+    const categories = menuItems.map(({text, href}) => ({ text, href }));
     return categories;
 }
 
