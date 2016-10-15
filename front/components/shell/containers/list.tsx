@@ -1,11 +1,12 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import Table from '../../table/index';
 import Head from '../../table/head';
 import Row from '../../table/row';
 import Anchor from '../../anchor';
 import { backgroundColor } from '../../common';
 
-export default ({ containers }: AppState) => (
+const render = ({ containers }: AppState) => (
     <div>
         <Table>
             <thead>
@@ -18,14 +19,23 @@ export default ({ containers }: AppState) => (
     </div>
 );
 
-const toContainerRow = (container: Concierge.APIContainer) => (
-    <Row columns={toContainerColumns(container)} rowStyles={rowStyle} />
+const mapStateToProps = (state: AppState) => {
+    return state;
+}
+
+const ContainerList = connect(mapStateToProps)(render);
+export default ContainerList;
+
+const toContainerRow = (container: Concierge.APIContainer, index: number) => (
+    <Row columns={toContainerColumns(container)} rowStyles={rowStyle} key={index} />
 )
 
 const toContainerColumns = (container: Concierge.APIContainer) => [
     container.id,
     container.label,
     container.subdomain,
+    container.memory || '???',
+    container.cpu || '???',
     <Anchor href={`http://${container.host}:{container.port}`} styles={anchorStyle}>
         {container.host}:{container.port}
     </Anchor>,
@@ -38,6 +48,8 @@ const headings = [
     'Id',
     'Label',
     'Subdomain',
+    'Memory',
+    'CPU',
     'Location',
     'Application',
     'Docker Image',
@@ -51,9 +63,7 @@ const headStyle = {
 }
 
 const rowStyle = {
-    tr: {
-        height: '35px'
-    }
+
 }
 
 const anchorStyle = {
