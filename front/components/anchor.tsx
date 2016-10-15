@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { Link } from 'react-router';
-import { StyleSheet, css } from 'aphrodite';
+import spreadStyle from './spread-style';
+import { css } from 'aphrodite';
 
-type AnchorOpts = { text?: string, href: string, children?: any }
-export default ({text, href, children}: AnchorOpts) => {
+type AnchorOpts = { text?: string, href: string, children?: any, styles?: {} }
+export default ({text, href, children, styles}: AnchorOpts) => {
     return (
         <Link
-            className={css(styles.anchor, styles.hover)}
+            className={css(...spreadStyle(style, styles))}
             to={href}>
             {text || children}
         </Link>
     )
 }
 
-let styles = StyleSheet.create({
+const style = {
     anchor: {
         color: 'white',
         textDecoration: 'none',
@@ -23,4 +24,4 @@ let styles = StyleSheet.create({
             textDecoration: 'underline'
         }
     }
-});
+};
