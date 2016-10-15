@@ -60,7 +60,6 @@ export default function create<TReturn, TDispatch>(options: DispatchOptions<TDis
             throw new Error('No match found');
         }
         if (maxMatches.length > 1) {
-            console.log(maxMatches);
             throw new Error('Ambiguous call');
         }
         return maxMatches[0].dispatcher.handler(...types);
