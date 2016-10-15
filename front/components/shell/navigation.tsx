@@ -18,18 +18,17 @@ const menuItems = [
     archive
 ];
 
-menuItems.forEach(
-    menuItem => {
-        const category = menuItem.href.slice(1);
-        double.override([category, ''], menuItem.content);
-        menuItem.options.forEach(
-            option => double.override([category, option.href], option.content)
-        );
-    }
-);
-
 export function getContent(category: string, item: string = '') {
-    return double.dispatch(category, item);
+    try {
+        return double.dispatch(category, item);        
+    }
+    catch (ex) {
+        // Ambiguous call
+        return dashboard.content();
+        
+        // Or return a 404?
+        // return (<div>404: Resource not found</div>);
+    }
 }
 
 export function getOptions(category: string) {
@@ -58,6 +57,16 @@ const double = multimethod<JSX.Element, string>(
                 isa: (special, general) => special === general
             }
         ]
+    }
+);
+
+menuItems.forEach(
+    menuItem => {
+        const category = menuItem.href.slice(1);
+        double.override([category, ''], menuItem.content);
+        menuItem.options.forEach(
+            option => double.override([category, option.href], option.content)
+        );
     }
 );
 
