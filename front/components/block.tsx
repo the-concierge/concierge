@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-export default ({ text }: { text: string | number }) => (
+export default ({ text, children }: { text?: string | number, children?: any }) => (
     <div style={styles}>
-        {text || 'N/A'}
+        {text || children || 'N/A'}
     </div>
 )
 

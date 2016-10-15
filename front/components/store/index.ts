@@ -1,8 +1,8 @@
 import { createStore } from 'redux';
-import stateHandler from '../reducers/index';
-import * as containers from './containers/index';
-import * as hosts from './hosts/index';
-import * as action from '../actions/creators';
+import stateHandler from '../store/reducers/index';
+import * as containers from './api/containers';
+import * as hosts from './api/hosts';
+import * as action from './actions/creators';
 
 // Hook up the store with Redux dev tools
 const win: any = window;
