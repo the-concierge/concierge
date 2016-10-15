@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Link } from 'react-router';
-import spreadStyle from './spread-style';
+import mergeToClass from './merge-style';
 import { css } from 'aphrodite';
 
 type AnchorOpts = { text?: string, href: string, children?: any, styles?: {} }
 export default ({text, href, children, styles}: AnchorOpts) => {
     return (
         <Link
-            className={css(...spreadStyle(style, styles))}
+            className={mergeToClass(style, styles)}
             to={href}>
             {text || children}
         </Link>
