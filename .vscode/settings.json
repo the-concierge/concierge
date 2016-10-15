@@ -7,7 +7,8 @@
 		"**/archive/*.tar": true,
 		"**/repositories": true,
 		"**/*.js" : { "when": "$(basename).ts" },
-		"**/*?.js" : { "when": "$(basename).tsx" }
+		"**/*?.js" : { "when": "$(basename).tsx" },
+		"node_modules": true
 	},
     "typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 4,
