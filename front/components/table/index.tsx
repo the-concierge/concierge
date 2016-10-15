@@ -14,6 +14,6 @@ export default ({ styles, children }: TableParams) => (
 const tableStyles = {
     table: {
         width: '100%',
-        'border-collapse': 'separate'
+        'border-spacing': '0'
     }
 }

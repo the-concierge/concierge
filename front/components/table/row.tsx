@@ -9,12 +9,12 @@ type RowParams = {
 }
 export default ({ columns, rowStyles, columnStyles }: RowParams) => (
     <tr className={mergeToClass(trStyle, rowStyles)}>
-        {columns.map(column => td(column, columnStyles))}
+        {columns.map((column, index) => td(column, index, columnStyles))}
     </tr>
 );
 
-const td = (columnContent: any, columnStyles?: {}) => (
-    <td className={mergeToClass(tdStyle, columnStyles)}>
+const td = (columnContent: any, index: number, columnStyles?: {}) => (
+    <td className={mergeToClass(tdStyle, columnStyles)} key={index}>
         {columnContent}
     </td>
 )
@@ -26,6 +26,7 @@ const trStyle = {
 const tdStyle = {
     td: {
         'border-bottom': '1px solid #91d3fd',
-        padding: '4px'
+        padding: '4px',        
+        height: '35px'
     }
 }
