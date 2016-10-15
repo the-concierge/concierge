@@ -1,7 +1,7 @@
 import { StyleSheet, css } from 'aphrodite';
 
 export default function toClass(styles: {}, stylesToMerge: {} = {}) {
-    return css(spread(styles, stylesToMerge));
+    return css(...spread(styles, stylesToMerge));
 }
 
 export function spread(styles: {}, stylesToMerge: {} = {}): Array<{ [index: string]: any }> {
