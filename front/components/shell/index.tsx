@@ -29,8 +29,10 @@ const Concierge = ({ params, styles = {} }: ConciergeParams) => (
 export default Concierge;
 
 const conciergeStyles: React.CSSProperties = {
-    fontFamily: 'Helvetica',
-    display: 'flex',
-    flexFlow: 'column',
-    height: '100vh'
+    body: {
+        fontFamily: 'Helvetica',
+        display: 'flex',
+        flexFlow: 'column',
+        height: '100vh'
+    }
 }
