@@ -24,19 +24,24 @@ export function getContent(category: string, item: string = '') {
     }
     catch (ex) {
         // Ambiguous call
+        // Let's fall back to the category
         try {
             return double.dispatch(category, '');
         }
         catch (ex) {
+            // Or return a 404?
             return dashboard.content();
-        // Or return a 404?
-        // return (<div>404: Resource not found</div>);
         }
     }
 }
 
 export function getOptions(category: string) {
-    return getItem(category).options;
+    const root = getItem(category).href;
+    const options = getItem(category).options;
+    return {
+        root,
+        options
+    }
 }
 
 export function getItem(category: string): TopLevelItem {

@@ -1,18 +1,20 @@
 import * as React from 'react';
 import Anchor from '../anchor';
-import {sidebarColor} from '../common';
+import { sidebarColor } from '../common';
 
 type SidebarParams = {
-    root: string;
-    options: Array<{ text: string, href: string }>;
+    params: {
+        root: string;
+        options: Array<{ text: string, href: string }>;
+    }
 }
-export default ({root, options}: SidebarParams) => (
+export default ({params}: SidebarParams) => (
     <div style={styles}>
         {
-            options
+            params.options
                 .map(({text, href}, key) => (
                     <p key={key}>
-                        <Anchor href={root + '/' + href}>
+                        <Anchor href={params.root + '/' + href}>
                             {text}
                         </Anchor>
                     </p>
