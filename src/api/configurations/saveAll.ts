@@ -3,7 +3,7 @@ import { setCache } from './get';
 import { ActiveState } from '../../types/states';
 import updateWebServers from '../../proxy';
 
-export default async((request: Lists.SaveRequest) => {
+export default async((request: Concierge.SaveRequest<Concierge.Configuration>) => {
     const trx = await(db.getTransaction());
     try {
         const table = 'Configurations';

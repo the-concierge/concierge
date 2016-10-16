@@ -2,7 +2,7 @@ import db from '../../data/connection';
 import * as states from '../../types/states';
 import DeployedState = states.DeployedState;
 
-export default function saveAll(request: Lists.SaveRequest) {
+export default function saveAll(request: Concierge.SaveRequest<Concierge.Variant>) {
 
 	var canProceed = request.deletes.every(del => isDeletable(del));
 	if (!canProceed) return Promise.reject('Only "Failed" variants can be deleted');

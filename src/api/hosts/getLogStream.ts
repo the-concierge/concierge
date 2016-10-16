@@ -7,7 +7,7 @@ import * as stream from 'stream';
 export default function get(host: Concierge.Host, callback: (error?: any, event?: string) => void) {
     var client = dockerClient(host);
 
-    client.getEvents({ }, (err, dataStream) => {
+    client.getEvents({ }, (err, dataStream: NodeJS.ReadableStream) => {
         if (err) return callback(err);
         dataStream.on('data', data => callback(null, data.toString()));
     });

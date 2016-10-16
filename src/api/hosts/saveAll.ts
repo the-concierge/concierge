@@ -2,7 +2,7 @@ import db from '../../data/connection';
 import makeDirectory from '../ssh/makeDirectory';
 import readDirectory from '../ssh/readDirectory';
 
-export default async((request: Lists.SaveRequest) => {
+export default async((request: Concierge.SaveRequest<Concierge.Host>) => {
     const trx = await(db.getTransaction());
     try {
         await(doInserts(trx, request.inserts));

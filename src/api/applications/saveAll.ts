@@ -7,7 +7,7 @@ import deleteRepository from './deleteRepo';
  * TODO: Can this behaviour be generic? ... Yes, but how to do it cleanly?
  */
 
-export default async((request: Lists.SaveRequest) => {
+export default async((request: Concierge.SaveRequest<Concierge.Application>) => {
     const trx = await(db.getTransaction());
 
     try {

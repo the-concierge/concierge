@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference path="./knockout/knockout.d.ts" />
 /// <reference path="./analysis/analysis.d.ts" />
 
 interface Window {
@@ -29,8 +28,6 @@ declare interface NodeRequire {
     (modules: string[], callback?: (...modules: any[]) => any);
     config: (options: any) => void;
 }
-
-declare var ko: KnockoutStatic;
 
 declare module "toastr" {
     var toastr: Toastr;
@@ -180,17 +177,9 @@ declare module Concierge {
         storageSpace: string;
     }
 
-
     interface Entity {
         type: string;
         name: string;
-    }
-
-    interface EntityModel extends Entity {
-        events: KnockoutObservableArray<string>;
-        cpu: KnockoutObservable<string>;
-        memory: KnockoutObservable<string>;
-        unread: KnockoutObservable<number>;
     }
 
     interface Event extends Entity {
@@ -232,6 +221,12 @@ declare module Concierge {
         timestamp: number;
         variant: string;
         date: string;
+    }
+
+    interface SaveRequest<T> {
+        inserts: T[];
+        updates: T[];
+        deletes: T[];
     }
 }
 

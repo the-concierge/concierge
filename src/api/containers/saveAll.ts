@@ -1,7 +1,7 @@
 import db from '../../data/connection';
 import * as log from '../../logger';
 
-export default async((request: Lists.SaveRequest) => {
+export default async((request: Concierge.SaveRequest<Concierge.Container>) => {
     const trx = await(db.getTransaction());
     try {
         request.updates.map(stripProps)

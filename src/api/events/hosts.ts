@@ -14,7 +14,7 @@ function listenToHosts(hosts: Concierge.Host[]) {
     const getEvents = host => {
         var client = getDockerClient(host);
 
-        client.getEvents({}, (err, data) => {
+        client.getEvents({}, (err, data: NodeJS.ReadableStream) => {
             if (err) {
                 log.error(`[${host.hostname}] Failed to stream Docker events: ${err}`);
                 return;
