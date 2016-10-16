@@ -28,3 +28,4 @@ repositories/
 .vagrant/
 *.js
 !front/libs/*.js
+*.lock
