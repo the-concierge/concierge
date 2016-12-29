@@ -35,7 +35,7 @@
     "@types/whatwg-fetch": "0.0.30",
     "chai": "^3.4.1",
     "mocha": "^2.2.5",
-    "typescript": "^2.1.0-dev.20160917"
+    "typescript": "^2.1.4"
   },
   "scripts": {
     "test": "mocha",
