@@ -3,15 +3,15 @@ import getClient from '../dockerClient';
 /**
  * Get the 'inspect' information of an Image
  */
-export default async((host: Concierge.Host, dockerImage: string) => {
+export default async function getImageInfo(host: Concierge.Host, dockerImage: string) {
     try {
-        const info = await(getImageAsync(host, dockerImage));
+        const info = await getImageAsync(host, dockerImage);
         return info;
     }
     catch (ex) {
         throw ex;
-    }    
-});
+    }
+}
 
 function getImageAsync(host: Concierge.Host, dockerImage: string) {
     const client = getClient(host).getImage(dockerImage);

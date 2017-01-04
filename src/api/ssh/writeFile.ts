@@ -5,21 +5,21 @@ import getVolumePath from '../hosts/volumePath';
 /**
  * Create a file on the Host
  */
-export default async((host: Concierge.Host, filename: string, data: Buffer): boolean => {    
-    let client = await(getSftpClient(host));
-    let success = await(writeFile(client, filename, data));
+export default async function writeFile(host: Concierge.Host, filename: string, data: Buffer): Promise<boolean> {
+    const client = await getSftpClient(host);
+    const success = await write(client, filename, data);
     return success;
-});
+}
 
-function writeFile(client, filePath: string, data: Buffer) {
-    var promise = new Promise<boolean>((resolve, reject) => {
+function write(client, filePath: string, data: Buffer) {
+    const promise = new Promise<boolean>((resolve, reject) => {
 
         function readFileHandler(error, response) {
             client.end();
             if (error)
                 return reject('[WRITEFILE] Failed to read file: ' + error);
 
-            resolve(<any>true);
+            resolve(true);
         }
 
         client.writeFile(filePath, data, {}, readFileHandler);

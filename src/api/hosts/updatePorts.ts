@@ -5,35 +5,36 @@ import db from '../../data/connection';
 /**
  * Get the current exposed ports for all Containers on all Hosts
  */
-export default async(() => {
-	const containers = await(getContainers.all());
-	const containersInfo = await(getContainerInfo());
-	const trx = await(db.getTransaction());
+export default async function update() {
+	const containers = await getContainers.all();
+	const containersInfo = await getContainerInfo();
+	const trx = await db.getTransaction();
 
 	try {
-		const updateResults = containers.map(container => {
+		const updateResults = [];
+		for (const container of containers) {
 			const port = getPort(container, containersInfo);
 			if (port == null) return null;
 
-			return await(db('Containers')
+			const result = await db('Containers')
 				.update({ port })
 				.where({ id: container.id })
-				.transacting(trx))
-		});
-		await(trx.commit());
+				.transacting(trx);
+			updateResults.push(result);
+		}
+
+		await trx.commit();
 		return updateResults;
 	}
 	catch (ex) {
-		await(trx.rollback());
+		await (trx.rollback());
 		throw new Error(`Failed to updates ports: ${ex.message}`);
 	}
-});
+}
 
 function updatePorts(results: any[]) {
 	const containers: Concierge.Container[] = results[0];
-
 	const containersInfo: any[] = results[1];
-
 }
 
 function getPort(container: Concierge.Container, containersInfo: any[]) {

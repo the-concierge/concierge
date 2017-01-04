@@ -12,10 +12,10 @@ import * as analysis from 'analysis';
 // TODO: notWatching should be monitored and actively retried
 // TODO: Look for new containers and attempt to watch
 
-var binFrequency = 0; // Milliseconds ?
-var binSize = 0;
-var binTrimTime = 0;
-var timer: NodeJS.Timer;
+let binFrequency = 0; // Milliseconds ?
+let binSize = 0;
+let binTrimTime = 0;
+let timer: NodeJS.Timer;
 
 type Stats = {
     container: Concierge.Container;
@@ -33,7 +33,7 @@ export default function watchAll() {
     binSize = config.heartbeatBinSize;
     binTrimTime = binFrequency * binSize;
 
-    var monitorAll = (containers: Concierge.Container[]) => containers.map(watchContainer);
+    const monitorAll = (containers: Concierge.Container[]) => containers.map(watchContainer);
 
     if (!timer) timer = setTimeout(() => flush(), binFrequency);
 
@@ -103,7 +103,7 @@ function watchStats(containerId: number) {
             state.stats = false;
             return;
         }
-        var memoryUsagePercentage = getMemoryUsage(stats);
+        const memoryUsagePercentage = getMemoryUsage(stats);
         state.memory.push(memoryUsagePercentage);
 
         // We cannot calculate CPU usage without more than one sample
@@ -114,7 +114,7 @@ function watchStats(containerId: number) {
             return;
         }
 
-        var cpuUsagePercentage = getCpuUsage(previousStats, stats);
+        const cpuUsagePercentage = getCpuUsage(previousStats, stats);
         emitter.containerStats(container.subdomain, usageEvent(memoryUsagePercentage, cpuUsagePercentage));
         state.cpu.push(cpuUsagePercentage);
         previousStats = stats;
@@ -139,12 +139,12 @@ function usageEvent(memory: number, cpu?: number) {
 }
 
 
-const flush = async(() => {
+async function flush() {
     clearTimeout(timer);
     timer = null;
 
     // We need to remove dead containers from our watch list
-    const containers = await(getContainers.all());
+    const containers = await getContainers.all();
     const exists = (key: number) => containers.some(container => Number(container.id) === key)
     const removedContainers = Object.keys(containerStates)
         .filter(key => !exists(Number(key)));
@@ -156,32 +156,30 @@ const flush = async(() => {
     // Write the stats to the database
     // Remove stats and heartbeats older than binTrimTime
 
-    const trx = await(db.getTransaction());
+    const trx = await db.getTransaction();
     try {
         const identifiers = Object.keys(containerStates);
-
-        identifiers.forEach(id => {
+        for (const id of identifiers) {
             const state = containerStates[Number(id)];
             const stats = toStats(state);
-            const responseTime = await(heartbeat(state.container));
+            const responseTime = await heartbeat(state.container);
             stats.responseTime = responseTime;
-            const heartbeatId = await(insertHeartbeat(stats).transacting(trx));
-            await(truncateHeartbeats().transacting(trx));
+            const heartbeatId = await insertHeartbeat(stats).transacting(trx);
+            await truncateHeartbeats().transacting(trx);
             delete state.cpu;
             delete state.memory;
             state.cpu = [];
             state.memory = [];
-        });
-
-        await(trx.commit());
+        }
+        await trx.commit();
     }
     catch (ex) {
-        await(trx.rollback());
+        await trx.rollback();
     }
     finally {
         process.nextTick(() => watchAll());
     }
-});
+}
 
 function toStats(state: Stats) {
     var cpu = analysis.descriptive.box(state.cpu.slice());

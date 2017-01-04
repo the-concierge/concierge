@@ -3,35 +3,40 @@ import { setCache } from './get';
 import { ActiveState } from '../../types/states';
 import updateWebServers from '../../proxy';
 
-export default async((request: Concierge.SaveRequest<Concierge.Configuration>) => {
-    const trx = await(db.getTransaction());
+export default async function saveAll(request: Concierge.SaveRequest<Concierge.Configuration>) {
+    const trx = await (db.getTransaction());
     try {
         const table = 'Configurations';
 
-        request.updates.forEach(req => await(
-            db(table).update(req).where('id', req.id).transacting(trx)
-        ));
+        for (const update of request.updates) {
+            await db(table)
+                .update(update)
+                .where('id', update.id)
+                .transacting(trx);
+        }
 
-        request.inserts.forEach(req => await(
-            db(table).insert(req).transacting(trx)
-        ));
+        for (const req of request.inserts) {
+            await db(table)
+                .insert(req)
+                .transacting(trx);
+        }
 
+        await trx.commit();
 
-        await(trx.commit());
-
-        const activeConfig: Concierge.Configuration = await(
-            db(table).select().where('isActive', ActiveState.Active)
-        )[0];
+        const activeConfig: Concierge.Configuration = await db(table)
+            .select()
+            .where('isActive', ActiveState.Active)
+            .first();
 
         if (activeConfig) {
             setCache(activeConfig);
         }
 
-        await(updateWebServers());
+        await updateWebServers();
         return true;
     }
     catch (ex) {
-        await(trx.rollback());
+        await trx.rollback();
         throw ex;
     }
-});
+}

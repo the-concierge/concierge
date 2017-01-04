@@ -5,7 +5,7 @@ const pkg = require('../../../../package.json');
 
 const privateBaseUrl = 'git@gitlab.com:';
 const publicBaseUrl = 'https://gitlab.com/'
-const getTags = async((application: Concierge.Application) => {
+async function getTags(application: Concierge.Application) {
 
     const project = encodeURIComponent(application.gitRepository);
     const token = !!application.gitPrivateToken === true
@@ -14,11 +14,11 @@ const getTags = async((application: Concierge.Application) => {
 
     const url = `https://gitlab.com/api/v3/projects/${project}/repository/tags${token}`;
 
-    const rawResult = await(request.getHttps(url, { timeout: 5000 }));
+    const rawResult = await request.getHttps(url, { timeout: 5000 });
     const rawTags: Array<GitlabTag> = JSON.parse(rawResult);
     const tags = rawTags.map(tag => tag.name);
-    return tags; 
-});
+    return tags;
+}
 
 function getRepository(application: Concierge.Application) {
     const isPrivate = !!(application.gitPrivateKey || '');

@@ -5,12 +5,12 @@ import getContainers from '../hosts/getContainers';
 import * as Boom from 'boom';
 
 const REDACT = '********'
-var get = {
+const get = {
     method: 'GET',
     path: '/api/hosts',
-    handler: async((request, reply) => {
+    handler: async function (request, reply) {
         try {
-            const hosts = await(getHosts.all());
+            const hosts = await getHosts.all();
             hosts.forEach(host => host.privateKey = REDACT);
             reply(hosts);
         }
@@ -18,20 +18,20 @@ var get = {
             reply(Boom.expectationFailed(error));
             throw error;
         }
-    })
+    }
 }
 
-var getOne = {
+const getOne = {
     method: 'GET',
-    path:'/api/hosts/{id}',
-    handler: async((request, reply) => {
-        const host = await(getHosts.one(request.params.id as number));
+    path: '/api/hosts/{id}',
+    handler: async function (request, reply) {
+        const host = await getHosts.one(request.params.id as number);
         host.privateKey = REDACT;
         reply(host);
-    })
+    }
 }
 
-var updateHosts = {
+const updateHosts = {
     method: 'POST',
     path: '/api/hosts',
     handler: (request, reply) => {
@@ -41,12 +41,12 @@ var updateHosts = {
     }
 }
 
-var getContainersRoute = {
+const getContainersRoute = {
     method: 'GET',
     path: '/api/hosts/{id}/containers',
     handler: (request, reply) => {
         var id = request.params.id as number
-         || null;
+            || null;
 
         getContainers(id)
             .then(reply)

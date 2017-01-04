@@ -1,8 +1,8 @@
 import * as httpProxy from 'http-proxy';
 import * as https from 'https';
 import * as fs from 'fs';
-import getConfigCache, {get as getConfig} from '../api/configurations/get';
-import {all as getContainers, bySubdomain as getContainerBySubdomain } from '../api/containers/get';
+import getConfigCache, { get as getConfig } from '../api/configurations/get';
+import { all as getContainers, bySubdomain as getContainerBySubdomain } from '../api/containers/get';
 import * as tls from 'tls';
 import * as log from '../logger';
 import Container = Concierge.Container;
@@ -10,58 +10,57 @@ import getIP from './get-ip';
 import { getCertPath, getKeyPath, baseDomainPath } from './certificate-path';
 import createCertificate from './create-certificate';
 import certificateExists from './certificate-exists';
-import {startServer as challengeServer} from './challenge-server';
+import { startServer as challengeServer } from './challenge-server';
 import getDomainInfo from './domain-info';
 import closeAsync from './close';
 
 const secureContextCache: { [domain: string]: tls.SecureContext } = {};
-var webServer: https.Server;
-var proxyServer: https.Server & { web: any, ws: any };
-var running: boolean = false;
+let webServer: https.Server;
+let proxyServer: https.Server & { web: any, ws: any };
+let running: boolean = false;
 
 /** Destructive */
-const startServer = async(() => {
+async function startServer() {
     if (running === true) return;
-    
-    webServer = createProxyServer();
+
+    webServer = await createProxyServer();
     challengeServer();
 
-    const containers = await(getContainers());
-    const config = await(getConfig());
+    const containers = await getContainers();
+    const config = await getConfig();
 
     const fullDomain = (container: Container) => `${container.subdomain}.${config.proxyHostname}`
 
     /** Cache secure contexts */
-    const newCerts = containers.map(container => {
+    for (const container of containers) {
         const domain = fullDomain(container);
-        const hasCertificate = await(certificateExists(domain));
+        const hasCertificate = await (certificateExists(domain));
 
         if (hasCertificate) {
             const secureContext = getSecureContext(domain);
             return secureContext;
         }
         try {
-            const certs = await(createCertificate(domain));
+            const certs = await (createCertificate(domain));
             const secureContext = getSecureContext(domain);
             return secureContext;
         } catch (ex) {
             log.error(`Failed to created certificate for ${domain}:`);
             log.error(ex.message || ex);
         }
-    });
-    
+    }
     running = true;
-});
+}
 
-const stopServer = async((): void => {
+async function stopServer() {
     if (running === false) return;
     if (!webServer && !proxyServer) {
         return;
     }
-    await(closeAsync(webServer));
-    await(closeAsync(proxyServer));
+    await closeAsync(webServer);
+    await closeAsync(proxyServer);
     running = false;
-});
+}
 
 export default {
     startServer,
@@ -72,7 +71,7 @@ export default {
  * This is only ever executed inside a fiber
  * It is to safe to use await() here
  */
-function createProxyServer() {
+async function createProxyServer() {
     log.info('Attempting to start HTTPS server...');
     const config = getConfigCache();
 
@@ -94,7 +93,7 @@ function createProxyServer() {
             });
     });
 
-    const serverIp = await(getIP());
+    const serverIp = await getIP();
     server.listen(config.httpsPort, serverIp, err => {
         if (err) {
             log.error(`Failed to start HTTPS proxy server: ${err}`);
@@ -108,9 +107,9 @@ function createProxyServer() {
     return server;
 }
 
-const webSocketHandler = async((request, socket, head) => {
-    var info = getDomainInfo(request.headers.host);
-    var container = await(getContainerBySubdomain(info.subdomain));
+async function webSocketHandler(request, socket, head) {
+    const info = getDomainInfo(request.headers.host);
+    const container = await getContainerBySubdomain(info.subdomain);
 
     if (container.isProxying === 0) {
         // Contaier is not proxying, do not proxy
@@ -121,9 +120,9 @@ const webSocketHandler = async((request, socket, head) => {
         // Container is not available, do not proxy
         return;
     }
-    var target = getContainerUrl(container);
+    const target = getContainerUrl(container);
     proxyServer.ws(request, socket, head, { target });
-});
+}
 
 function errorResponse(response: any, error) {
     response.statusCode = 503;

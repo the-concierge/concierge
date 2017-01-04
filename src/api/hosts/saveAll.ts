@@ -2,57 +2,60 @@ import db from '../../data/connection';
 import makeDirectory from '../ssh/makeDirectory';
 import readDirectory from '../ssh/readDirectory';
 
-export default async((request: Concierge.SaveRequest<Concierge.Host>) => {
-    const trx = await(db.getTransaction());
+export default async function saveAll(request: Concierge.SaveRequest<Concierge.Host>) {
+    const trx = await db.getTransaction();
     try {
-        await(doInserts(trx, request.inserts));
-        await(doUpdates(trx, request.updates));
-        await(trx.commit());
+        await doInserts(trx, request.inserts);
+        await doUpdates(trx, request.updates);
+        await trx.commit();
         return true;
     }
     catch (error) {
-        await(trx.rollback());
+        await (trx.rollback());
         throw error;
-    }    
-})
+    }
+}
 
-const doInserts = async((trx: any, models: Concierge.Host[]) => {
-    const createdVolumePaths = await(createVolumePaths(models));
-    return models.map(model => {
+async function doInserts(trx: any, models: Concierge.Host[]) {
+    const createdVolumePaths = await (createVolumePaths(models));
+    for (const model of models) {
         delete model.id;
-        return await(db('Hosts')
+        await db('Hosts')
             .insert(model)
-            .transacting(trx));
-    });
-});
+            .transacting(trx);
+    }
+}
 
-const doUpdates = async((trx: any, models: Concierge.Host[]) => {
+async function doUpdates(trx: any, models: Concierge.Host[]) {
     if (models.length === 0) return [];
-    return models.map(model => {
-        return await(db('Hosts')
+    for (const model of models) {
+        await db('Hosts')
             .update(model)
             .where({ id: model.id })
-            .transacting(trx));
-    });
+            .transacting(trx);
+    }
+}
 
-});
-
-const createVolumePaths = async((hosts: Concierge.Host[]) => {
-    const volumesCreated = hosts.map(host => {
-        const aleadyExists = await(readDirectory(host, ''));
-        if (aleadyExists) return true;
+async function createVolumePaths(hosts: Concierge.Host[]) {
+    const volumesCreated: boolean[] = [];
+    for (const host of hosts) {
+        const aleadyExists = await (readDirectory(host, ''));
+        if (aleadyExists) {
+            volumesCreated.push(true);
+            continue;
+        }
 
         try {
-            const isCreated = await(makeDirectory(host, ''));
+            const isCreated = await (makeDirectory(host, ''));
             log.info(`Created volume path for ${host.hostname}`);
-            return true;
+            volumesCreated.push(true);
+            continue;
         }
         catch (ex) {
             log.error(`Failed to create volume path for ${host.hostname}: ${ex.message}`);
-            return false;
+            volumesCreated.push(false);
+            continue;
         }
-
-    });
-
+    }
     return volumesCreated.every(result => result === true);
-});
+}

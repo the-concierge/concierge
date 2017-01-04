@@ -22,14 +22,14 @@ import isVariantValid from '../variants/isValid';
  Create a new container
  * Returns a promise that resolves with the docker id of the new container
  */
-export default async((request: Concierge.NewContainer, newContainerType: NewContainerType) => {
+export default async function create(request: Concierge.NewContainer, newContainerType: NewContainerType) {
     newContainerType = newContainerType || NewContainerType.Normal;    
     let dockerId = '';
 
     if (!isValidRequest(request))
         throw new Error('Required fields missing. [variant / subdomain / label]');
 
-    const isValidSubdomain = await(validSubdomain(request.subdomain));
+    const isValidSubdomain = await validSubdomain(request.subdomain);
     if (!isValidSubdomain)
         throw new Error('Invalid subdomain: Invalid format or blacklisted. See Configuration for blacklist');
 
@@ -38,11 +38,11 @@ export default async((request: Concierge.NewContainer, newContainerType: NewCont
 
     let newContainer = toContainer(request);
 
-    let isRegistryOnline = await(registryIsOnline());
+    let isRegistryOnline = await registryIsOnline();
     if (!isRegistryOnline)
         throw new Error('Registry is unavailable');
 
-    let isCreatable = await(canCreate(newContainer.subdomain, newContainerType));
+    let isCreatable = await canCreate(newContainer.subdomain, newContainerType);
     if (!isCreatable)
         throw new Error('Unable to create container: Subdomain is not available');
 
@@ -75,21 +75,21 @@ export default async((request: Concierge.NewContainer, newContainerType: NewCont
     }
 
     // Let's cheekily tell our events to keep an eye on the new container
-    const result = await(saveContainer(newContainer, newContainerType));
+    const result = await saveContainer(newContainer, newContainerType);
     watchContainer(result);
 
     return result;
-});
+}
 
-const getDockerImageFor = async((request: Concierge.NewContainer) => {
+async function getDockerImageFor(request: Concierge.NewContainer) {
     if (request.applicationId == null || request.applicationId === 0) {
         return request.dockerImage;
     }
 
-    const application = await(getApplications.one(request.applicationId));
-    const registry = await(getRegistry());
+    const application = await getApplications.one(request.applicationId);
+    const registry = await getRegistry();
     return registry.getTaggedImage(application, request.variant);
-});
+}
 
 function makeContainerVolume(host: Concierge.Host, subdomain: string) {
     return makeDirectory(host, subdomain);

@@ -11,18 +11,18 @@ import * as Docker from 'dockerode-ts';
 /**
  * Create a new container and return the Docker ID of the new container
  */
-export default async((container: Concierge.Container, host: Concierge.Host): string => {
+export default async function run(container: Concierge.Container, host: Concierge.Host): Promise<string> {
     container.host = host.hostname;
 
     // Pull the image 'to the Host' from the registry if the Host doesn't have the image 
-    let imageExists = await(hasImage(host, container.dockerImage));
+    let imageExists = await hasImage(host, container.dockerImage);
     if (!imageExists) {
-        await(pullVariant(host, container.dockerImage));
+        await (pullVariant(host, container.dockerImage));
     }
-    let containerOptions = await(newContainerOptions(host, container));
-    let newContainerDockerId = await(runContainer(host, container, containerOptions));
+    let containerOptions = await newContainerOptions(host, container);
+    let newContainerDockerId = await runContainer(host, container, containerOptions);
     return newContainerDockerId;
-});
+}
 
 function runContainer(host: Concierge.Host, container: Concierge.Container, options: Docker.ContainerCreateOptions) {
 
@@ -44,42 +44,37 @@ function runContainer(host: Concierge.Host, container: Concierge.Container, opti
     return promise;
 }
 
-const newContainerOptions = async((host: Concierge.Host, container: Concierge.Container) => {
+async function newContainerOptions(host: Concierge.Host, container: Concierge.Container) {
     const config = getConfig();
     const hostPath = posix.join(
         getVolumePath(host),
         container.subdomain
     );
-    try {
-        const volumes = await(getVolumes(host, container.dockerImage));
-        const binds: string[] = volumes.map(volume => `${posix.join(hostPath, volume)}:${volume}`);
 
-        // Inject Concierge specific environment variables
-        // TODO: This feature should be documented clearly
-        const variables = [
-            `CONCIERGE_SUBDOMAIN=${container.subdomain}`,
-            `CONCIERGE_LABEL=${container.label}`
-        ];
-        
-        const existingVariables: string[] = JSON.parse(container.variables);
+    const volumes = await getVolumes(host, container.dockerImage);
+    const binds: string[] = volumes.map(volume => `${posix.join(hostPath, volume)}:${volume}`);
 
-        const options: Docker.ContainerCreateOptions = {
-            Image: container.dockerImage,
-            HostConfig: {
-                Binds: binds,
-                PublishAllPorts: true, // Eliminates port assigning race conditions
-                RestartPolicy: {
-                    Name: 'on-failure',
-                    MaximumRetryCount: Number(config.containerMaximumRetries)
-                }
-            },
-            Env: variables.concat(existingVariables)
-        };
+    // Inject Concierge specific environment variables
+    // TODO: This feature should be documented clearly
+    const variables = [
+        `CONCIERGE_SUBDOMAIN=${container.subdomain}`,
+        `CONCIERGE_LABEL=${container.label}`
+    ];
 
-        return options;
-    } 
-    catch (ex) {
-        throw ex;
-    }
+    const existingVariables: string[] = JSON.parse(container.variables);
 
-});
+    const options: Docker.ContainerCreateOptions = {
+        Image: container.dockerImage,
+        HostConfig: {
+            Binds: binds,
+            PublishAllPorts: true, // Eliminates port assigning race conditions
+            RestartPolicy: {
+                Name: 'on-failure',
+                MaximumRetryCount: Number(config.containerMaximumRetries)
+            }
+        },
+        Env: variables.concat(existingVariables)
+    };
+
+    return options;
+}

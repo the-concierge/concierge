@@ -7,80 +7,73 @@ import deleteRepository from './deleteRepo';
  * TODO: Can this behaviour be generic? ... Yes, but how to do it cleanly?
  */
 
-export default async((request: Concierge.SaveRequest<Concierge.Application>) => {
-    const trx = await(db.getTransaction());
+export default async function saveAll(request: Concierge.SaveRequest<Concierge.Application>) {
+    const trx = await db.getTransaction();
 
     try {
-        const inserts = await(doInserts(trx, request.inserts));
-        const updates = await(doUpdates(trx, request.updates));
-        const deletes = await(doDeletes(trx, request.deletes));
-        await(trx.commit());
+        const inserts = await doInserts(trx, request.inserts);
+        const updates = await doUpdates(trx, request.updates);
+        const deletes = await doDeletes(trx, request.deletes);
+        await trx.commit();
         return true;
     }
     catch (ex) {
-        await(trx.rollback());
+        await trx.rollback();
         throw ex;
     }
-});
+}
 
-const doInserts = async((trx: any, models: Concierge.Application[]) => {    
-    return models.map(model => {
+async function doInserts(trx: any, models: Concierge.Application[]) {
+    for (const model of models) {
         delete model.id;
-        const id: number[] = await(db('Applications').insert(model).transacting(trx));
+        const id: number[] = await db('Applications')
+            .insert(model)
+            .transacting(trx);
         model.id = id[0];
+
         try {
-            const cloneResult = await(clone(model));
-            return cloneResult;
+            await clone(model);
         }
         catch (ex) {
             throw ex;
         }
-    })
-});
+    }
+}
 
-const doUpdates = async((trx: any, models: Concierge.Application[]) => {
-    const results = models.map(model => {
-        const original: Concierge.Application = await(get(trx, model.id));
+async function doUpdates(trx: any, models: Concierge.Application[]) {
+    for (const model of models) {
+        const original: Concierge.Application = await get(trx, model.id);
         const isRepoChanged = original.gitRepository !== model.gitRepository;
 
-        const result = await(db('Applications')
+        const result = await db('Applications')
             .update(model)
             .where('id', model.id)
-            .transacting(trx));
-        
+            .transacting(trx);
+
         // The model from the request may not have private key/tokens if they haven't changed.
-        const updatedModel = await(get(trx, model.id));
-        if (isRepoChanged) {
-            await(deleteRepository(model));
-            await(clone(updatedModel));
+        const updatedModel = await get(trx, model.id);
+        if (!isRepoChanged) {
+            continue;
         }
+        await deleteRepository(model);
+        await clone(updatedModel);
+    }
+}
 
-        return result;
-    });
-    return results;
+async function doDeletes(trx: any, models: Concierge.Application[]) {
+    for (const model of models) {
+        await db('Applications')
+            .delete()
+            .where('id', model.id)
+            .transacting(trx);
+        await deleteRepository(model);
+    }
+}
 
-});
-
-const doDeletes = async((trx: any, models: Concierge.Application[]) => {
-    const results = models.map(model => {
-        await(
-            db('Applications')
-                .delete()
-                .where('id', model.id)
-                .transacting(trx)
-            )
-        await(deleteRepository(model));
-    });
-    return results;
-});
-
-const get = async((trx: any, id: number) => {
-    const app: Concierge.Application = await(
-        db('Applications')
-            .select()
-            .where('id', id)
-            .transacting(trx)
-
-    )[0];
+async function get(trx: any, id: number) {
+    const app: Concierge.Application = await db('Applications')
+        .select()
+        .where('id', id)
+        .transacting(trx)[0];
     return app;
-});
+}

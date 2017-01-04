@@ -3,7 +3,7 @@ import { Request as HapiRequest } from 'hapi';
 import * as path from 'path';
 import * as inert from 'inert';
 
-export default async(() => {
+export default function load() {
     server.register(inert, () => { });
 
     // Load variants route handlers
@@ -31,9 +31,9 @@ export default async(() => {
     require('./applications');
 
     // Load static route handler
-    var staticPath = path.join(path.resolve(__dirname, '../../../'), 'front');
+    const staticPath = path.join(path.resolve(__dirname, '../../../'), 'front');
 
-    var staticRoute = {
+    const staticRoute = {
         method: 'GET',
         path: '/{param*}',
         handler: {
@@ -59,6 +59,4 @@ export default async(() => {
         if (request.response.output.statusCode !== 404) reply.continue();        
         reply.file(`${staticPath}/index.html`);    
     });
-
-    return void (0);
-});
+}

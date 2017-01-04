@@ -18,8 +18,8 @@ const handlers = {
     },
 };
 
-const getService = async(() => {
-    const config = await(getConfig());
+async function getService() {
+    const config = await getConfig();
     const acmeServer = !!config.useProductionCertificates
         ? LE.productionServerUrl
         : LE.stagingServerUrl;
@@ -34,6 +34,6 @@ const getService = async(() => {
         webrootPath: ':config/acme-challenge',
         debug: Number(config.debug) === 1,
     }, handlers);
-});
+}
 
 export default getService;

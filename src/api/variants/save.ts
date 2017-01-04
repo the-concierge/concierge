@@ -3,12 +3,7 @@ import * as states from '../../types/states';
 import DeployedState = states.DeployedState;
 import * as log from '../../logger';
 
-
-export default function save(applicationId: number, tag: string, buildState?: DeployedState): Promise<boolean> {
-	return _save(applicationId, tag, buildState);
-}
-
-const _save = async((applicationId: number, tag: string, buildState: DeployedState) => {
+export default async function save(applicationId: number, tag: string, buildState?: DeployedState): Promise<boolean> {
 	buildState = buildState || DeployedState.NotDeployed;
 
 	const variant = {
@@ -19,18 +14,14 @@ const _save = async((applicationId: number, tag: string, buildState: DeployedSta
 	}
 
 	try {
-		await(
-			db('Variants')
-				.insert(variant)
-		)[0];
+		await db('Variants')
+			.insert(variant);
 		return true;
 	}
 	catch (ex) {
-		await(
-			db('Variants')
-				.update(variant)
-				.where('name', variant.name)
-		)
+		await db('Variants')
+			.update(variant)
+			.where('name', variant.name)
 		return true;
 	}
-})
+}

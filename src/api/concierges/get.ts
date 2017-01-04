@@ -1,15 +1,14 @@
 import db from '../../data/connection';
 
-export const one = async((id: number): Concierge.Concierge => {
-  let query = await(db('Concierges')
-    .select());
+export async function one(id: number): Promise<Concierge.Concierge> {
+  let query = await db('Concierges')
+    .select();
 
   return query[0];
-});
+}
 
-export const all = async((): Concierge.Concierge[] => {
-  let query = await(db('Concierges')
-    .select());
-
+export async function all(): Promise<Concierge.Concierge[]> {
+  let query = await db('Concierges')
+    .select();
   return query;
-});
+}

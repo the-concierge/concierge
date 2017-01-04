@@ -8,17 +8,17 @@ export default function remove(container: Concierge.Container, deleteFromDatabas
 	return _remove(container, deleteFromDatabase);
 }
 
-const _remove = async((container: Concierge.Container, deleteFromDb: boolean) => {
+async function _remove(container: Concierge.Container, deleteFromDb: boolean) {
 	deleteFromDb = deleteFromDb || false;
 
-	await(stopContainer(container));
-	await(archiveVolume(container));
-	const host = await(getHost.one(container.host));
+	await stopContainer(container);
+	await archiveVolume(container);
+	const host = await (getHost.one(container.host));
 	const client = getDockerClient(host);
-	await(removeContainer(container, client));
-	await(deleteFromDatabase(container, deleteFromDb));
+	await removeContainer(container, client);
+	await deleteFromDatabase(container, deleteFromDb);
 	return true;
-});
+}
 
 function removeContainer(container: Concierge.Container, client: any) {
 	var dockerContainer = client.getContainer(container.dockerId);

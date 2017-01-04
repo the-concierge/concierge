@@ -1,15 +1,14 @@
 import getClient from './getClient';
-import {posix} from 'path';
+import { posix } from 'path';
 const resolve = posix.resolve;
 
 /**
  * Execute a shell command on a Host
  */
-export default async((host: Concierge.Host, command: string) => {
-    const client = await(getClient(host));
-    
+export default async function exec(host: Concierge.Host, command: string) {
+    const client = await getClient(host);
+
     const promise = new Promise<boolean>((resolve, reject) => {
-    
         client.exec(command, (error, stream: NodeJS.ReadableStream) => {
             if (error) return reject(error);
 
@@ -26,8 +25,7 @@ export default async((host: Concierge.Host, command: string) => {
 
                 else resolve(true);
             }).resume();
-
-        })
+        });
     });
-    return await(promise);
-});
+    return await (promise);
+}

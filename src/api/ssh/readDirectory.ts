@@ -5,20 +5,20 @@ import * as path from 'path';
 /**
  * Determines if a directory on the Host exists
  */
-export default async((host: Concierge.Host, directory: string): boolean => {
-    let vp = await(getVolumePath(host));
+export default async function readDirectory(host: Concierge.Host, directory: string): Promise<boolean> {
+    const vp = await getVolumePath(host);
     directory = path.posix.join(
-        await(getVolumePath(host)),
+        await (getVolumePath(host)),
         directory || ''
     );
 
-    let sftpClient = await(getSftpClient(host));
-    let dirExists = await(readDirectory(sftpClient, directory));
+    const sftpClient = await getSftpClient(host);
+    const dirExists = await readDir(sftpClient, directory);
     return dirExists;
-});
+}
 
-function readDirectory(client, path: string) {
-    var promise = new Promise<boolean>((resolve, reject) => {
+function readDir(client, path: string): Promise<boolean> {
+    const promise = new Promise<boolean>((resolve, reject) => {
 
         function readdirHandler(error, response) {
             client.end();

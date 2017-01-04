@@ -3,10 +3,10 @@ import getConfig from '../configurations/get';
 /**
  * Return an object 'utility helper' for resolving application variant/image paths
  */
-export default async((): Concierge.Registry => {
-    const config = getConfig();
+export default async function getRegistry(): Promise<Concierge.Registry> {
+    const config = await getConfig();
 
-    var details: Concierge.Registry = {
+    const details: Concierge.Registry = {
         url: config.dockerRegistry,
         getUntaggedImage: function (application: Concierge.Application) {
             return `${this.url}/${application.dockerNamespace}`;
@@ -17,4 +17,4 @@ export default async((): Concierge.Registry => {
     };
 
     return details;
-});
+}

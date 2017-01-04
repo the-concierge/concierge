@@ -14,7 +14,7 @@ import change from '../containers/change';
 import getLog from '../containers/getLog';
 import getStats from '../containers/getStats';
 
-var get = {
+const get = {
 	method: 'GET',
 	path: '/api/containers',
 	handler: (request, reply) => {
@@ -24,22 +24,21 @@ var get = {
 	}
 }
 
-var getVolumeRoute = {
+const getVolumeRoute = {
 	method: 'GET',
 	path: '/api/containers/{id}/volume',
-	handler: async((request, reply) => {
-		const container = await(getContainers.one(request.params.id));		
+	handler: async function handler(request, reply) {
+		const container = await getContainers.one(request.params.id);
 		const filename = `${container.subdomain}_${container.applicationName}_${container.variant}.tar`;
-		const volume = await(getVolume(container));
-
+		const volume = await getVolume(container);
 		reply(volume)
 			.type('application/octet-stream')
 			.header('Content-Disposition', 'attachment; filename=' + filename)
 			.header('Content-Description', 'File Transfer');
-	})
+	}
 }
 
-var create = {
+const create = {
 	method: 'PUT',
 	path: '/api/containers',
 	handler: (request, reply) => {
@@ -52,7 +51,7 @@ var create = {
 	}
 }
 
-var post = {
+const post = {
 	method: 'POST',
 	path: '/api/containers',
 	handler: (request, reply) => {
@@ -62,7 +61,7 @@ var post = {
 	}
 }
 
-var forkRoute = {
+const forkRoute = {
 	method: 'PUT',
 	path: '/api/containers/{id}/fork',
 	handler: (request, reply) => {
@@ -73,7 +72,7 @@ var forkRoute = {
 	}
 }
 
-var containerInfo = {
+const containerInfo = {
 	method: 'GET',
 	path: '/api/containers/{id}/info',
 	handler: (request, reply) => {
@@ -84,7 +83,7 @@ var containerInfo = {
 	}
 }
 
-var stopRoute = {
+const stopRoute = {
 	method: 'POST',
 	path: '/api/containers/{id}/stop',
 	handler: (request, reply) => {
@@ -95,7 +94,7 @@ var stopRoute = {
 	}
 }
 
-var startRoute = {
+const startRoute = {
 	method: 'POST',
 	path: '/api/containers/{id}/start',
 	handler: (request, reply) => {
@@ -106,7 +105,7 @@ var startRoute = {
 	}
 }
 
-var removeRoute = {
+const removeRoute = {
 	method: 'DELETE',
 	path: '/api/containers/{id}',
 	handler: (request, reply) => {
@@ -120,7 +119,7 @@ var removeRoute = {
 	}
 }
 
-var changeRoute = {
+const changeRoute = {
 	method: 'PUT',
 	path: '/api/containers/{id}/change',
 	handler: (request, reply) => {
@@ -131,7 +130,7 @@ var changeRoute = {
 	}
 }
 
-var logRoute = {
+const logRoute = {
 	method: 'GET',
 	path: '/api/containers/{id}/log',
 	handler: (request, reply) => {
@@ -140,17 +139,17 @@ var logRoute = {
 			.then(reply)
 			.catch(error => reply(Boom.expectationFailed(error)));
 	}
-} 
+}
 
-var statsRoute = {
-    method: 'GET',
-    path: '/api/containers/{id}/stats',
-    handler: (request, reply) => {
-        getContainers.one(request.params.id)
-            .then(getStats)
-            .then(reply)
-            .catch(error => reply(Boom.expectationFailed(error)));
-    }
+const statsRoute = {
+	method: 'GET',
+	path: '/api/containers/{id}/stats',
+	handler: (request, reply) => {
+		getContainers.one(request.params.id)
+			.then(getStats)
+			.then(reply)
+			.catch(error => reply(Boom.expectationFailed(error)));
+	}
 }
 
 server.route(get);

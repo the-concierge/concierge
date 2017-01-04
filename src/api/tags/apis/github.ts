@@ -1,21 +1,21 @@
-import {getHttps} from '../../request';
+import { getHttps } from '../../request';
 
 const privateBaseUrl = 'git@github.com:';
 const publicBaseUrl = 'https://github.com/'
 
-const getTags = async((application: Concierge.Application) => {
-    
+async function getTags(application: Concierge.Application) {
+
     const token = !!application.gitPrivateToken === true
         ? `?access_token=${application.gitPrivateToken}`
         : '';
 
     const url = `https://api.github.com/repos/${application.gitRepository}/tags${token}`;
 
-    const rawResult = await(getHttps(url, { timeout: 5000 }));
+    const rawResult = await getHttps(url, { timeout: 5000 });
     const rawTags: Array<GithubTag> = JSON.parse(rawResult);
     const tags = rawTags.map(tag => tag.name);
-    return tags; 
-});
+    return tags;
+}
 
 function getRepository(application: Concierge.Application) {
     const isPrivate = !!(application.gitPrivateKey || '');

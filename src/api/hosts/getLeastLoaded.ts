@@ -12,7 +12,6 @@ export default function getHostForContainer(): Promise<Concierge.Host> {
     return Promise.all([hosts, containers])
         .then(getHostLoads)
         .then(getLowestLoadedHost);
-
 }
 
 function getHostLoads(promiseResult: any[]): Promise<any> {
@@ -26,22 +25,26 @@ function getHostLoads(promiseResult: any[]): Promise<any> {
     return Promise.resolve(hostLoads);
 }
 
-const getLowestLoadedHost = async((hosts: Concierge.Host[]) => {
-    var orderedHosts = hosts.slice().sort((l, r) => l.capacity - r.capacity);
-    
+async function getLowestLoadedHost(hosts: Concierge.Host[]) {
+    const orderedHosts = hosts.slice().sort((l, r) => l.capacity - r.capacity);
+
     // Find the first online in the array of hosts
-    var toOnlineHostIndex = (hostIndex, hostIsOnline, index) => {
+    const toOnlineHostIndex = (hostIndex, hostIsOnline, index) => {
         if (hostIndex === -1 && hostIsOnline === true) hostIndex = index;
         return hostIndex;
     }
 
-    const hostStatuses = orderedHosts.map(host => await(isOnline(host)));
+    const hostStatuses: boolean[] = [];
+    for (const host of orderedHosts) {
+        hostStatuses.push(await isOnline(host));
+    }
+
     const onlineHostIndex = hostStatuses.reduce(toOnlineHostIndex, -1);
     if (onlineHostIndex === -1) {
         throw new Error('No hosts are currently online');
     }
     return orderedHosts[onlineHostIndex];
-});
+}
 
 function hostLoadPercentage(host: Concierge.Host, containers: Concierge.Container[]) {
 
@@ -50,7 +53,6 @@ function hostLoadPercentage(host: Concierge.Host, containers: Concierge.Containe
         if (isMatching) count++;
         return count;
     }, 0);
-
 
     var load = Math.round((hostedCount / host.capacity) * 10000) / 100;
     host.capacity = load;

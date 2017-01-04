@@ -15,19 +15,19 @@ import gitApis from '../tags';
 let configCache: Config = null;
 export default () => configCache;
 
-export const initialise = async(() => {
-    configCache = await(get());
+export async function initialise() {
+    configCache = await get();
     return true;
-});
+}
 
-export const get = async((): Concierge.Configuration => {
-    const config: Concierge.Configuration = await(db('Configurations')
+export async function get(): Promise<Concierge.Configuration> {
+    const config: Concierge.Configuration = await db('Configurations')
         .select()
         .where('isActive', ActiveState.Active)
-        .then(configs => configs[0]));
+        .then(configs => configs[0])
 
     return config;
-});
+}
 
 export const setCache = (config: Config) => {
     configCache = <any>config;

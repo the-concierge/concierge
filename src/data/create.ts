@@ -4,8 +4,7 @@ import db from './connection';
 /**
  * Create the database schema
  */
-export default async(() => {
-
+export default async function create() {
     const funcs = [
         configurationTable,
         applicationTable,
@@ -16,13 +15,12 @@ export default async(() => {
         heartbeatTable
     ];
 
-    funcs.forEach(fn => {
-        fn;
-        const tbl = fn();
-        await(tbl);
-    });
+    for (const func of funcs) {
+        const query = func();
+        await query;
+    }
     return true;
-});
+}
 
 function configurationTable() {
     return db.schema.createTable('Configurations', tbl => {

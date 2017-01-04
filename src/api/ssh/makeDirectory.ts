@@ -6,20 +6,20 @@ import * as log from '../../logger';
 /**
  * Create a directory on a Host
  */
-export default async((host: Concierge.Host, newDirectory: string) => {
+export default async function makeDirectory(host: Concierge.Host, newDirectory: string) {
     newDirectory = newDirectory || '';
 
-    var newPath = posix.join(
-        await(getVolumePath(host)),
+    const newPath = posix.join(
+        await getVolumePath(host),
         newDirectory
     );
-    
-    let client = await(getSshClient(host));
-    return await(mkdir(client, newPath));
-});
+
+    const client = await getSshClient(host);
+    return await mkdir(client, newPath);
+}
 
 function mkdir(client, newPath: string) {
-    var promise = new Promise<boolean>((resolve, reject) => {
+    const promise = new Promise<boolean>((resolve, reject) => {
 
         function mkdirHandler(error) {
             client.end();

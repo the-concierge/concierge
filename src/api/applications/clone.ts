@@ -5,7 +5,7 @@ import gitCmd from './gitCmd';
 /**
  * Git clone the Application repository
  */
-export default async((application: Concierge.Application) => {
+export default async function clone(application: Concierge.Application) {
     // Working directory for clone is not relevant 
     const workingDir = __dirname;
 
@@ -13,6 +13,6 @@ export default async((application: Concierge.Application) => {
     const api = gitApi(application.gitApiType);
     const repository = api.getRepository(application);
     const command = `git clone ${repository} ${targetPath}`
-    const result = await(gitCmd(application, workingDir, command));
-
-});
+    const result = await gitCmd(application, workingDir, command);
+    return result;
+};

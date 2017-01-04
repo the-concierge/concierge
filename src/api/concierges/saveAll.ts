@@ -1,41 +1,37 @@
 import db from '../../data/connection';
 import * as log from '../../logger';
 
-export default async((request: Concierge.SaveRequest<Concierge.Concierge>) => {
+export default async function saveAll(request: Concierge.SaveRequest<Concierge.Concierge>) {
     return db.transaction(trx => {
         doInserts(trx, request.inserts)
             .then(() => doUpdates(trx, request.updates))
             .then(trx.commit)
             .catch(error => {
                 trx.rollback();
-                return Promise.reject(error);
-            })
+                throw error;
+            });
     });
-});
+}
 
-const doInserts = async((trx: any, models: any[]) => {
+async function doInserts(trx: any, models: any[]) {
     const isAllValid = models.every(isValidConcierge);
     if (!isAllValid) return Promise.reject('Unable to insert Concierge: Required fields missing');
-    const results = models.map(model => {
+    for (const model of models) {
         delete model.id;
-        return await(
-            db('Concierges')
-                .insert(model)
-                .transacting(trx)
-        );
-    });
-    return results;
-});
-
-const doUpdates = async((trx: any, models: any[]) => {
-    const results = models.map(model => {
-        return db('Concierges')
-            .update(model)
-            .where({ id: model.id})
+        await db('Concierges')
+            .insert(model)
             .transacting(trx)
-    });
-    return results;
-});
+    }
+}
+
+async function doUpdates(trx: any, models: any[]) {
+    for (const model of models) {
+        await db('Concierges')
+            .update(model)
+            .where({ id: model.id })
+            .transacting(trx)
+    }
+}
 
 function isValidConcierge(concierge: Concierge.Concierge): boolean {
     concierge.label = concierge.label || '';

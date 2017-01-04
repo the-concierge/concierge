@@ -8,18 +8,18 @@ import * as emitter from '../events/emitter';
 /**
  * Push an Image onto the registry
  */
-export default async((tagName: string, application: Concierge.Application, host: Concierge.Host) => {
-    host = host || await(getHosts.all())[0];
+export default async function push(tagName: string, application: Concierge.Application, host: Concierge.Host) {
+    host = host || await (getHosts.all())[0];
     log.info('[PUSH] Attempting to push "' + tagName + '"');
 
-    var pushResponses = await(pushToHost(host, application, tagName));
+    const pushResponses = await pushToHost(host, application, tagName);
     return pushResponses;
-});
+}
 
-function pushToHost(host: Concierge.Host, application: Concierge.Application, tagName: string) {
+async function pushToHost(host: Concierge.Host, application: Concierge.Application, tagName: string) {
 
     const dockerClient = getDockerClient(host);
-    const registry = await(getRegistry());
+    const registry = await getRegistry();
     const imageName = registry.getUntaggedImage(application);
     const image = dockerClient.getImage(imageName);
 

@@ -5,7 +5,7 @@ import { writeFile, chmod, unlink } from 'fs';
 /**
  * Execute abritrary Git commands in an Application's git repository
  */
-export default async((application: Concierge.Application, workingDirectory: string, command: string) => {
+export default async function gitCommand(application: Concierge.Application, workingDirectory: string, command: string) {
     log.debug(`Cloning ${application.name}`);
     const isPrivate = !!application.gitPrivateToken;
     const api = gitApi(application.gitApiType);
@@ -48,9 +48,9 @@ export default async((application: Concierge.Application, workingDirectory: stri
             throw ex;
         }
     }
-});
+}
 
-const createFiles = async((privateKey: string) => {
+async function createFiles(privateKey: string) {
     // We need to create a file that is guaranteed not to clash with any existing files 
     const suffix = randomWord(20);
     const scriptFilename = `/tmp/${suffix}_wrapper.sh`;
@@ -59,21 +59,21 @@ const createFiles = async((privateKey: string) => {
     const filenames = { script: scriptFilename, key: keyFilename };
 
     // Create the script and key file
-    await(writeFileAsync(scriptFilename, script));
-    await(writeFileAsync(keyFilename, privateKey));
+    await writeFileAsync(scriptFilename, script);
+    await writeFileAsync(keyFilename, privateKey);
 
     // Set the correct permissions (script is executable, keyfile is write/read only by owner)
-    await(chmodAsync(scriptFilename, '0755' as any));
-    await(chmodAsync(keyFilename, '0600' as any));
+    await chmodAsync(scriptFilename, '0755' as any);
+    await chmodAsync(keyFilename, '0600' as any);
     log.debug('Set permissions');
     return filenames;
-});
+};
 
-const teardown = async((filenames: { key: string, script: string }) => {
-    await(unlinkAsync(filenames.key));
-    await(unlinkAsync(filenames.script));
+async function teardown(filenames: { key: string, script: string }) {
+    await unlinkAsync(filenames.key);
+    await unlinkAsync(filenames.script);
     return true;
-});
+}
 
 
 function randomWord(length: number) {

@@ -16,36 +16,37 @@ import * as  Docker from 'dockerode';
 /**
  * Build an Image of an Application from a particular tag
  */
-export default async((application: Concierge.Application, tag: string) => {
-    const registry = await(getRegistry());
-    const hosts = <Concierge.Host[]>await(getHosts.all());
-    const availableHost = await(findOnlineHost(hosts));
+export default async function build(application: Concierge.Application, tag: string) {
+    const registry = await getRegistry();
+    const hosts = await getHosts.all();
+    const availableHost = await findOnlineHost(hosts);
     const dockerImage = registry.getTaggedImage(application, tag);
 
     if (!availableHost) {
         throw new Error('Unable to find a suitable Docker host');
     }
 
-    var buildResult = await(buildImage(availableHost, registry, application, tag));
+    const buildResult = await buildImage(availableHost, registry, application, tag);
     return buildResult;
-});
+}
 
-function buildImage (host: Concierge.Host, registry: Concierge.Registry, application: Concierge.Application, tag: string) {
+async function buildImage(host: Concierge.Host, registry: Concierge.Registry, application: Concierge.Application, tag: string) {
 
-    var buildResponses = [];
+    const buildResponses = [];
 
-    var imageTag = registry.getTaggedImage(application, tag);
-    var client = getDockerClient(host);
-    var previousMessage = '';
+    const imageTag = registry.getTaggedImage(application, tag);
+    const client = getDockerClient(host);
+    const buildPackage = await fetchTag(application, tag);
+    let previousMessage = '';
 
     return new Promise<{ responses: any[], host: Concierge.Host }>((resolve, reject) => {
 
-        function dataHandler(data) {
-            var msg = data.toString();
+        function dataHandler(data: Buffer) {
+            const msg = data.toString();
 
             log.debug('[BUILD] ' + msg.trim());
             emitter.variant(tag, msg.trim());
-            var parsedMsg = tryJsonParse(previousMessage + msg);
+            const parsedMsg = tryJsonParse(previousMessage + msg);
             if (!parsedMsg) previousMessage += msg;
             else {
                 buildResponses.push(parsedMsg);
@@ -54,24 +55,24 @@ function buildImage (host: Concierge.Host, registry: Concierge.Registry, applica
         }
 
         function endHandler() {
-            var isErrors = buildResponses.some(res => !!res['errorDetail']);
+            const isErrors = buildResponses.some(res => !!res['errorDetail']);
             if (isErrors) {
                 reject(buildResponses);
                 updateVariant(tag, DeployedState.Failed);
                 return;
             }
 
-            resolve(<any>{
+            resolve({
                 responses: buildResponses,
                 host
             });
             updateVariant(tag, DeployedState.Deployed);
         }
 
-        const buildPackage = await(fetchTag(application, tag));
-
         // Do not use any form of cache to execute the build
         // An erroneous or buggy step in the build can be cached and used for future builds which is undesired
+
+        // TODO: Allow more build options
         client.buildImage(buildPackage, { t: imageTag, forcerm: true, nocache: true }, (err, res) => {
             if (err) return reject(err);
             res.on('data', dataHandler);
@@ -82,7 +83,7 @@ function buildImage (host: Concierge.Host, registry: Concierge.Registry, applica
 
 function tryJsonParse(message: string) {
     try {
-        var parsed = JSON.parse(message);
+        const parsed = JSON.parse(message);
         return parsed;
     } catch (ex) {
         return false;
@@ -90,7 +91,7 @@ function tryJsonParse(message: string) {
 }
 
 function updateVariant(tag: string, state: DeployedState) {
-    var variant = {
+    const variant = {
         name: tag,
         buildState: DeployedState[state],
         buildTime: Date.now()
@@ -99,10 +100,12 @@ function updateVariant(tag: string, state: DeployedState) {
     return update(variant);
 }
 
-var findOnlineHost = async((hosts: Concierge.Host[]) => {
-    for (var idx = 0; hosts.length > idx; idx++) {
-        var isOnline = await(hostIsOnline(hosts[idx]));
-        if (isOnline) return hosts[idx];
+async function findOnlineHost(hosts: Concierge.Host[]) {
+    for (const host of hosts) {
+        const isOnline = await hostIsOnline(host);
+        if (isOnline) {
+            return host;
+        }
     }
     throw new Error('Unable to find online host');
-});
+}

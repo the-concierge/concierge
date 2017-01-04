@@ -5,10 +5,6 @@ interface Window {
     containerPoller: any;
 }
 
-declare var async: Async;
-declare var await: Await;
-declare var log: Logger;
-
 interface Logger {
     info: (message: string) => void;
     warn: (message: string) => void;
@@ -16,13 +12,7 @@ interface Logger {
     debug: (message: string) => void;
 }
 
-declare namespace NodeJS {
-    export interface Global {
-        async: Async;
-        await: Await;
-        log: Logger;
-    }    
-}
+declare const log: Logger;
 
 declare interface NodeRequire {
     (modules: string[], callback?: (...modules: any[]) => any);

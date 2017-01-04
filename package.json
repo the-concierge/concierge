@@ -6,7 +6,6 @@
   "dependencies": {
     "analysis": "0.x.x",
     "aphrodite": "^0.5.0",
-    "asyncawait": "^1.0.3",
     "boom": "^2.9.0",
     "chalk": "^1.0.0",
     "dockerode-ts": "^0.2.11",

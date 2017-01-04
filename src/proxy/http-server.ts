@@ -1,7 +1,7 @@
 import * as http from 'http';
 import * as log from '../logger';
 import db from '../data/connection';
-import {get as getConfig} from '../api/configurations/get';
+import { get as getConfig } from '../api/configurations/get';
 import getIP from './get-ip';
 import * as HTTPProxy from 'http-proxy';
 import closeAsync from './close';
@@ -10,11 +10,11 @@ var webServer: http.Server;
 var proxyServer: http.Server & { web: any, ws: any };
 var running: boolean = false;
 
-const startServer = async(() => {
+async function startServer() {
     if (running === true) return;
     log.info('Attempting to start HTTP proxy server...');
-    let config = await(getConfig());
-    const serverIp = await(getIP())
+    let config = await getConfig();
+    const serverIp = await getIP();
     webServer = http.createServer(requestHandler);
     webServer.listen(config.httpPort, serverIp, () => {
         proxyServer = HTTPProxy.createProxyServer({});
@@ -32,28 +32,28 @@ const startServer = async(() => {
     webServer.on('error', error => {
         log.error('Failed to start HTTP proxy server: ' + error);
     });
-    
-    running = true;
-});
 
-const stopServer = async((): void => {
+    running = true;
+}
+
+async function stopServer() {
     if (running === false) return;
     if (!webServer && !proxyServer) {
         return;
     }
-    
-    await(closeAsync(webServer));
-    await(closeAsync(proxyServer));
-    running = false;
-});
 
-export default { 
+    await closeAsync(webServer);
+    await closeAsync(proxyServer);
+    running = false;
+}
+
+export default {
     startServer,
     stopServer,
 }
 
-export const restartServer = async(() => {
-    var promise = new Promise<boolean>(resolve => {
+export function restartServer() {
+    return new Promise<boolean>(resolve => {
         const closeHandler = () => {
             if (!proxyServer) return;
             proxyServer.close(() => {
@@ -63,12 +63,11 @@ export const restartServer = async(() => {
         }
         webServer.close(closeHandler);
     }).then(startServer);
-    return await(promise);
-});
+}
 
-const webSocketHandler = async((request, socket, head) => {
-    var info = getDomainInfo(request.headers.host);
-    var container = await(getSubdomainContainer(info.subdomain));
+async function webSocketHandler(request, socket, head) {
+    const info = getDomainInfo(request.headers.host);
+    const container = await getSubdomainContainer(info.subdomain);
 
     if (container.isProxying === 0) {
         // Contaier is not proxying, do not proxy
@@ -81,7 +80,7 @@ const webSocketHandler = async((request, socket, head) => {
     }
     var target = getContainerUrl(container);
     proxyServer.ws(request, socket, head, { target });
-});
+}
 
 function requestHandler(request, response) {
     //TODO: Container information should be kept in memory to remove DB call overhead

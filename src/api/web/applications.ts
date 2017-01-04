@@ -8,14 +8,14 @@ import deploy from '../variants/deploy';
 const getRoute = {
 	path: '/api/applications',
 	method: 'GET',
-	handler: async((request, reply) => {
-		const apps = await(getApplications.all());
+	handler: async function handler(request, reply) {
+		const apps = await getApplications.all();
 		apps.forEach(app => {
 			app.gitPrivateKey = '********';
 			app.gitPrivateToken = '********';
 		});
-		reply(apps);		
-	})
+		reply(apps);
+	}
 }
 
 const saveAllRoute = {
@@ -29,18 +29,17 @@ const saveAllRoute = {
 }
 
 const deployRoute = {
-    path: '/api/applications/{id}/deploy/{tag}',
-    method: 'POST',
-    handler: async((request, reply) => {
-        const id = request.params.id;
-        const tag = request.params.tag;
-        const app = await(getApplications.one(id));
+	path: '/api/applications/{id}/deploy/{tag}',
+	method: 'POST',
+	handler: async function handler(request, reply) {
+		const id = request.params.id;
+		const tag = request.params.tag;
+		const app = await getApplications.one(id);
 
-        deploy(app, tag)
-            .then(reply)
-            .catch(error => reply(Boom.expectationFailed(error)));
-
-    })
+		deploy(app, tag)
+			.then(reply)
+			.catch(error => reply(Boom.expectationFailed(error)));
+	}
 }
 
 server.route(getRoute);

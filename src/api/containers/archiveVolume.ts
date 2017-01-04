@@ -11,11 +11,11 @@ import archivePath from '../archive/archivePath';
  * 3. Store the tar archive on the file system
  */
 
-export default async((container: Concierge.Container) => {
+export default async function archive(container: Concierge.Container) {
     try {
-        let db = await(getVolume(container));
+        let db = await getVolume(container);
         const writeResult = archiveVolume(container, db);
-        return await(removeVolume(container));
+        return await removeVolume(container);
     }
     catch (ex) {
         var msg = ex.toString();
@@ -23,10 +23,10 @@ export default async((container: Concierge.Container) => {
         if (noSuchFile) return true;
         throw new Error(msg);
     }
-})
+}
 
-function archiveVolume(container: Concierge.Container, volume: any) {
-    const app = await(getApps.one(container.applicationId));
+async function archiveVolume(container: Concierge.Container, volume: any) {
+    const app = await getApps.one(container.applicationId);
     const appName = app ? app.name : 'CLONED';
     
 	const volumeFileName = `${appName}_${container.subdomain}_${container.variant}_${Date.now().valueOf()}.tar`;

@@ -3,26 +3,22 @@ import * as LE from 'letsencrypt';
 import { baseDomainPath, getCertPath, getKeyPath } from './certificate-path';
 import * as fs from 'fs';
 import * as log from '../logger';
-import {get as getConfig} from '../api/configurations/get';
+import { get as getConfig } from '../api/configurations/get';
 
-export default function createCertificate(domain: string) {
-    return _createCertificate(domain);
+export default async function createCertificate(domain: string) {
+    /** We don't actually care about the result of this... */
+    const isCreated = await createCertificateDomainDirectory(domain);
+    const service = await certService();
+    const result = await register(service, domain);
+    return result;
 }
 
-const _createCertificate = async((domain: string) => {
-    /** We don't actually care about the result of this... */
-    const isCreated = await(createCertificateDomainDirectory(domain));
-    const service = await(certService());
-    const result = await(register(service, domain));
-    return result;
-});
-
-function register(service: LE.LetsEncryptInstance, domain: string) {
-    const config = await(getConfig());
+async function register(service: LE.LetsEncryptInstance, domain: string) {
+    const config = await getConfig();
     if (config.certificateEmail === 'user@email.com.invalid') {
         throw new Error('Certificate Email Address in Configuration has not been changed');
     }
-    
+
     return new Promise((resolve, reject) => {
         service.register({
             domains: [domain],

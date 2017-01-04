@@ -1,15 +1,8 @@
 import * as aa from 'asyncawait';
 import * as log from './logger';
 
-/**
- * Make async/await available globally
- * This will need to be removed in TypeScript 2.1 (See Microsoft/TypeScript #8559)
- */
-global.async = <any>aa.async;
-global.await = <any>aa.await;
-
 // Make logger available globally
-global.log = log;
+global['log'] = log;
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -24,9 +17,9 @@ import loadWebRoutes from './api/web/loader';
 import { initialise as listenToDockerHosts } from './api/info';
 import { initialise as initConfig } from './api/configurations/get';
 
-const start = async(() => {
+async function start() {
     // Create the database if it doesn't exist
-    let isDbCreated = await(initDatabase());
+    let isDbCreated = await initDatabase();
     if (isDbCreated) {
         log.info('Created new database');
     }
@@ -41,32 +34,32 @@ const start = async(() => {
     }
 
     // Fetch the configuration from the database and cache it
-    await(initConfig());
+    await initConfig();
 
     // Start the web server
-    await(startWeb());
+    await startWeb();
 
     // Start the web socket listener
-    await(startSockets());
+    await startSockets();
 
     // Listen for Performance (memory and CPU) and Docker events on all Containers 
-    await(watchContainers());
+    await watchContainers();
 
     // Listen for Docker events on all Hosts
-    await(watchHosts());
+    await watchHosts();
 
     // Create the route handlers
-    await(loadWebRoutes());
+    await loadWebRoutes();
 
     // Create the proxy server that forwards requests from [subdomain].[proxy] to the container
-    await(startProxying());
+    await startProxying();
 
     // Get the all Container's exposed port number and store it in the database
-    await(updateContainerPorts());
+    await updateContainerPorts();
     log.info('Successfully updated all container ports');
 
     // Monitor the status of all Hosts 
-    await(listenToDockerHosts());
-});
+    await listenToDockerHosts();
+}
 
 start();

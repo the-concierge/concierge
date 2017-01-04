@@ -6,7 +6,7 @@ import NewContainerType = codes.NewContainerType;
 /**
  * Clone a container from a remote Concierge
  */
-export default async((cloneRequest: CloneRequest) => {
+export default async function clone(cloneRequest: CloneRequest) {
 	const createRequest: Concierge.NewContainer = {
 		variant: cloneRequest.container.variant,
 		dockerImage: cloneRequest.container.dockerImage,
@@ -21,13 +21,13 @@ export default async((cloneRequest: CloneRequest) => {
 	const remoteUrl = getVolumeUrl(cloneRequest);
 
 	// Fetch the volume archive of the remote Container
-	const volume = await(request.get(remoteUrl, false));
+	const volume = await request.get(remoteUrl, false);
 
 	// This is not guaranteed to be a Buffer, so we convert it to one and pass it to createContainer as an option
 	createRequest.volume = new Buffer(volume);
-	const result = await(createContainer(createRequest, newType));
+	const result = await createContainer(createRequest, newType);
 	return result;
-});
+}
 
 function getVolumeUrl(cloneRequest: CloneRequest) {
 	const {hostname, port} = cloneRequest.concierge;

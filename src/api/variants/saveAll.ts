@@ -17,20 +17,20 @@ export default function saveAll(request: Concierge.SaveRequest<Concierge.Variant
 	});
 }
 
-const doDeletes = async((trx: any, models: Concierge.Variant[]) => {
-	return models.map(model => await(
-		db('Containers')
+async function doDeletes(trx: any, models: Concierge.Variant[]) {
+	for (const model of models) {
+		await db('Containers')
 			.update(model)
 			.where({ name: model.name })
 			.transacting(trx)
-	));
-});
+	}
+}
 
 function isDeletable(model: Concierge.Variant) {
-	var states = [
+	const states = [
 		DeployedState[DeployedState.Failed]
 	];
 
-	var isAllowed = states.some(state => model.buildState === state);
+	const isAllowed = states.some(state => model.buildState === state);
 	return isAllowed;
 }

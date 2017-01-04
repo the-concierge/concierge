@@ -9,27 +9,28 @@ const BASE_DB_PATH = resolve(__dirname, '../../db');
 const LIVE_DB = join(BASE_DB_PATH, 'concierge.db');
 
 // Using lazy initialisation until a more maintainable alternative is implemented
-export default async(() => {
-    let isLiveDbPresent = await(isFilePresent(LIVE_DB));
+export default async function init() {
+    const isLiveDbPresent = await isFilePresent(LIVE_DB);
 
-    if (isLiveDbPresent) return false;
+    if (isLiveDbPresent) {
+        return false;
+    }
 
-    await(createDb());
+    await createDb();
 
     const defaultName = os.hostname() || 'development';
-    await(db('Configurations')
-        .insert({ name: defaultName }));
+    await db('Configurations')
+        .insert({ name: defaultName });
 
     log.info(`Concierge renamed to: ${defaultName}`);
     return true;
-});
+}
 
-const isFilePresent = async((filename: string): boolean => {
-    const filePresent = new Promise<boolean>((resolve, reject) => {
+async function isFilePresent(filename: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
         readFile(filename, error => {
             if (error) return resolve(false);
             resolve(true);
         });
     });
-    return await(filePresent);
-});
+}

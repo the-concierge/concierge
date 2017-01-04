@@ -11,7 +11,7 @@ let sentinal: { [id: number]: boolean } = {};
  * Get Application source code for a particular Git tag
  * This has a direct impact on the filesystem
  */
-export default async((application: Concierge.Application, tag: string): NodeJS.ReadableStream => {
+export default async function fetchTag(application: Concierge.Application, tag: string): Promise<NodeJS.ReadableStream> {
     if (sentinal[application.id]) {
         throw new Error(`Applcation ${application.name} is already fetching`);
     }
@@ -27,12 +27,12 @@ export default async((application: Concierge.Application, tag: string): NodeJS.R
     const checkoutCmd = `git checkout ${tag}`;
 
     try {
-        const fetchResult = await(gitCmd(application, workingDirectory, fetchCmd))
-        const checkoutResult = await(gitCmd(application, workingDirectory, checkoutCmd));
+        const fetchResult = await gitCmd(application, workingDirectory, fetchCmd);
+        const checkoutResult = await gitCmd(application, workingDirectory, checkoutCmd);
         const stream = tar.pack(workingDirectory);
         return stream;
     }
     finally {
         sentinal[application.id] = false;
     }
-});
+};

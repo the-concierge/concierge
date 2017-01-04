@@ -1,28 +1,27 @@
 import db from '../../data/connection';
 
-export const one = async((id: number): Concierge.Container => {
-    return await(db('Containers')
+export async function one(id: number): Promise<Concierge.Container> {
+    return await db('Containers')
         .select(...columns)
         .where('Containers.id', id)
-        .leftJoin(joinClause[0], joinClause[1], joinClause[2]))[0];
-});
+        .first()
+        .leftJoin(joinClause[0], joinClause[1], joinClause[2]);
+}
 
-export const all = async((): Concierge.Container[] => {
+export async function all(): Promise<Concierge.Container[]> {
     return await(
         db('Containers')
         .select(...columns)
         .leftJoin(joinClause[0], joinClause[1], joinClause[2]))
-});
+}
 
-export const bySubdomain = async((subdomain: string): Concierge.Container => {
-    return await(
-        db('Containers')
+export async function bySubdomain(subdomain: string): Promise<Concierge.Container> {
+    return await db('Containers')
             .select(...columns)
             .where({ subdomain })
             .leftJoin(joinClause[0], joinClause[1], joinClause[2])
-            .limit(1)
-    )[0];
-})
+            .limit(1);
+}
 
 const columns = [
     'Containers.*',
@@ -33,4 +32,4 @@ const joinClause = [
     'Applications',
     'Applications.id',
     'Containers.applicationId'
-]
+];

@@ -3,7 +3,6 @@ import * as getContainers from '../containers/get';
 import obs = require('observers');
 import getContainerStream from '../containers/getLogStream';
 import getHostStream from '../hosts/getLogStream';
-export { info as default }
 
 /**
  * 
@@ -13,33 +12,33 @@ export { info as default }
  */
 const CONTAINER_STOP_EVENTS = [
     'kill', 'stop', 'die'
-]
+];
 
-var info = {
+const info = {
     containers: obs.observeArray<Concierge.Container & Watch>([]),
     hosts: obs.observeArray<Concierge.Host & Watch>([])
 }
 
-export const initialise = async(() => {
-    let hosts = <Array<Concierge.Host & Watch>>await(getHosts.all());
-    hosts.forEach(h => {
-        h.online = false;
-        h.streaming = false;
-        info.hosts.push(h);
-        getHostStream(h, hostEvent(h));
+export async function initialise() {
+    const hosts = await getHosts.all() as Array<Concierge.Host & Watch>;
+    hosts.forEach(host => {
+        host.online = false;
+        host.streaming = false;
+        info.hosts.push(host);
+        getHostStream(host, hostEvent(host));
     });
     return true;
-});
+}
 
-const watchContainer = async((container: Concierge.Container) => {
+function watchContainer(container: Concierge.Container) {
     getContainerStream(container, containerEvent(container))
-});
+}
 
 function containerEvent(container: Concierge.Container) {
-    var predicate = (c => c.id === container.id);
-    return function(error?: any, event?: string) {
+    const predicate = (c => c.id === container.id);
+    return function (error?: any, event?: string) {
 
-        var containerObservable = info.containers.find(predicate);
+        const containerObservable = info.containers.find(predicate);
         if (error) containerObservable.streaming = false;
 
         info.containers.update(predicate, containerObservable);
@@ -48,7 +47,7 @@ function containerEvent(container: Concierge.Container) {
 
 function hostEvent(host: Concierge.Host) {
     var predicate = (h => h.id === host.id);
-    return function(error?: any, hostEvent?: string) {
+    return function (error?: any, hostEvent?: string) {
         var hostObservable = info.hosts.find(predicate);
 
         if (error) hostObservable.streaming = false;
@@ -57,22 +56,22 @@ function hostEvent(host: Concierge.Host) {
         try {
             var event: HostEvent = JSON.parse(hostEvent);
             var container = info.containers.find(c => c.dockerId === event.id);
-            
-            if (!container) return;            
-            
+
+            if (!container) return;
+
             if (CONTAINER_STOP_EVENTS.some(t => t === event.status))
                 container.online = false;
-                
+
             if (event.status === 'start')
-                container.online = true;                
-                
+                container.online = true;
+
             info.containers.update(c => c.dockerId === event.id, container);
             info.hosts.update(predicate, hostObservable);
         }
         catch (ex) {
             // Do nothing. Failed to parse the event.
         }
-        
+
     }
 }
 
@@ -87,3 +86,5 @@ interface HostEvent {
     from: string;
     time: number;
 }
+
+export { info as default }
