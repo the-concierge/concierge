@@ -22,6 +22,11 @@ const reducers = [
     ...hosts
 ];
 
+dispatcher.override(
+    ['@@INIT'],
+    () => (state: AppState, action: any) => state
+);
+
 reducers
     .forEach(reducer => dispatcher.override(reducer.types, () => reducer.handler));
 

@@ -1,23 +1,23 @@
 import { AddHost, RemoveHost } from '../actions/types';
+import * as util from './util';
 
 const add = {
     types: ['add-host'],
     handler: (state: AppState, action: AddHost) => {
-        const existing = state.containers.find(container => container.id === action.host.id);
-        if (existing) {
-            Object.assign(existing, action.host);
-            return state;
+        return {
+            ...state,
+            hosts: util.addEntity(state.hosts, action.host)
         }
-        const hosts = state.hosts.concat(action.host);
-        return Object.assign({}, state, { hosts });
     }
 }
 
 const remove = {
     types: ['remove-host'],
     handler: (state: AppState, action: RemoveHost) => {
-        const hosts = state.hosts.filter(host => host.id !== action.id);
-        return Object.assign({}, state, { hosts });
+        return {
+            ...state,
+            hosts: util.removeEntity(state, state.hosts, action.id)
+        }
     }
 
 }
