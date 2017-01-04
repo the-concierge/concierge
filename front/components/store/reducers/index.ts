@@ -1,5 +1,44 @@
 import * as Actions from '../actions/types';
 import ActionType = Actions.ActionType;
+import multimethod from '../../multimethod';
+
+const single = multimethod<(state: AppState, action: ActionType) => AppState, string>({
+    name: 'reducer',
+    params: [
+        {
+            name: 'action type',
+            isa: (special, general) => special === general
+        }
+    ]
+});
+
+single.override(['add-container'], () => (state: AppState, action: Actions.AddContainer) => {
+    return {
+        ...state,
+        containers: addEntity(state.containers, action.container)
+    }
+});
+
+single.override(['remove-container'], () => (state: AppState, action: Actions.RemoveContainer) => {
+    return {
+        ...state,
+        containers: state.containers.filter(container => container.id !== action.id)
+    }
+});
+
+single.override(['add-host'], () => (state: AppState, action: Actions.AddHost) => {
+    return {
+        ...state,
+        hosts: addEntity(state.hosts, action.host)
+    }
+});
+
+single.override(['remove-host'], () => (state: AppState, action: Actions.RemoveHost) => {
+    return {
+        ...state,
+        hosts: state.hosts.filter(host => host.id !== action.id)
+    }
+});
 
 export default function reduce(state: AppState = { containers: [], hosts: [] }, action: ActionType): AppState {
     switch (action.type) {
