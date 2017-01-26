@@ -1,6 +1,6 @@
 export function addEntity<T extends Id>(entities: Array<T>, entity: T) {
     const existing = entities.find(c => c.id === entity.id);
-    if (existing) {
+    if (existing) {        
         Object.assign(existing, entity);
         return entities;
     }

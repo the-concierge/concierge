@@ -1,35 +1,18 @@
-import * as Actions from '../actions/types';
-import ActionType = Actions.ActionType;
 import multimethod from '../../multimethod';
-import containers from './containers';
-import hosts from './hosts';
+import dispatcher from './dispatcher'; 
+import { ActionType } from '../actions/types';
 
-type Action = { type: string };
-type ActionHandler = (state: AppState, action: ActionType) => AppState;
+// Imported for their side-effects
+import './containers';
+import './hosts';
+import './configurations';
 
-export const dispatcher = multimethod<ActionHandler, string>({
-    name: 'action reducer',
-    params: [
-        {
-            name: 'action type',
-            isa: (special, general) => special === general
-        }
-    ]
-});
+const defaultState: AppState = {
+    containers: [],
+    hosts: [],
+    configurations: []
+};
 
-const reducers = [
-    ...containers,
-    ...hosts
-];
-
-dispatcher.override(
-    ['@@INIT'],
-    () => (state: AppState, action: any) => state
-);
-
-reducers
-    .forEach(reducer => dispatcher.override(reducer.types, () => reducer.handler));
-
-export default function reduce(state: AppState = { containers: [], hosts: [] }, action: ActionType): AppState {
+export default function reduce(state: AppState = { ...defaultState }, action: ActionType): AppState {
     return dispatcher.dispatch(action.type)(state, action);
 }

@@ -1,5 +1,6 @@
 import { AddHost, RemoveHost } from '../actions/types';
 import * as util from './util';
+import { register } from './dispatcher';
 
 const add = {
     types: ['add-host'],
@@ -19,10 +20,6 @@ const remove = {
             hosts: util.removeEntity(state, state.hosts, action.id)
         }
     }
-
 }
 
-export default [
-    add,
-    remove
-];
+register(add, remove);

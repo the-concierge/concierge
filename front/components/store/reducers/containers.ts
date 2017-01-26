@@ -1,5 +1,6 @@
 import { AddContainer, RemoveContainer } from '../actions/types';
 import * as util from './util';
+import { register } from './dispatcher';
 
 const add = {
     types: ['add-container'],
@@ -21,7 +22,4 @@ const remove = {
     }
 }
 
-export default [
-    add,
-    remove
-];
+register(add, remove);
