@@ -2,6 +2,7 @@ export type ActionType = AddContainer
     | RemoveContainer
     | AddHost
     | RemoveHost
+    | AddConfiguration
 
 export interface AddContainer {
     type: 'add-container';
@@ -21,4 +22,9 @@ export interface AddHost {
 export interface RemoveHost {
     type: 'remove-host';
     id: number;
+}
+
+export interface AddConfiguration {
+    type: 'add-configuration';
+    configuration: Concierge.Configuration;
 }
