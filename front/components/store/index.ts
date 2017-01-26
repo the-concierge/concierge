@@ -2,6 +2,7 @@ import { createStore } from 'redux';
 import stateHandler from '../store/reducers/index';
 import * as containers from './api/containers';
 import * as hosts from './api/hosts';
+import * as configurations from './api/configurations';
 import * as action from './actions/creators';
 
 // Hook up the store with Redux dev tools
@@ -15,10 +16,14 @@ const dispatch = (actionKind: string, dispatchObject: {}) => store.dispatch(Obje
 // Initialisation
 containers
     .all()
-    .then(list => list.forEach(c => store.dispatch(action.addContainer(c))));
+    .then(list => list.forEach(item => store.dispatch(action.addContainer(item))));
 
 hosts
     .all()
-    .then(list => list.forEach(h => store.dispatch(action.addHost(h))));
+    .then(list => list.forEach(item => store.dispatch(action.addHost(item))));
+
+configurations
+    .all()
+    .then(list => list.forEach(item => store.dispatch(action.addConfiguration(item))));
 
 export default store;
