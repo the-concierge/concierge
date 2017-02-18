@@ -1,0 +1,68 @@
+{
+    "extends": [
+        "tslint-config-standard"
+    ],
+    "rules": {
+        "jsdoc-format": false,
+        "handle-callback-err": false,
+        "triple-equals": true,
+        "no-unused-variable": [
+            true
+        ],
+        "no-unused-expression": true,
+        "indent": [
+            true,
+            "spaces"
+        ],
+        "linebreak-style": [
+            true,
+            "LF"
+        ],
+        "no-var-keyword": true,
+        "quotemark": [false],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-module",
+            "check-separator",
+            "check-type"
+        ],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            }
+        ],
+        "no-internal-module": true,
+        "no-trailing-whitespace": true,
+        "no-null-keyword": false,
+        "switch-default": false,
+        "max-line-length": [
+            false
+        ],
+        "align": [
+            false
+        ],
+        "no-console": [
+            true,
+            "log",
+            "warn",
+            "error",
+            "trace",
+            "debug",
+            "assert"
+        ],
+        "eofline": false,
+        "space-before-function-paren": [
+            false
+        ],
+        "no-empty": false,
+        "no-use-before-declare": false
+    }
+}

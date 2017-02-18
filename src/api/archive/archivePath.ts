@@ -1,5 +1,5 @@
-import { resolve } from 'path';
+import { resolve } from 'path'
 
 export default function getPath() {
-	return resolve(__dirname, '..', '..', '..', 'archive');
+  return resolve(__dirname, '..', '..', '..', 'archive')
 }

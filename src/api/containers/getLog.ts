@@ -1,46 +1,49 @@
-import dockerClient from '../dockerClient';
-import * as getHost from '../hosts/get';
-import * as stream from 'stream';
-import Docker from 'dockerode-ts';
+import dockerClient from '../dockerClient'
+import * as getHost from '../hosts/get'
+import * as stream from 'stream'
+import Docker from 'dockerode-ts'
 
 /**
  * Retrieve the logs from a Container
  */
 export default function get(container: Concierge.Container): Promise<any> {
-	var request = (client: Docker) => getLog(client, container);
+  let request = (client: Docker) => getLog(client, container)
 
-	return getHost.one(container.host)
-		.then((host: Concierge.Host) => dockerClient(host, 500))
-		.then(request);
+  return getHost.one(container.host)
+    .then((host: Concierge.Host) => dockerClient(host, 500))
+    .then(request)
 }
 
 function getLog(client: Docker, container: Concierge.Container) {
-	var promise = new Promise((resolve, reject) => {
-		var output = '';
-		var append = data => {
-            var str = data.toString();
-            if (str.slice(-6, -1) === 'GET /') return;
-            
-            output += str;
-        }
+  let promise = new Promise((resolve, reject) => {
+    let output = ''
+    let append = data => {
+      let str = data.toString()
+      if (str.slice(-6, -1) === 'GET /') {
+        return
+      }
 
-		var callback = (error, dataStream) => {
-			if (error) return reject(error);
+      output += str
+    }
 
-			// Demulitplexing the stream removes control characters from the output
-			var stdout = new stream.PassThrough();
-			var stderr = new stream.PassThrough();
-			client.modem.demuxStream(dataStream, stdout, stderr);
+    let callback = (error, dataStream) => {
+      if (error) {
+        return reject(error)
+      }
 
-			stdout.on('data', append);
-			stderr.on('data', append);
-			dataStream.on('end', () => resolve(<any>output));
-		}
+      // Demulitplexing the stream removes control characters from the output
+      let stdout = new stream.PassThrough()
+      let stderr = new stream.PassThrough()
+      client.modem.demuxStream(dataStream, stdout, stderr)
 
-		client.getContainer(container.dockerId)
-			.logs({ follow: false, stdout: true, stderr: true }, callback); // ?
-	});
+      stdout.on('data', append)
+      stderr.on('data', append)
+      dataStream.on('end', () => resolve(output as any))
+    }
 
-	return promise;
+    client.getContainer(container.dockerId)
+      .logs({ follow: false, stdout: true, stderr: true }, callback) // ?
+  })
+
+  return promise
 }
-

@@ -1,33 +1,36 @@
-import * as SSH2 from 'ssh2';
+import * as SSH2 from 'ssh2'
 
 /**
  * Create an instance of a connect SSH client ready for consumption
  */
 export default function getClient(host: Concierge.Host): Promise<any> {
-	var client = new SSH2.Client();
+  let client = new SSH2.Client()
 
-	var settings: any = {
-		host: host.hostname,
-		port: host.sshPort,
-		username: host.sshUsername
-	};
+  let settings: any = {
+    host: host.hostname,
+    port: host.sshPort,
+    username: host.sshUsername
+  }
 
-	var hasPassword = host.privateKey.length < 30;
+  let hasPassword = host.privateKey.length < 30
 
-	if (hasPassword) settings.password = host.privateKey;
-	else settings.privateKey = host.privateKey;
+  if (hasPassword) {
+    settings.password = host.privateKey
+  } else {
+    settings.privateKey = host.privateKey
+  }
 
-	client.connect(settings);
+  client.connect(settings)
 
-	var promise = new Promise((resolve, reject) => {
-		client.on('ready', () => {
-			resolve(client);
-		});
-		
-		client.on('error', error => {
-			reject('[SSH] ' + error);
-		});
-	});
+  let promise = new Promise((resolve, reject) => {
+    client.on('ready', () => {
+      resolve(client)
+    })
 
-	return promise;
+    client.on('error', error => {
+      reject('[SSH] ' + error)
+    })
+  })
+
+  return promise
 }

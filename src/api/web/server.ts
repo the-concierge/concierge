@@ -1,3 +1,3 @@
-import { Server } from 'hapi';
+import { Server } from 'hapi'
 
-export default new Server();
+export default new Server()

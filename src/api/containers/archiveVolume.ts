@@ -1,9 +1,9 @@
-import getVolume from './getVolume';
-import * as getApps from '../applications/get';
-import removeVolume from './removeVolume';
-import { writeFile } from 'fs';
-import { resolve } from 'path';
-import archivePath from '../archive/archivePath';
+import getVolume from './getVolume'
+import * as getApps from '../applications/get'
+import removeVolume from './removeVolume'
+import { writeFile } from 'fs'
+import { resolve } from 'path'
+import archivePath from '../archive/archivePath'
 
 /**
  * 1. Fetch the application data of a container
@@ -12,36 +12,39 @@ import archivePath from '../archive/archivePath';
  */
 
 export default async function archive(container: Concierge.Container) {
-    try {
-        let db = await getVolume(container);
-        const writeResult = archiveVolume(container, db);
-        return await removeVolume(container);
+  try {
+    let db = await getVolume(container)
+    await archiveVolume(container, db)
+    return await removeVolume(container)
+  } catch (ex) {
+    let msg = ex.toString()
+    let noSuchFile = msg.indexOf('No such file') > -1
+    if (noSuchFile) {
+      return true
     }
-    catch (ex) {
-        var msg = ex.toString();
-        var noSuchFile = msg.indexOf('No such file') > -1;
-        if (noSuchFile) return true;
-        throw new Error(msg);
-    }
+    throw new Error(msg)
+  }
 }
 
 async function archiveVolume(container: Concierge.Container, volume: any) {
-    const app = await getApps.one(container.applicationId);
-    const appName = app ? app.name : 'CLONED';
-    
-	const volumeFileName = `${appName}_${container.subdomain}_${container.variant}_${Date.now().valueOf()}.tar`;
-	const archiveFilePath = resolve(archivePath(), volumeFileName);
-    const writeResult = await(writeFileAsync(archiveFilePath, volume));
-	return writeResult;
+  const app = await getApps.one(container.applicationId)
+  const appName = app ? app.name : 'CLONED'
+
+  const volumeFileName = `${appName}_${container.subdomain}_${container.variant}_${Date.now().valueOf()}.tar`
+  const archiveFilePath = resolve(archivePath(), volumeFileName)
+  const writeResult = await (writeFileAsync(archiveFilePath, volume))
+  return writeResult
 }
 
 const writeFileAsync = (filePath: string, contents: any) => {
-	const promise = new Promise((resolve, reject) => {
-		writeFile(filePath, contents, (err) => {
-			if (err) return reject(err);
-			resolve(true);
-		});
-	});
+  const promise = new Promise((resolve, reject) => {
+    writeFile(filePath, contents, (err) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(true)
+    })
+  })
 
-	return promise;
+  return promise
 }
