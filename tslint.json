@@ -12,7 +12,8 @@
         "no-unused-expression": true,
         "indent": [
             true,
-            "spaces"
+            "spaces",
+            ""
         ],
         "linebreak-style": [
             true,

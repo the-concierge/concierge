@@ -27,12 +27,6 @@ interface Toastr {
   options: any;
 }
 
-interface AppState {
-  containers: Array<Concierge.APIContainer>;
-  hosts: Array<Concierge.APIHost>;
-  configurations: Array<Concierge.Configuration>;
-}
-
 declare module Concierge {
   interface Concierge {
     id: number;
@@ -255,3 +249,16 @@ declare module 'rimraf' {
   export = api;
 }
 
+declare module 'compression' {
+    namespace api { }
+    function api(): any;
+    export = api;
+}
+
+declare module 'body-parser' {
+    namespace api {
+        function json(): any
+    }
+    function api(): any;
+    export = api;
+}

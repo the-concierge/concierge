@@ -140,7 +140,7 @@ function getSubdomainContainer(subdomain: string): Promise<Concierge.Container> 
         if (containers.length === 0) {
           return reject('No matching service found')
         }
-        
+
         if (containers[0].isProxying !== 1) {
           return reject('Service is down for maintenance')
         }

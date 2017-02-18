@@ -102,7 +102,7 @@ function getContainerHost(request: Concierge.NewContainer) {
   return getLeastLoadedHost()
 }
 
-function saveContainer(container: Concierge.Container, containerType: NewContainerType) {
+function saveContainer(container: Concierge.Container, containerType: NewContainerType): Promise<Concierge.Container> {
   let isChange = containerType === NewContainerType.Change
   if (isChange) {
     return Promise.resolve(container)

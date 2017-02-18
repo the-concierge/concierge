@@ -15,4 +15,4 @@ export default async function clone(application: Concierge.Application) {
   const command = `git clone ${repository} ${targetPath}`
   const result = await gitCmd(application, workingDir, command)
   return result
-};
+}

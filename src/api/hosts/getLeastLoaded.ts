@@ -5,26 +5,23 @@ import * as getContainers from '../containers/get'
 /**
  * Locate the Host that has the least amount of Containers running
  */
-export default function getHostForContainer(): Promise<Concierge.Host> {
-  let hosts = getHosts.all()
-  let containers = getContainers.all()
+export default async function getHostForContainer(): Promise<Concierge.Host> {
+  const hosts = getHosts.all()
+  const containers = getContainers.all()
+  const entities = await Promise.all([hosts, containers])
 
-  return Promise.all([hosts, containers])
-    .then(getHostLoads)
-    .then(getLowestLoadedHost)
+  const loads = getHostLoads(entities)
+  return getLowestLoadedHost(loads)
 }
 
-function getHostLoads(promiseResult: any[]): Promise<any> {
-  let hosts: Concierge.Host[] = promiseResult[0]
-  let containers: Concierge.Container[] = promiseResult[1]
-
-  let hasHosts = hosts.length > 0
+function getHostLoads([hosts, containers]: [Concierge.Host[], Concierge.Container[]]) {
+  const hasHosts = hosts.length > 0
   if (!hasHosts) {
-    return Promise.reject('[HOST.ALLOCATE] There are no hosts available. Please assign at least one.')
+    throw new Error('[HOST.ALLOCATE] There are no hosts available. Please assign at least one.')
   }
 
   let hostLoads = hosts.map(host => hostLoadPercentage(host, containers))
-  return Promise.resolve(hostLoads)
+  return hostLoads
 }
 
 async function getLowestLoadedHost(hosts: Concierge.Host[]) {
