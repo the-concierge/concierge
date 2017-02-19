@@ -1,3 +1,7 @@
+# Concierge
+
+Docker orchestration with Node and TypeScript
+
 # FAQ
 
 - [Setting up a Host](./docs/host.md)
@@ -6,8 +10,8 @@
 - [Creating Containers](./docs/container.md)
 
 ## Browser Targets
-TypeScript is compiled to ES2015.  
-This effectively means the browser targets are current major version minus one (-1) of:
+Current major version of:
+
 - Chrome 
 - Firefox
 - Edge
@@ -102,3 +106,5 @@ See  [Application.md](./docs/application.md)
 - Choose `View Containers` from the Concierge Actions dropdown
 - Choose `Clone Container` from the Container Actions dropdown
 - Complete the dialog and and `Submit`
+
+[![Analytics](https://ga-beacon.appspot.com/UA-61186849-2/node-concierge/github)](https://github.com/paypac/node-concierge)
