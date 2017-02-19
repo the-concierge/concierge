@@ -1,7 +1,7 @@
 import * as http from 'http'
 import * as log from '../logger'
 import db from '../data/connection'
-import { get as getConfig } from '../api/configurations/get'
+import { get as getConfig } from '../configurations/get'
 import getIP from './get-ip'
 import * as HTTPProxy from 'http-proxy'
 import closeAsync from './close'

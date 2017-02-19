@@ -13,7 +13,7 @@
     "http-proxy": "^1.13.3",
     "knex": "^0.11.7",
     "knockout": "^3.4.1",
-    "moment": "^2.9.0",
+    "node-dockerfile": "^0.5.1",
     "observers": "^0.5.1",
     "rimraf": "^2.5.3",
     "socket.io": "^1.5.0",

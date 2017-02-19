@@ -1,4 +1,4 @@
-import { get as getConfig } from '../api/configurations/get'
+import { get as getConfig } from '../configurations/get'
 
 export default async function getIP(): Promise<string> {
   const config = await getConfig()

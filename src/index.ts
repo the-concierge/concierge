@@ -8,14 +8,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 import initDatabase from './data/init'
 import startProxying from './proxy'
-import startWeb from './api/web/start'
-import { start as startSockets } from './api/events/server'
-import updateContainerPorts from './api/hosts/updatePorts'
-import watchContainers from './api/events/containers'
-import watchHosts from './api/events/hosts'
-import loadWebRoutes from './api/web/loader'
-import { initialise as listenToDockerHosts } from './api/info'
-import { initialise as initConfig } from './api/configurations/get'
+import startServer from './server/start'
+import { start as startSockets } from './events/server'
+import updateContainerPorts from './hosts/updatePorts'
+import watchContainers from './events/containers'
+import watchHosts from './events/hosts'
+import { initialise as listenToDockerHosts } from './info'
+import { initialise as initConfig } from './configurations/get'
 
 async function start() {
   // Create the database if it doesn't exist
@@ -37,7 +36,7 @@ async function start() {
   await initConfig()
 
   // Start the web server
-  await startWeb()
+  await startServer()
 
   // Start the web socket listener
   await startSockets()
@@ -47,9 +46,6 @@ async function start() {
 
   // Listen for Docker events on all Hosts
   await watchHosts()
-
-  // Create the route handlers
-  await loadWebRoutes()
 
   // Create the proxy server that forwards requests from [subdomain].[proxy] to the container
   await startProxying()
