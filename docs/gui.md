@@ -170,3 +170,5 @@ This provides functionality for:
 - `Heartbeats: Frequency (ms)`: How often _heartbeat_ requests are sent to containers
 - `Docker: Registry URL`: The fully qualified URL of the Docker registry that the Concierge will use to push Docker images to
  - The URL *MUST* be in `HOSTNAME/IP`:`PORT` format
+
+ [![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/docs/gui)](https://github.com/paypac/node-concierge)

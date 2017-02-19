@@ -23,3 +23,5 @@ The Concierge will use SSH to retrieve code from a remote repository and will re
 The **public key** will need to be added to an Github/Gitlab account which has access to the repositories.   
 
 The **private key** is what is entered into the `Private Key` field of an Application
+
+[![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/docs/application)](https://github.com/paypac/node-concierge)

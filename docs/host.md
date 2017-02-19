@@ -63,3 +63,5 @@ This creates a local socket to ensure Docker can still be consumed from the comm
 `-H tcp://0.0.0.0:2375`  
 This creates a TCP socket that will listen for Docker commands.  
 This allows the Concierge to remotely execute Docker commands on the Host.
+
+[![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/docs/host)](https://github.com/paypac/node-concierge)

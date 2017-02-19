@@ -107,4 +107,4 @@ See  [Application.md](./docs/application.md)
 - Choose `Clone Container` from the Container Actions dropdown
 - Complete the dialog and and `Submit`
 
-[![Analytics](https://ga-beacon.appspot.com/UA-61186849-2/node-concierge/github)](https://github.com/paypac/node-concierge)
+[![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/readme)](https://github.com/paypac/node-concierge)
