@@ -1,4 +1,4 @@
-﻿import knex = require('knex')
+import * as knex from 'knex'
 
 const connection = knex({
   client: 'sqlite3',

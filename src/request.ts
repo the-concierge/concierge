@@ -1,6 +1,6 @@
 import * as http from 'http'
 import * as https from 'https'
-const pkg = require('../../package')
+const pkg = require('../package')
 
 function request(url: string, httpModule: any, options: any): Promise<string> {
   options = options || { method: 'GET' }

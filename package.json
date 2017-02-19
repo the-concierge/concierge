@@ -41,7 +41,8 @@
     "debug": "node --inspect start.js",
     "start": "node .",
     "build": "tsc",
-    "bundle": "browserify -e front/src/index.js -o front/bundle.js -r fs:browserify-fs -t brfs"
+    "bundle": "browserify -e front/src/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
+    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json"
   },
   "author": "Carl Winkler",
   "license": "MIT",

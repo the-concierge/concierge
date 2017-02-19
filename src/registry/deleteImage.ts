@@ -7,14 +7,13 @@ import * as request from '../request'
 /**
  * Delete an Image (variant) from the Registry
  */
-export default function remove(variant: string) {
-  return hasImage(variant)
-    .then(has => {
-      if (has) {
-        return tryRemove(variant)
-      }
-      return true
-    })
+export default async function remove(variant: string) {
+  const registryHasImage = await hasImage(variant)
+  if (!registryHasImage) {
+    return true
+  }
+
+  return tryRemove(variant)
 }
 
 function tryRemove(variant: string) {
@@ -26,9 +25,9 @@ function tryRemove(variant: string) {
     .then(result => {
       let isSuccessful = result === 'true'
       if (isSuccessful) {
-        return Promise.resolve(true)
+        return true
       }
-      return Promise.reject('Failed to form a valid request')
+      throw new Error('Failed to form a valid request')
     })
 }
 

@@ -1,7 +1,5 @@
 import * as request from '../../request'
 
-const pkg = require('../../../../package.json')
-
 const privateBaseUrl = 'git@gitlab.com:'
 const publicBaseUrl = 'https://gitlab.com/'
 async function getTags(application: Concierge.Application) {
