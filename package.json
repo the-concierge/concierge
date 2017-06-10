@@ -26,7 +26,6 @@
     "@types/history": "^2.0.39",
     "@types/knockout": "^3.4.39",
     "@types/node": "^6.0.38",
-    "@types/whatwg-fetch": "0.0.30",
     "brfs": "^1.4.3",
     "browserify": "^14.1.0",
     "browserify-fs": "^1.0.0",
@@ -34,7 +33,7 @@
     "mocha": "^2.2.5",
     "tslint": "^4.4.2",
     "tslint-config-standard": "^4.0.0",
-    "typescript": "^2.1.6"
+    "typescript": "^2.3.4"
   },
   "scripts": {
     "test": "mocha",
