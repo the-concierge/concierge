@@ -19,7 +19,7 @@ app.use(bodyParser.json())
 
 router.use('/api', api)
 
-const staticPath = path.resolve(__dirname, '..', 'front')
+const staticPath = path.resolve(__dirname, '..', '..', 'front')
 app.use(express.static(staticPath))
 
 // 404 handler
