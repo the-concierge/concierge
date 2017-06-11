@@ -1,7 +1,19 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
+import menu from '../menu'
 
-class Body {}
+class Body {
+  item = menu.currentItem
+
+  component = ko.computed(() => {
+    const item = this.item()
+    if (!item) {
+      return 'ko-loading'
+    }
+
+    return item.component
+  })
+}
 
 const body = new Body()
 

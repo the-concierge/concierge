@@ -114,7 +114,7 @@ declare module Concierge {
 
     /** JSON representation of Array<string> */
     variables: string;
-  }
+}
 
   interface Container {
     id?: number;

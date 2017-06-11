@@ -19,9 +19,28 @@ export default class Container {
   variables = ko.observable('')
 
   original: Partial<Concierge.APIContainer> = {}
+  container: KnockoutObservable<Concierge.APIContainer> = ko.observable({
+    id: 0,
+    dockerId: '',
+    label: '',
+    port: 0,
+    variant: '',
+    subdomain: '',
+    isProxying: 0,
+    host: '',
+    applicationId: 0,
+    applicationName: '',
+    dockerImage: '',
+    variables: '[]',
+    memory: '',
+    cpu: '',
+    responseTime: ''
+  })
 
   constructor(params: Params) {
+    console.log(params.container)
     this.original = params.container
+    this.container(params.container)
   }
 }
 
