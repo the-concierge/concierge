@@ -19,7 +19,8 @@
     "socket.io": "^1.5.0",
     "sqlite3": "^3.1.4",
     "ssh2": "^0.4.9",
-    "tar-fs": "^1.5.1"
+    "tar-fs": "^1.5.1",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
     "@types/express": "^4.0.35",
@@ -40,7 +41,7 @@
     "debug": "node --inspect start.js",
     "start": "node .",
     "build": "tsc",
-    "bundle": "browserify -e front/src/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
+    "bundle": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json"
   },
   "author": "Carl Winkler",

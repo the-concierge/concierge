@@ -19,7 +19,9 @@
             },
             "console": "internalConsole",
             "sourceMaps": true,
-            "outDir": "${workspaceRoot}"
+            "outFiles": [
+                "."
+            ]
         },
         {
             "name": "Attach",
