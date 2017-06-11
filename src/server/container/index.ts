@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import get from './all'
+import getRunning from './running'
 import update from './update'
 import create from './create'
 import change from './change'
@@ -15,6 +16,7 @@ import info from './info'
 const router = Router()
 
 router.get('/', get)
+router.get('/running', getRunning)
 router.post('/', update)
 router.get('/:id/volume', volume)
 router.put('/', create)
