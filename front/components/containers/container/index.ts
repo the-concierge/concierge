@@ -38,7 +38,6 @@ export default class Container {
   })
 
   constructor(params: Params) {
-    console.log(params.container)
     this.original = params.container
     this.container(params.container)
   }

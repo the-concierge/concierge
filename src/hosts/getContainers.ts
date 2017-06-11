@@ -10,7 +10,10 @@ export default async function getContainers(id?: number) {
 
   const hosts = await getHosts.all()
   const allInfo = await Promise.all(hosts.map(getContainersForHost))
-  const infos = allInfo.reduce<ContainerInfo[]>((list, info: ContainerInfo[]) => list.concat(info), [])
+  const infos = allInfo.reduce<ContainerInfo[]>(
+    (list, info: ContainerInfo[]) => list.concat(info),
+    []
+  )
   return infos
 }
 
@@ -20,13 +23,13 @@ function getContainersForHost(host: Concierge.Host) {
       if (error) {
         return reject(error)
       }
+
       resolve(containers)
     }
 
     setTimeout(() => reject('Connection to docker host timed out'), 1500)
 
-    getDockerClient(host)
-      .listContainers({ all: 1 }, handler)
+    getDockerClient(host).listContainers({ all: 1 }, handler)
   })
   return promise
 }
