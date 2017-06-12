@@ -14,10 +14,10 @@ export default function del(variantName: string): Promise<Concierge.Variant[]> {
     return Promise.reject('Invalid variantName supplied')
   }
 
-  let request = deleteImage(variantName)
+  const request = deleteImage(variantName)
     .then(() => deleteVariant(variantName))
 
-  return request
+  return request as any
 }
 
 function deleteVariant(variantName: string) {

@@ -102,7 +102,7 @@ function getContainerHost(request: Concierge.NewContainer) {
   return getLeastLoadedHost()
 }
 
-function saveContainer(container: Concierge.Container, containerType: NewContainerType): Promise<Concierge.Container> {
+function saveContainer(container: Concierge.Container, containerType: NewContainerType) {
   let isChange = containerType === NewContainerType.Change
   if (isChange) {
     return Promise.resolve(container)
@@ -112,7 +112,7 @@ function saveContainer(container: Concierge.Container, containerType: NewContain
     .insert(container)
     .then((ids: number[]) => {
       container.id = ids[0]
-      return container
+      return container as Concierge.Container
     })
 }
 

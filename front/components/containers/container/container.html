@@ -1,18 +1,7 @@
-<div class="card">
-  <div class="card-header">
-    <span data-bind="text: container().label"></span>
-  </div>
-  <div class="card-body">
-    <table class="table table-striped table-hover">
-      <tr>
-        <th>Id</th>
-        <td data-bind="text: container().dockerId"></td>
-      </tr>
-
-      <tr>
-        <th>Image</th>
-        <td data-bind="text: container().dockerImage"></td>
-      </tr>
-    </table>
-  </div>
-</div>
+<tr>
+  <td data-bind="text: container().Names[0].slice(1)"></td>
+  <td data-bind="text: container().Id.slice(0, 10)"></td>
+  <td data-bind="text: container().Image"></td> 
+  <td data-bind="text: container().State"></td>
+  <td data-bind="text: container().Status"></td>
+</tr>

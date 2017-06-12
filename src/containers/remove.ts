@@ -37,7 +37,7 @@ function removeContainer(container: Concierge.Container, client: any) {
   return promise
 }
 
-function deleteFromDatabase(container: Concierge.Container, deleteFromDb: boolean): Promise<any> {
+function deleteFromDatabase(container: Concierge.Container, deleteFromDb: boolean) {
   if (!deleteFromDb) {
     return Promise.resolve(true)
   }
