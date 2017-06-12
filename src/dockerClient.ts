@@ -1,4 +1,3 @@
-
 import DockerClient from 'dockerode-ts'
 
 export default function getDockerClient(host: Concierge.Host, timeout?: number) {
@@ -6,7 +5,7 @@ export default function getDockerClient(host: Concierge.Host, timeout?: number) 
     throw new Error(`Invalid host provided: must container field 'hostname' (Typeof ${typeof host})`)
   }
 
-  let dockerClient = new DockerClient({
+  const dockerClient = new DockerClient({
     host: host.hostname,
     port: host.dockerPort || 2375,
     protocol: 'http',
