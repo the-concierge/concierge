@@ -5,6 +5,7 @@ import * as path from 'path'
 import api from './api'
 import errorHandler from './error-handler'
 import menu from '../../front/components/menu'
+import v2Router from '../api'
 
 const app = express()
 const router = express.Router()
@@ -19,6 +20,8 @@ app.use(compression())
 app.use(bodyParser.json())
 
 router.use('/api', api)
+router.use('/v2', v2Router)
+
 app.use(router)
 
 const staticPath = path.resolve(__dirname, '..', '..', 'front')

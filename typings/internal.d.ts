@@ -225,11 +225,6 @@ declare module 'ssh2' {
   export = api;
 }
 
-declare module 'dockerode' {
-  const api: any;
-  export = api;
-}
-
 declare module 'tar-fs' {
   const api: {
     pack(directory: string, options?: any): NodeJS.ReadableStream;
