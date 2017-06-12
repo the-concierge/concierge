@@ -12,6 +12,11 @@ class StateManager {
     this.getHosts()
   }
 
+  /**
+   * TODO:
+   * Update objects instead of replacing them all
+   */
+
   getContainers = () =>
     fetch('/v2/hosts/containers')
       .then(res => res.json())
