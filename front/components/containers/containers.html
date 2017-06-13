@@ -9,7 +9,43 @@
     </tr>
   </thead>
   <tbody data-bind="foreach: containers">
+    <tr data-bind="click: function() { $parent.showModal($data) }">
       <!-- ko component: { name: 'ko-container', params: { container: $data } } -->
       <!-- /ko -->
+    </tr>
   </tbody>
 </table>
+
+<div class="modal" data-bind="css: { active: modalActive }">
+  <div class="modal-overlay" data-bind="click: hideModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
+      <div class="modal-title" data-bind="text: modalName"></div>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <div class="container">
+          <div class="columns">
+
+            <div class="column col-2"><b>Image</b></div>
+            <div class="column col-10" data-bind="text: modalContainer().Image"></div>
+
+            <div class="column col-2"><b>State</b></div>
+            <div class="column col-10" data-bind="text: modalContainer().State"></div>
+
+            <div class="column col-2"><b>Status</b></div>
+            <div class="column col-10" data-bind="text: modalContainer().Status"></div>
+          </div>
+        </div>
+        <!-- content here -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="btn btn-md" data-bind="visible: showStopButton">Stop</div>
+      <div class="btn btn-md" data-bind="visible: showStartButton">Start</div>
+      <div class="btn btn-md">Pause</div>
+      <div class="btn btn-md">Delete</div>
+    </div>
+  </div>
+</div>

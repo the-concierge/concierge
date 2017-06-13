@@ -8,11 +8,10 @@ import * as fs from 'fs'
 import * as path from 'path'
 import initDatabase from './data/init'
 import startProxying from './proxy'
-import startServer from './server/start'
-import { start as startSockets } from './events/server'
+import startServer from './server'
 import updateContainerPorts from './hosts/updatePorts'
-import watchContainers from './events/containers'
 import watchHosts from './events/hosts'
+import watchContainers from './api/stats/containers'
 import { initialise as listenToDockerHosts } from './info'
 import { initialise as initConfig } from './configurations/get'
 
@@ -37,9 +36,6 @@ async function start() {
 
   // Start the web server
   await startServer()
-
-  // Start the web socket listener
-  await startSockets()
 
   // Listen for Performance (memory and CPU) and Docker events on all Containers
   await watchContainers()

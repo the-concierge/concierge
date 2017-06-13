@@ -6,9 +6,28 @@ import api from './api'
 import errorHandler from './error-handler'
 import menu from '../../front/components/menu'
 import v2Router from '../api'
+import * as http from 'http'
+import * as io from 'socket.io'
 
 const app = express()
+
+export const server = http.createServer(app)
+
+export const socket = io(server)
+
 const router = express.Router()
+
+export default function start() {
+  return new Promise((resolve, reject) => {
+    const port = process.env.PORT || 3141
+    server.listen(port, err => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(port)
+    })
+  })
+}
 
 /**
  * TODO
@@ -39,5 +58,3 @@ app.use('/', (_, res) => {
 })
 
 app.use(errorHandler)
-
-export default app

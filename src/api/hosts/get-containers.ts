@@ -21,6 +21,8 @@ export const getAll: RequestHandler = async (req, res) => {
 
 async function getContainers(host: Concierge.Host) {
   const client = getClient(host)
-  const containers = await client.listContainers()
+  const containers = await client.listContainers({
+    all: 1
+  })
   return containers
 }

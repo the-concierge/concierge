@@ -1,5 +1,6 @@
 import * as events from 'events'
-import { server as socket } from '../events/server'
+import { socket } from '../server'
+
 const emitter = new events.EventEmitter()
 
 export function container(subdomain: string, event: any) {

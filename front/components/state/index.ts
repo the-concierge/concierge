@@ -1,5 +1,8 @@
 import * as ko from 'knockout'
 import { ContainerInfo } from 'dockerode'
+import * as io from 'socket.io-client'
+
+const socket = io()
 
 class StateManager {
   containers = ko.observableArray<ContainerInfo>([])
@@ -10,6 +13,10 @@ class StateManager {
   constructor() {
     this.getContainers()
     this.getHosts()
+
+    socket.on('stats', event => {
+      // TODO: Implement stats handler
+    })
   }
 
   /**
