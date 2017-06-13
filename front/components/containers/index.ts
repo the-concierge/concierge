@@ -1,5 +1,4 @@
-import { ContainerInfo } from 'dockerode'
-import state from '../state'
+import state, { Container } from '../state'
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import './container'
@@ -9,7 +8,7 @@ class Containers {
 
   modalActive = ko.observable(false)
 
-  modalContainer = ko.observable<ContainerInfo>({
+  modalContainer = ko.observable<Container>({
     Host: '',
     Id: '',
     Names: [],
@@ -26,7 +25,7 @@ class Containers {
   showStartButton = ko.computed(() => this.modalContainer().State === 'exited')
   showStopButton = ko.computed(() => this.modalContainer().State === 'running')
 
-  showModal = (container: ContainerInfo) => {
+  showModal = (container: Container) => {
     this.modalContainer(container)
     this.modalActive(true)
   }
