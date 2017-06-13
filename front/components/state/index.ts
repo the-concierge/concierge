@@ -12,7 +12,7 @@ export type Stats = {
   mbOut: string
 }
 
-export type Container = ContainerInfo & { stats: Stats }
+export type Container = ContainerInfo & { stats: Stats } & { concierge: { hostId: string } }
 
 class StateManager {
   containers = ko.observableArray<Container>([])

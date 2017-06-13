@@ -24,5 +24,11 @@ async function getContainers(host: Concierge.Host) {
   const containers = await client.listContainers({
     all: 1
   })
+
+  containers.forEach(container => {
+    container['concierge'] = {
+      hostId: host.id
+    }
+  })
   return containers
 }
