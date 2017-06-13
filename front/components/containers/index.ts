@@ -25,6 +25,26 @@ class Containers {
   showStartButton = ko.computed(() => this.modalContainer().State === 'exited')
   showStopButton = ko.computed(() => this.modalContainer().State === 'running')
 
+  /**
+   * TODO:
+   * - Add UI feedback for container control
+   * - Remove deleted containers somehow? If they don't appear in 'getContainers', just remove them?
+   */
+
+  stopContainer = () => {
+    const container = this.modalContainer()
+    const route = `/v2/containers/${container.Id}/host/${container.concierge.hostId}`
+    return fetch(route)
+      .then(res => res.json())
+  }
+
+  startContainer = () => {
+    const container = this.modalContainer()
+    const route = `/v2/containers/${container.Id}/host/${container.concierge.hostId}`
+    return fetch(route)
+      .then(res => res.json())
+  }
+
   showModal = (container: Container) => {
     this.modalContainer(container)
     this.modalActive(true)

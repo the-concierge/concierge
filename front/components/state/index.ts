@@ -24,6 +24,8 @@ class StateManager {
     this.getContainers()
     this.getHosts()
 
+    setInterval(() => this.getContainers(), 5000)
+
     socket.on('stats', (event: ConciergeEvent) => {
       const container = this.containers().find(container => container.Id === event.name)
       if (!container) {
@@ -63,8 +65,18 @@ class StateManager {
     fetch('/v2/hosts/containers')
       .then(res => res.json())
       .then(containers => {
-        this.containers.destroyAll()
+        const stateContainers = this.containers()
         containers.forEach(container => {
+          const existing = stateContainers.find(c => c.Id === container.Id)
+          if (existing) {
+            const newContainer = { ...existing }
+            newContainer.State = container.State
+            newContainer.Status = container.Status
+            newContainer.stats = existing.stats
+            this.containers.replace(existing, newContainer)
+            return
+          }
+
           const stats: Stats = {
             cpu: '...',
             memory: '...',
@@ -73,8 +85,8 @@ class StateManager {
           }
 
           container.stats = stats
+          this.containers.push(container)
         })
-        this.containers.push(...containers)
       })
 
   getHosts = () => {
