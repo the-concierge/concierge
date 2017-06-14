@@ -1,3 +1,7 @@
+## _This is currently under-going a large refactor_
+Current progress is being tracked in `REWRITE.MD`  
+The original, pre-refactor state is available on the `master` branch
+
 # Concierge
 
 Docker orchestration with Node and TypeScript
