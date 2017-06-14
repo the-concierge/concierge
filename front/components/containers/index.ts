@@ -24,6 +24,8 @@ class Containers {
 
   showStartButton = ko.computed(() => this.modalContainer().State === 'exited')
   showStopButton = ko.computed(() => this.modalContainer().State === 'running')
+  containerWaiting = ko.observable(false)
+  buttonLoading = ko.observable('')
 
   /**
    * TODO:
@@ -31,18 +33,34 @@ class Containers {
    * - Remove deleted containers somehow? If they don't appear in 'getContainers', just remove them?
    */
 
-  stopContainer = () => {
-    const container = this.modalContainer()
-    const route = `/v2/containers/${container.Id}/host/${container.concierge.hostId}`
-    return fetch(route)
-      .then(res => res.json())
+  loading = (button: string) => {
+    this.buttonLoading(button)
+    this.containerWaiting(true)
   }
 
-  startContainer = () => {
+  resetButtons = () => {
+    this.buttonLoading('')
+    this.containerWaiting(false)
+  }
+
+  stopContainer = async () => {
     const container = this.modalContainer()
-    const route = `/v2/containers/${container.Id}/host/${container.concierge.hostId}`
-    return fetch(route)
-      .then(res => res.json())
+    const route = `/v2/containers/${container.Id}/stop/${container.concierge.hostId}`
+
+    this.loading('stop')
+    const res = await fetch(route)
+    this.resetButtons()
+    return res.json()
+  }
+
+  startContainer = async () => {
+    const container = this.modalContainer()
+    const route = `/v2/containers/${container.Id}/start/${container.concierge.hostId}`
+
+    this.loading('start')
+    const res = await fetch(route)
+    this.resetButtons()
+    return res.json()
   }
 
   showModal = (container: Container) => {
@@ -51,6 +69,7 @@ class Containers {
   }
 
   hideModal = () => this.modalActive(false)
+
 }
 
 const viewModel = new Containers()

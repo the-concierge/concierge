@@ -65,8 +65,10 @@ class StateManager {
     fetch('/v2/hosts/containers')
       .then(res => res.json())
       .then(containers => {
+        const seenContainers: string[] = []
         const stateContainers = this.containers()
         containers.forEach(container => {
+          seenContainers.push(container.Id)
           const existing = stateContainers.find(c => c.Id === container.Id)
           if (existing) {
             const newContainer = { ...existing }
@@ -87,6 +89,9 @@ class StateManager {
           container.stats = stats
           this.containers.push(container)
         })
+
+        // Remove every unseen container as it's probably been deleted
+        this.containers.remove(c => seenContainers.every(s => s !== c.Id))
       })
 
   getHosts = () => {

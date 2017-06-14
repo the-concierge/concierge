@@ -48,10 +48,20 @@
       </div>
     </div>
     <div class="modal-footer">
-      <div class="btn btn-md" data-bind="visible: showStopButton, click: stopContainer">Stop</div>
-      <div class="btn btn-md" data-bind="visible: showStartButton, click: startContainer">Start</div>
-      <div class="btn btn-md">Pause</div>
-      <div class="btn btn-md">Delete</div>
+      <button class="btn btn-md" data-bind="
+        visible: showStopButton,
+        click: stopContainer,
+        enable: containerWaiting"
+      >Stop</button>
+
+      <button class="btn btn-md" data-bind="
+        visible: showStartButton,
+        click: startContainer,
+        enable: containerWaiting"
+      >Start</button>
+
+      <button class="btn btn-md">Pause</button>
+      <button class="btn btn-md">Delete</button>
     </div>
   </div>
 </div>
