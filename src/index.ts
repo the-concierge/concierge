@@ -10,7 +10,7 @@ import initDatabase from './data/init'
 import startProxying from './proxy'
 import startServer from './server'
 import updateContainerPorts from './hosts/updatePorts'
-import watchHosts from './events/hosts'
+import watchHosts from './api/stats/hosts'
 import watchContainers from './api/stats/containers'
 import { initialise as listenToDockerHosts } from './info'
 import { initialise as initConfig } from './configurations/get'
@@ -48,7 +48,6 @@ async function start() {
 
   // Get the all Container's exposed port number and store it in the database
   await updateContainerPorts()
-  log.info('Successfully updated all container ports')
 
   // Monitor the status of all Hosts
   await listenToDockerHosts()

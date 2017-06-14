@@ -8,14 +8,24 @@ class Containers {
 
   modalActive = ko.observable(false)
 
-  modalContainer = ko.observable<Container>({
-    Host: '',
-    Id: '',
-    Names: [],
-    Image: '',
-    State: '',
-    Status: ''
-  } as any)
+  currentContainer = ko.observable<string | undefined>()
+
+  modalContainer = ko.computed(() => {
+    const id = this.currentContainer()
+    if (!id) {
+      return {
+        Host: '',
+        Id: '',
+        Names: [],
+        Image: '',
+        State: '',
+        Status: ''
+      } as any
+    }
+
+    return this.containers().find(c => c.Id === id)
+  })
+
   modalName = ko.computed(() => {
     const container = this.modalContainer()
     const names = container.Names || []
@@ -33,8 +43,7 @@ class Containers {
    * - Remove deleted containers somehow? If they don't appear in 'getContainers', just remove them?
    */
 
-  loading = (button: string) => {
-    this.buttonLoading(button)
+  loading = () => {
     this.containerWaiting(true)
   }
 
@@ -43,33 +52,27 @@ class Containers {
     this.containerWaiting(false)
   }
 
-  stopContainer = async () => {
+  modifyContainer = async (command: string) => {
     const container = this.modalContainer()
-    const route = `/v2/containers/${container.Id}/stop/${container.concierge.hostId}`
-
-    this.loading('stop')
+    const route = `/v2/containers/${container.Id}/${command}/${container.concierge.hostId}`
+    this.loading()
     const res = await fetch(route)
     this.resetButtons()
     return res.json()
   }
 
-  startContainer = async () => {
-    const container = this.modalContainer()
-    const route = `/v2/containers/${container.Id}/start/${container.concierge.hostId}`
-
-    this.loading('start')
-    const res = await fetch(route)
-    this.resetButtons()
-    return res.json()
-  }
+  stopContainer = async () => this.modifyContainer('stop')
+  startContainer = async () => this.modifyContainer('start')
+  removeContainer = async () => this.modifyContainer('remove')
+    .then(() => this.currentContainer(''))
+    .then(() => this.hideModal())
 
   showModal = (container: Container) => {
-    this.modalContainer(container)
+    this.currentContainer(container.Id)
     this.modalActive(true)
   }
 
   hideModal = () => this.modalActive(false)
-
 }
 
 const viewModel = new Containers()

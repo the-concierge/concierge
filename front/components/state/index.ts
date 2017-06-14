@@ -44,7 +44,8 @@ class StateManager {
       const cpuPercent = analysis.common.round((x / (x + y) * 100), 2)
       container.stats.cpu = cpuPercent.toString() + '%'
 
-      const eth0 = event.event.networks['eth0']
+      const networks = event.event.networks || {}
+      const eth0 = networks['eth0']
       if (eth0) {
         container.stats.mbIn = analysis.common.round(eth0.rx_bytes / 1024 / 1024, 2) + 'MB'
         container.stats.mbOut = analysis.common.round(eth0.tx_bytes / 1024 / 1024, 2) + 'MB'

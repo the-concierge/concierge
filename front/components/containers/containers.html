@@ -51,17 +51,16 @@
       <button class="btn btn-md" data-bind="
         visible: showStopButton,
         click: stopContainer,
-        enable: containerWaiting"
+        disable: containerWaiting"
       >Stop</button>
 
       <button class="btn btn-md" data-bind="
         visible: showStartButton,
         click: startContainer,
-        enable: containerWaiting"
+        disable: containerWaiting"
       >Start</button>
 
-      <button class="btn btn-md">Pause</button>
-      <button class="btn btn-md">Delete</button>
+      <button class="btn btn-md" data-bind="disable: containerWaiting, click: removeContainer">Remove</button>
     </div>
   </div>
 </div>
