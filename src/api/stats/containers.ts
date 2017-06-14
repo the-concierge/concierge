@@ -1,8 +1,7 @@
 import { Readable } from 'stream'
 import * as getHosts from '../hosts/db'
-import { ContainerInfo } from 'dockerode'
 import docker from '../docker'
-import * as emitter from '../../events/emitter'
+import * as emitter from './emitter'
 
 const containerStats: { [id: string]: string } = {}
 
@@ -11,31 +10,34 @@ export default async function monitorAll() {
 
   for (const host of hosts) {
     const client = docker(host)
-
     const containers = await client.listContainers()
 
     for (const container of containers) {
-      containerStats[container.Id] = ''
-
-      client.getContainer(container.Id)
-        .stats((err, stream: Readable) => {
-          log.info(`Monitoring ${container.Id.slice(0, 10)}`)
-          stream.on('data', (data: Buffer) => parseData(container, data))
-        })
-
+      watchContainer(host, container.Id)
     }
   }
 }
 
-function parseData(container: ContainerInfo, buffer: Buffer) {
-  const preStats = containerStats[container.Id]
+export function watchContainer(host: Concierge.Host, containerId: string) {
+  const client = docker(host)
+  containerStats[containerId] = ''
+
+  client.getContainer(containerId)
+    .stats((err, stream: Readable) => {
+      log.info(`[${containerId.slice(0,10)}] Monitoring container`)
+      stream.on('data', (data: Buffer) => parseData(containerId, data))
+    })
+}
+
+function parseData(containerId: string, buffer: Buffer) {
+  const preStats = containerStats[containerId]
   const stats = preStats + buffer.toString()
 
   try {
     const json = JSON.parse(stats)
-    emitter.containerStats(container.Id, json)
-    containerStats[container.Id] = ''
+    emitter.containerStats(containerId, json)
+    containerStats[containerId] = ''
   } catch (_) {
-    containerStats[container.Id] = stats
+    containerStats[containerId] = stats
   }
 }
