@@ -8,6 +8,6 @@ router.get('/', hosts.getAll)
 router.get('/containers', containers.getAll)
 
 router.get('/:id', hosts.getOne)
-router.get('/containers/:id', containers.getOne)
+router.get('/:id/containers', containers.getOne)
 
 export default router
