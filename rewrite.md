@@ -1,0 +1,30 @@
+# Features to re-implement
+
+- Containers
+  - Create on specific host
+  - Replace image (re-create container with volume using different image)
+  - View per host
+  - Fork
+  - Create with volume
+  - Download volume
+  - Inject volume
+  - Port publishing
+  - Run options
+  - Proxying
+    - [containerPort].[label].[hostname]:[proxyPort]
+    - E.g. 80.foo.my-host.com:5926
+- Hosts
+  - Create
+  - Update
+  - Delete
+  - Control Docker host via SSH
+- Applications
+  - Create
+  - Update
+  - Delete
+  - Create image from branch/tag
+- Configuration
+  - Update
+- Images
+  - Read
+  - Delete
