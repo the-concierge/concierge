@@ -5,7 +5,7 @@ class Menu {
   items = ko.observableArray([
     { name: 'Containers', component: 'ko-containers', url: ['/containers', '/'] },
     { name: 'Hosts', component: 'ko-hosts', url: ['/hosts'] },
-    { name: 'Images', component: 'ko-not-found', url: ['/images'] },
+    { name: 'Images', component: 'ko-images', url: ['/images'] },
     { name: 'Applications', component: 'ko-not-found', url: ['/applications'] },
     { name: 'Concierges', component: 'ko-not-found', url: ['/concierges'] },
     { name: 'Configuration', component: 'ko-not-found', url: ['/configuration'] }

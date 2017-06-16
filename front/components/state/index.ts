@@ -1,5 +1,5 @@
 import * as ko from 'knockout'
-import { ContainerInfo } from 'dockerode'
+import { ContainerInfo, ImageInfo } from 'dockerode'
 import * as io from 'socket.io-client'
 import * as analysis from 'analysis'
 
@@ -12,9 +12,13 @@ export type Stats = {
   mbOut: string
 }
 
-export type Container = ContainerInfo & { stats: Stats } & { concierge: { hostId: string } }
+type HostId = { concierge: { hostId: number } }
+
+export type Container = ContainerInfo & HostId & { stats: Stats }
+export type Image = ImageInfo & HostId & { name: string }
 
 class StateManager {
+  images = ko.observableArray<Image>([])
   containers = ko.observableArray<Container>([])
   hosts = ko.observableArray<Concierge.APIHost>([])
   concierges = ko.observableArray<Concierge.Concierge>([])
@@ -23,6 +27,7 @@ class StateManager {
   constructor() {
     this.getContainers()
     this.getHosts()
+    this.getImages()
 
     setInterval(() => this.getContainers(), 5000)
 
@@ -35,14 +40,14 @@ class StateManager {
       const memStats = event.event.memory_stats
       const memory = (memStats.usage / 1024 / 1024) / (memStats.limit / 1024 / 1024) * 100
       const memPercent = analysis.common.round(memory, 2)
-      container.stats.memory = memPercent.toString() + '%'
+      container.stats.memory = isNaN(memPercent) ? '...' : memPercent.toString() + '%'
 
       const postCpuStats = event.event.cpu_stats
       const preCpuStats = event.event.precpu_stats
       const x = preCpuStats.cpu_usage.total_usage - postCpuStats.cpu_usage.total_usage
       const y = preCpuStats.system_cpu_usage - postCpuStats.system_cpu_usage
       const cpuPercent = analysis.common.round((x / (x + y) * 100), 2)
-      container.stats.cpu = cpuPercent.toString() + '%'
+      container.stats.cpu = isNaN(cpuPercent) ? '...' : cpuPercent.toString() + '%'
 
       const networks = event.event.networks || {}
       const eth0 = networks['eth0']
@@ -103,6 +108,25 @@ class StateManager {
         this.hosts.push(...hosts)
       })
   }
+
+  getImages = () => {
+    fetch('/v2/images')
+      .then(res => res.json())
+      .then(images => {
+        this.images.destroyAll()
+
+        for (const image of images) {
+          image.name = getTag(image.RepoTags)
+        }
+
+        this.images.push(...images.filter(image => image.name !== undefined))
+      })
+  }
+}
+
+function getTag(tags: string[]) {
+  const tag = tags.find(tag => tag !== '<none>:<none>')
+  return tag
 }
 
 const state = new StateManager()
