@@ -13,9 +13,18 @@
     </tr>
   </thead>
   <tbody data-bind="foreach: containers">
-    <tr data-bind="click: function() { $parent.showModal($data) }">
-      <!-- ko component: { name: 'ko-container', params: { container: $data } } -->
-      <!-- /ko -->
+    <tr>
+      <td>
+        <a data-bind="text: Names[0].slice(1), click: function() { $parent.showModal($data) }" style="cursor: pointer"></a>
+      </td>
+      <td data-bind="text: Id.slice(0, 10)"></td>
+      <td data-bind="text: Image"></td>
+      <td data-bind="text: State"></td>
+      <td data-bind="text: Status"></td>
+      <td data-bind="text: stats.cpu"></td>
+      <td data-bind="text: stats.memory"></td>
+      <td data-bind="text: stats.mbIn"></td>
+      <td data-bind="text: stats.mbOut"></td>
     </tr>
   </tbody>
 </table>
@@ -51,15 +60,12 @@
       <button class="btn btn-md" data-bind="
         visible: showStopButton,
         click: stopContainer,
-        disable: containerWaiting"
-      >Stop</button>
+        disable: containerWaiting">Stop</button>
 
       <button class="btn btn-md" data-bind="
         visible: showStartButton,
         click: startContainer,
-        disable: containerWaiting"
-      >Start</button>
-
+        disable: containerWaiting">Start</button>
       <button class="btn btn-md" data-bind="disable: containerWaiting, click: removeContainer">Remove</button>
     </div>
   </div>

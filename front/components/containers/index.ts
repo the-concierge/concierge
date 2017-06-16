@@ -68,7 +68,7 @@ class Containers {
     .then(() => this.hideModal())
 
   showModal = (container: Container) => {
-    this.currentContainer(container.Id)
+    this.currentContainer(ko.unwrap(container).Id)
     this.modalActive(true)
   }
 
