@@ -1,7 +1,6 @@
 import state, { Container } from '../state'
 import * as ko from 'knockout'
 import * as fs from 'fs'
-import './container'
 
 class Containers {
   containers = state.containers
