@@ -3,7 +3,7 @@ import validate from './validate'
 import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key } = req.body
+  const { repository, name, key } = req.query
 
   const body = { repository, name, key }
   const errors = validate(body)

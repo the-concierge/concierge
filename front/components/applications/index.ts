@@ -17,28 +17,26 @@ class Applications {
     this.key('')
     this.modalActive(true)
   }
-  closeModal = () => this.modalActive(false)
 
-  createImage = async () => {
-    const body = {
-      repository: this.repository(),
-      name: this.name(),
-      key: this.key()
-    }
+  hideModal = () => this.modalActive(false)
 
-    const result = await fetch('/api/applications', {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'applicaton/json'
-      }
+  createApplication = async () => {
+    const repository = this.repository()
+    const name = this.name()
+    const key = this.key()
+
+    const result = await fetch(`/api/applications?name=${name}&repository=${repository}&key=${key}`, {
+      method: 'POST'
     })
 
     if (result.status === 200) {
-      this.closeModal()
       state.getApplications()
+      state.toast.success('Successfully created application')
+      this.hideModal()
       return
     }
+    const msg = await result.json()
+    state.toast.error(`Failed to create application: ${msg.join(',')}`)
   }
 }
 

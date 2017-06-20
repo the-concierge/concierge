@@ -21,10 +21,10 @@
 </table>
 
 <div class="modal" data-bind="css: { active: modalActive }">
-  <div class="modal-overlay" data-bind="click: closeModal"></div>
+  <div class="modal-overlay" data-bind="click: hideModal"></div>
   <div class="modal-container">
     <div class="modal-header">
-      <button class="btn btn-clear float-right" data-bind="click: closeModal"></button>
+      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
       <div class="modal-title">Create Application</div>
     </div>
     <div class="modal-body">
@@ -48,7 +48,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-md">Save</button>
+      <button class="btn btn-md" data-bind="click: createApplication">Save</button>
     </div>
   </div>
 </div>
