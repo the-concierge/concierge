@@ -9,8 +9,11 @@
             "dom"
         ]
     },
-    "exclude": [
-        "node_modules",
-        "repositories"
+    "include": [
+        "src/*.ts",
+        "src/api/**/*.ts",
+        "front/**/*.ts",
+        "src/data/*.ts",
+        "typings/**/*.ts"
     ]
 }
