@@ -43,14 +43,6 @@ declare module Concierge {
     timestamp: number;
   }
 
-  interface Variant {
-    id?: number;
-    name: string;
-    application: number | string;
-    buildState: string;
-    buildTime: number;
-  }
-
   interface Registry {
     url: string;
     getUntaggedImage: (application: Application) => string;
@@ -58,24 +50,14 @@ declare module Concierge {
   }
 
   interface Configuration {
-    id?: number;
     name: string;
     conciergePort: number;
     proxyHostname?: string;
     proxyIp?: string;
-    subdomainBlacklist: string;
     httpPort: number;
-    httpsPort: number;
-    useProductionCertificates: number;
-    certificateEmail: string;
-    useHttps: number;
     debug: number;
-    containerMinimumUptime: number;
-    containerMaximumRetries: number;
     heartbeatFrequency: number;
     heartbeatBinSize: number;
-    isActive: number;
-
     dockerRegistry?: string;
   }
 
@@ -83,24 +65,11 @@ declare module Concierge {
     id?: number;
     name: string;
 
-    /** github or gitlab */
-    gitApiType: string;
-
     /** {namespace}/{repository} */
-    gitRepository: string;
-
-    /** For fetching tags */
-    gitPrivateToken: string;
+    repository: string;
 
     /** For fetching/cloning the repository */
-    gitPrivateKey: string;
-
-    /** E.g. namespace/$TAG:latest or projectName:$TAG */
-    dockerNamespace: string;
-
-    /** JSON array of strings ("key=value") */
-    variables: string;
-
+    key: string;
   }
 
   interface NewContainer {
@@ -114,28 +83,6 @@ declare module Concierge {
 
     /** JSON representation of Array<string> */
     variables: string;
-}
-
-  interface Container {
-    id?: number;
-    dockerId: string;
-    label: string;
-    port: number;
-    variant: string;
-    subdomain: string;
-    isProxying: number;
-    host: string;
-    applicationId: number;
-    applicationName?: string;
-    dockerImage: string;
-    /** JSON representation of Array<string> */
-    variables: string;
-  }
-
-  interface APIContainer extends Container {
-    memory: string;
-    cpu: string;
-    responseTime: string;
   }
 
   interface Host {
@@ -147,14 +94,6 @@ declare module Concierge {
     sshUsername: string;
     // volumesPath: string;
     privateKey?: string;
-  }
-
-  interface APIHost extends Host {
-    ip: string;
-    dockerVersion: string;
-    operatingSystem: string;
-    containerCount: number;
-    storageSpace: string;
   }
 
   interface Entity {
@@ -202,12 +141,6 @@ declare module Concierge {
     variant: string;
     date: string;
   }
-
-  interface SaveRequest<T> {
-    inserts: T[];
-    updates: T[];
-    deletes: T[];
-  }
 }
 
 declare module 'ip' {
@@ -245,15 +178,15 @@ declare module 'rimraf' {
 }
 
 declare module 'compression' {
-    namespace api { }
-    function api(): any;
-    export = api;
+  namespace api { }
+  function api(): any;
+  export = api;
 }
 
 declare module 'body-parser' {
-    namespace api {
-        function json(): any
-    }
-    function api(): any;
-    export = api;
+  namespace api {
+    function json(): any
+  }
+  function api(): any;
+  export = api;
 }
