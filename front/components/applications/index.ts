@@ -15,6 +15,7 @@ class Applications {
     this.repository('')
     this.name('')
     this.key('')
+    this.modalActive(true)
   }
   closeModal = () => this.modalActive(false)
 
