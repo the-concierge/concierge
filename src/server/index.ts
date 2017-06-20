@@ -2,8 +2,6 @@ import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as path from 'path'
-import api from './api'
-import errorHandler from './error-handler'
 import menu from '../../front/components/menu'
 import v2Router from '../api'
 import * as http from 'http'
@@ -38,8 +36,7 @@ export default function start() {
 app.use(compression())
 app.use(bodyParser.json())
 
-router.use('/api', api)
-router.use('/v2', v2Router)
+router.use('/api', v2Router)
 
 app.use(router)
 
@@ -51,10 +48,8 @@ for (const item of menu.items()) {
 app.use(express.static(staticPath))
 
 // 404 handler
-app.use('/', (_, res) => {
+app.use('/api', (_, res) => {
   res.status(404)
   res.sendFile(path.resolve(staticPath, 'index.html'))
   return
 })
-
-app.use(errorHandler)

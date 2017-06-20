@@ -1,12 +1,11 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 
 class Menu {
   items = ko.observableArray([
     { name: 'Containers', component: 'ko-containers', url: ['/containers', '/'] },
     { name: 'Hosts', component: 'ko-hosts', url: ['/hosts'] },
     { name: 'Images', component: 'ko-images', url: ['/images'] },
-    { name: 'Applications', component: 'ko-not-found', url: ['/applications'] },
+    { name: 'Applications', component: 'ko-applications', url: ['/applications'] },
     { name: 'Concierges', component: 'ko-not-found', url: ['/concierges'] },
     { name: 'Configuration', component: 'ko-not-found', url: ['/configuration'] }
   ])
@@ -51,12 +50,5 @@ class Menu {
 }
 
 const menu = new Menu()
-
-ko.components.register('ko-menu', {
-  template: fs.readFileSync(`${__dirname}/menu.html`).toString(),
-  viewModel: {
-    createViewModel: () => menu
-  }
-})
 
 export default menu

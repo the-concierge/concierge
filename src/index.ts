@@ -7,12 +7,9 @@ global['log'] = log
 import * as fs from 'fs'
 import * as path from 'path'
 import initDatabase from './data/init'
-import startProxying from './proxy'
 import startServer from './server'
-import updateContainerPorts from './hosts/updatePorts'
 import watchHosts from './api/stats/hosts'
 import watchContainers from './api/stats/containers'
-import { initialise as listenToDockerHosts } from './info'
 import { initialise as initConfig } from './configurations/get'
 
 async function start() {
@@ -44,13 +41,10 @@ async function start() {
   await watchHosts()
 
   // Create the proxy server that forwards requests from [subdomain].[proxy] to the container
-  await startProxying()
+  // await startProxying()
 
   // Get the all Container's exposed port number and store it in the database
-  await updateContainerPorts()
-
-  // Monitor the status of all Hosts
-  await listenToDockerHosts()
+  // await updateContainerPorts()
 }
 
 start()

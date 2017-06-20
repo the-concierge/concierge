@@ -1,10 +1,31 @@
-<div class="container">
-  <div class="columns">
-    <div class="column col-12">
-      <ko-menu></ko-menu>
-    </div>
+<div class="columns">
+  <div class="column col-12">
+    <header class="navbar">
+      <section class="navbar-section">
+        <span style="margin-right: 5px; margin-top: 15px"><h5><strong>Concierge</strong></h5></span>
+        <ul class="tab" data-bind="foreach: items">
+          <li class="tab-item" data-bind="css: { active: $parent.item().name === name }">
+            <ko-link class="btn btn-link" params="href: url[0]">
+              <span data-bind="text: name"></span>
+            </ko-link>
+          </li>
+        </ul>
+      </section>
+      <section class="navbar-center"></section>
+    </header>
   </div>
+</div>
+<div class="container">
   <div data-bind="component: component"></div>
+</div>
+
+<div style="position: fixed; bottom: 20px; right: 50px">
+  <!-- ko foreach: toasts -->
+  <div class="toast" data-bind="css: cls">
+    <button class="btn btn-clear float-right" data-bind="click: remove"></button>
+    <span data-bind="text: msg"></span>
+  </div>
+  <!-- /ko -->
 </div>
 
 <style>
@@ -13,7 +34,7 @@
     padding-left: 10px;
     padding-right: 10px;
   }
-  
+
   body {
     position: absolute;
     top: 0px;

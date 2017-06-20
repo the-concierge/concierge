@@ -1,28 +1,30 @@
 import * as ko from 'knockout'
-import { ContainerInfo, ImageInfo } from 'dockerode'
 import * as io from 'socket.io-client'
-import * as analysis from 'analysis'
+import { Image, Container, ConciergeEvent, Stats } from './types'
+import updateContainer from './update'
 
-const socket = io()
-
-export type Stats = {
-  memory: string
-  cpu: string
-  mbIn: string
-  mbOut: string
+export {
+  Image,
+  Container,
 }
 
-type HostId = { concierge: { hostId: number } }
-
-export type Container = ContainerInfo & HostId & { stats: Stats }
-export type Image = ImageInfo & HostId & { name: string }
+const socket = io()
 
 class StateManager {
   images = ko.observableArray<Image>([])
   containers = ko.observableArray<Container>([])
-  hosts = ko.observableArray<Concierge.APIHost>([])
+  hosts = ko.observableArray<Concierge.Host>([])
   concierges = ko.observableArray<Concierge.Concierge>([])
   registries = ko.observableArray<Concierge.Registry>([])
+  applications = ko.observableArray<Concierge.Application>([])
+
+  toasts = ko.observableArray<{ msg: string, cls: string, remove: () => void }>([])
+  toast = {
+    primary: (msg: string) => this.showToast('toast-primary', msg),
+    error: (msg: string) => this.showToast('toast-error', msg),
+    warn: (msg: string) => this.showToast('toast-warning', msg),
+    success: (msg: string) => this.showToast('toast-success', msg)
+  }
 
   constructor() {
     this.getContainers()
@@ -37,38 +39,20 @@ class StateManager {
         return
       }
 
-      const memStats = event.event.memory_stats
-      const memory = (memStats.usage / 1024 / 1024) / (memStats.limit / 1024 / 1024) * 100
-      const memPercent = analysis.common.round(memory, 2)
-      container.stats.memory = isNaN(memPercent) ? '...' : memPercent.toString() + '%'
-
-      const postCpuStats = event.event.cpu_stats
-      const preCpuStats = event.event.precpu_stats
-      const x = preCpuStats.cpu_usage.total_usage - postCpuStats.cpu_usage.total_usage
-      const y = preCpuStats.system_cpu_usage - postCpuStats.system_cpu_usage
-      const cpuPercent = analysis.common.round((x / (x + y) * 100), 2)
-      container.stats.cpu = isNaN(cpuPercent) ? '...' : cpuPercent.toString() + '%'
-
-      const networks = event.event.networks || {}
-      const eth0 = networks['eth0']
-      if (eth0) {
-        container.stats.mbIn = analysis.common.round(eth0.rx_bytes / 1024 / 1024, 2) + 'MB'
-        container.stats.mbOut = analysis.common.round(eth0.tx_bytes / 1024 / 1024, 2) + 'MB'
-      }
-
-      const newContainer = { ...container }
-
+      const newContainer = updateContainer(container, event)
       this.containers.replace(container, newContainer)
+
     })
   }
 
-  /**
-   * TODO:
-   * Update objects instead of replacing them all
-   */
+  showToast = (cls: string, msg: string, duration: number = 5000) => {
+    const toast = { msg, cls, remove: () => this.toasts.remove(toast) }
+    this.toasts.push(toast)
+    setTimeout(toast.remove, duration)
+  }
 
   getContainers = () =>
-    fetch('/v2/hosts/containers')
+    fetch('/api/hosts/containers')
       .then(res => res.json())
       .then(containers => {
         const seenContainers: string[] = []
@@ -101,7 +85,7 @@ class StateManager {
       })
 
   getHosts = () => {
-    fetch('/v2/hosts')
+    fetch('/api/hosts')
       .then(res => res.json())
       .then(hosts => {
         this.hosts.destroyAll()
@@ -110,7 +94,7 @@ class StateManager {
   }
 
   getImages = () => {
-    fetch('/v2/images')
+    fetch('/api/images')
       .then(res => res.json())
       .then(images => {
         this.images.destroyAll()
@@ -122,6 +106,15 @@ class StateManager {
         this.images.push(...images.filter(image => image.name !== undefined))
       })
   }
+
+  getApplications = () => {
+    fetch('/api/applications')
+      .then(res => res.json())
+      .then(applications => {
+        this.applications.destroyAll()
+        this.applications.push(...applications)
+      })
+  }
 }
 
 function getTag(tags: string[]) {
@@ -130,91 +123,5 @@ function getTag(tags: string[]) {
 }
 
 const state = new StateManager()
-
-interface ConciergeEvent {
-  event: ContainerEvent
-  name: string
-  type: string
-}
-
-interface ContainerEvent {
-  id: string
-  name: string
-  read: string
-  preread: string
-  cpu_stats: CpuStats
-  precpu_stats: CpuStats
-  memory_stats: MemoryStats
-  networks: {
-    [name: string]: {
-      rx_bytes: number
-      rx_dropped: number
-      rx_errors: number
-      rx_packets: number
-      tx_bytes: number
-      tx_dropped: number
-      tx_errors: number
-      tx_packets: number
-    }
-  }
-}
-
-interface CpuStats {
-  cpu_usage: {
-    percpu_usage: { [cpu: number]: number }
-    total_usage: number
-    usage_in_kernelmode: number
-    usage_in_usermode: number
-  }
-  online_cpus: number
-  system_cpu_usage: number
-  throttling_data: {
-    periods: number
-    throttled_periods: number
-    throttled_time: number
-  }
-}
-
-interface MemoryStats {
-  limit: number
-  max_usage: number
-  usage: number
-  stats: {
-    active_anon: number
-    active_file: number
-    cache: number
-    dirty: number
-    hierarchical_memory_limit: number
-    hierarchical_memsw_limit: number
-    inactive_anon: number
-    inactive_file: number
-    mapped_file: number
-    pgfault: number
-    pgmajfault: number
-    pgpgin: number
-    pgpgout: number
-    rss: number
-    rss_huge: number
-    swap: number
-    total_active_anon: number
-    total_active_file: number
-    total_cache: number
-    total_dirty: number
-    total_inactive_anon: number
-    total_inactive_file: number
-    total_mapped_file: number
-    total_pgfault: number
-    total_pgmajfault: number
-    total_pgpgin: number
-    total_pgpgout: number
-    total_rss: number
-    total_rss_huge: number
-    total_swap: number
-    total_unevictable: number
-    total_writeback: number
-    unevictable: number
-    writeback: number
-  }
-}
 
 export default state
