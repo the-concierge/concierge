@@ -24,7 +24,7 @@ export function watchContainer(host: Concierge.Host, containerId: string) {
 
   client.getContainer(containerId)
     .stats((err, stream: Readable) => {
-      log.info(`[${containerId.slice(0,10)}] Monitoring container`)
+      log.info(`[${containerId.slice(0, 10)}] Monitoring container`)
       stream.on('data', (data: Buffer) => parseData(containerId, data))
     })
 }

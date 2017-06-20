@@ -1,0 +1,54 @@
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Repository</th>
+      <th>
+        <button class="btn btn-md" data-bind="click: showModal">Create</button>
+      </th>
+    </tr>
+  </thead>
+  <tbody data-bind="foreach: applications">
+    <tr>
+      <td data-bind="text: hostname"></td>
+      <td data-bind="text: capacity"></td>
+      <td>
+        <button class="btn btn-md">Deploy</button>
+        <button class="btn btn-md">Remove</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="modal" data-bind="css: { active: modalActive }">
+  <div class="modal-overlay" data-bind="click: closeModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="btn btn-clear float-right" data-bind="click: closeModal"></button>
+      <div class="modal-title">Create Application</div>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <form>
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-input" type="text" data-bind="textInput: name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Repository</label>
+            <input class="form-input" type="text" data-bind="textInput: repository" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Key</label>
+            <textarea class="form-input" type="text" data-bind="textInput: key"></textarea>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-md">Save</button>
+    </div>
+  </div>
+</div>

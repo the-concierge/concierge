@@ -53,7 +53,7 @@ class Containers {
 
   modifyContainer = async (command: string) => {
     const container = this.modalContainer()
-    const route = `/v2/containers/${container.Id}/${command}/${container.concierge.hostId}`
+    const route = `/api/containers/${container.Id}/${command}/${container.concierge.hostId}`
     this.loading()
     const res = await fetch(route)
     this.resetButtons()

@@ -42,7 +42,7 @@ class Images {
     this.newContainer.envs.destroyAll()
     this.newContainer.volumes.destroyAll()
 
-    const info: ImageInspectInfo = await fetch(`/v2/images/${image.Id}/inspect/${image.concierge.hostId}`)
+    const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
       .then(res => res.json())
 
     const ports = getPorts(info)
