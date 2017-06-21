@@ -11,6 +11,8 @@ class Applications {
 
   modalActive = ko.observable(false)
 
+  refresh = () => state.getApplications()
+
   showModal = () => {
     this.repository('')
     this.name('')
@@ -30,7 +32,7 @@ class Applications {
     })
 
     if (result.status === 200) {
-      state.getApplications()
+      this.refresh()
       state.toast.success('Successfully created application')
       this.hideModal()
       return

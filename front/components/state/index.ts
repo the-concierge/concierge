@@ -30,6 +30,7 @@ class StateManager {
     this.getContainers()
     this.getHosts()
     this.getImages()
+    this.getApplications()
 
     setInterval(() => this.getContainers(), 5000)
 
