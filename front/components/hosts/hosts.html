@@ -3,12 +3,78 @@
     <tr>
       <th>Hostname</th>
       <th>Capacity</th>
+      <th>
+        <button class="btn btn-md" data-bind="click: showModal">Create Host</button>
+      </th>
     </tr>
   </thead>
   <tbody data-bind="foreach: hosts">
     <tr>
       <td data-bind="text: hostname"></td>
       <td data-bind="text: capacity"></td>
+      <td></td>
     </tr>
   </tbody>
 </table>
+
+<div class="modal" data-bind="css: { active: modalActive }">
+  <div class="modal-overlay" data-bind="click: hideModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
+      <div class="modal-title">Create Host</div>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <form>
+          <div class="form-group">
+            <label class="form-label">Hostname</label>
+            <input class="form-input" type="text" data-bind="textInput: name" placeholder="127.0.0.1" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Authorisation</label>
+            <label class="form-radio">
+              <input type="radio" value="key" data-bind="checked: displayAuth" />
+              <i class="form-icon" data-bind="click: useKey"></i>Key
+            </label>
+            <label class="form-radio">
+              <input type="radio" value="password" data-bind="checked: displayAuth" />
+              <i class="form-icon" data-bind="click: usePassword"></i>Password
+            </label>
+            <label class="form-radio">
+              <input type="radio" value="none" data-bind="checked: displayAuth" />
+              <i class="form-icon" data-bind="click: useNone"></i>None
+            </label>
+          </div>
+
+          <!-- ko if: isNone() === false -->
+          <div class="form-group">
+            <label class="form-label">Key</label>
+            <textarea class="form-input" type="text" data-bind="textInput: privateKey, visible: isKey"></textarea>
+            <input class="form-input" type="password" data-bind="textInput: password, visible: isPassword" />
+          </div>
+          <!-- /ko -->
+
+          <div class="form-group">
+            <label class="form-label">Container Capacity</label>
+            <input class="form-input" type="text" data-bind="textInput: capacity" placeholder="5" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">SSH Port</label>
+            <input class="form-input" type="text" data-bind="textInput: sshPort" placeholder="22" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Docker Port</label>
+            <input class="form-input" type="text" data-bind="textInput: dockerPort" placeholder="2375" />
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: createHost">Save</button>
+    </div>
+  </div>
+</div>
