@@ -19,6 +19,11 @@ export default async function monitorAll() {
 }
 
 export function watchContainer(host: Concierge.Host, containerId: string) {
+  if (containerStats[containerId] !== undefined) {
+    log.debug(`[${containerId.slice(0, 10)}] Already monitoring container`)
+    return
+  }
+
   const client = docker(host)
   containerStats[containerId] = ''
 
@@ -26,6 +31,9 @@ export function watchContainer(host: Concierge.Host, containerId: string) {
     .stats((err, stream: Readable) => {
       log.info(`[${containerId.slice(0, 10)}] Monitoring container`)
       stream.on('data', (data: Buffer) => parseData(containerId, data))
+      stream.on('close', () => log.info(`[${containerId.slice(0, 10)}] Stats stream closed`))
+      stream.on('end', () => log.info(`[${containerId.slice(0, 10)}] Stats stream ended`))
+      stream.on('error', (err) => log.info(`[${containerId.slice(0, 10)}] Stats stream errored: ${err}`) )
     })
 }
 

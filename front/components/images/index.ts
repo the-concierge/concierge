@@ -32,6 +32,8 @@ class Images {
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
 
+  refresh = () => state.getImages()
+
   configureImage = async (image: Image) => {
     this.modalImage(image)
     this.modalActive(true)

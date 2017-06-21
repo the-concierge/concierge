@@ -39,6 +39,7 @@ async function start() {
 
   // Listen for Docker events on all Hosts
   await watchHosts()
+  setInterval(() => watchHosts(), 5000)
 
   // Create the proxy server that forwards requests from [subdomain].[proxy] to the container
   // await startProxying()

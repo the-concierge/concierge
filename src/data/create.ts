@@ -23,6 +23,7 @@ export default async function create() {
 
 function configurationTable() {
   return db.schema.createTable('Configurations', tbl => {
+    tbl.text('name')
     tbl.integer('conciergePort').defaultTo(3141)
     tbl.text('proxyHostname').defaultTo('localhost')
     tbl.text('proxyIp').defaultTo('0.0.0.0')
