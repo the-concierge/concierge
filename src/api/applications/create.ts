@@ -9,7 +9,8 @@ const handler: RequestHandler = async (req, res) => {
   const errors = validate(body)
 
   if (errors.length) {
-    res.status(400).json(errors)
+    const message = errors.join(', ')
+    res.status(400).json({ message })
     return
   }
 

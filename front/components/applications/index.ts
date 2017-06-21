@@ -35,8 +35,8 @@ class Applications {
       this.hideModal()
       return
     }
-    const msg = await result.json()
-    state.toast.error(`Failed to create application: ${msg.join(',')}`)
+    const error = await result.json()
+    state.toast.error(`Failed to create application: ${error.message}`)
   }
 }
 

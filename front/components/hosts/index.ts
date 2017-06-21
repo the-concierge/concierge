@@ -10,20 +10,17 @@ class Hosts {
   capacity = ko.observable(5)
   privateKey = ko.observable('')
   password = ko.observable('')
+  username = ko.observable('')
   sshPort = ko.observable(22)
   dockerPort = ko.observable(2375)
 
-  displayAuth = ko.observable('none')
+  displayAuth = ko.observable('Password')
 
-  isPassword = ko.computed(() => this.displayAuth() === 'password')
-  isKey = ko.computed(() => this.displayAuth() === 'key')
-  isNone = ko.computed(() => this.displayAuth() === 'none')
+  isPassword = ko.computed(() => this.displayAuth() === 'Password')
+  isKey = ko.computed(() => this.displayAuth() === 'Key')
 
-  useNone = () => this.displayAuth('none') || true
-  useKey = () => this.displayAuth('key') || true
-  usePassword = () => this.displayAuth('password') || true
-
-
+  useKey = () => this.displayAuth('Key') || true
+  usePassword = () => this.displayAuth('Password') || true
 
   hideModal = () => {
     this.modalActive(false)
@@ -38,13 +35,42 @@ class Hosts {
     this.modalActive(true)
   }
 
-  createHost = () => {
+  createHost = async () => {
     const hostname = this.hostname()
     const capacity = this.capacity() || 5
+    const sshUsername = this.username()
     const sshPort = this.sshPort() || 22
     const dockerPort = this.dockerPort() || 2375
-    const key = this.privateKey()
-    const url = `/api/hosts?hostname=${hostname}&capacity=${capacity}&sshPort=${sshPort}&dockerPort=${dockerPort}&privateKey=${key}`
+    const key = this.displayAuth() === 'key'
+      ? this.privateKey()
+      : this.password()
+
+    const url = `/api/hosts`
+
+    const result = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        hostname,
+        capacity,
+        dockerPort,
+        sshPort,
+        sshUsername,
+        privateKey: key
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (result.status === 200) {
+      this.hideModal()
+      state.getHosts()
+      state.toast.success('Successfully created host')
+      return
+    }
+
+    const error = await result.json()
+    state.toast.error(`Failed to create host: ${error.message}`)
   }
 }
 
