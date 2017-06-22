@@ -49,3 +49,11 @@ async function start() {
 }
 
 start()
+
+process.on('unhandledRejection', err => {
+  log.error(err.message || err)
+
+  if (err.stack) {
+    log.error(err.stack)
+  }
+})
