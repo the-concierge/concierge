@@ -3,6 +3,8 @@
     <tr>
       <th>Hostname</th>
       <th>Capacity</th>
+      <th>SSH Port</th>
+      <th>Docker Port</th>
       <th>
         <button class="btn btn-md" data-bind="click: showModal">Create Host</button>
       </th>
@@ -12,7 +14,11 @@
     <tr>
       <td data-bind="text: hostname"></td>
       <td data-bind="text: capacity"></td>
-      <td></td>
+      <td data-bind="text: sshPort"></td>
+      <td data-bind="text: dockerPort"></td>
+      <td>
+        <button class="btn btn-md">Edit</button>
+      </td>
     </tr>
   </tbody>
 </table>
