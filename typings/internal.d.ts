@@ -62,14 +62,14 @@ declare module Concierge {
   }
 
   interface Application {
-    id?: number;
-    name: string;
+    id: number
+    name: string
 
     /** {namespace}/{repository} */
-    repository: string;
+    repository: string
 
     /** For fetching/cloning the repository */
-    key: string;
+    key: string
   }
 
   interface NewContainer {
