@@ -31,7 +31,11 @@ export default async function watchHosts() {
 }
 
 function handleHostEvent(host: Concierge.Host, rawEvent: string) {
-  const event: DockerEvent = JSON.parse(rawEvent)
+  const event = parseEvent(rawEvent)
+  if (!event) {
+    return
+  }
+
   const id = (event.id || 'Host').slice(0, 10)
   const status = (event.status || 'unknown').toLowerCase()
   log.info(`[${host.hostname}:${id}] Emitted '${event.Type}:${event.Action}'`)
@@ -42,6 +46,17 @@ function handleHostEvent(host: Concierge.Host, rawEvent: string) {
   const isContainer = id !== 'Host'
   if (isContainer && isStartEvent) {
     watchContainer(host, event.id)
+  }
+}
+
+function parseEvent(rawEvent: string) {
+  try {
+    const event: DockerEvent = JSON.parse(rawEvent)
+    return event
+  } catch (ex) {
+    log.warn(`Failed to parse Host Event`)
+    log.debug(rawEvent)
+    return undefined
   }
 }
 
