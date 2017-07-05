@@ -2,6 +2,7 @@ export type Body = {
   repository: string
   name: string
   key: string
+  label: string
 }
 
 export default function validate(body: Body) {
@@ -16,6 +17,7 @@ export default function validate(body: Body) {
 
   const repo = body.repository || ''
   const name = body.name || ''
+  const label = body.label || ''
 
   if (!repo.length) {
     errors.push('Invalid repository name')
@@ -23,6 +25,10 @@ export default function validate(body: Body) {
 
   if (!name.length) {
     errors.push('Invalid application name')
+  }
+
+  if (!label.length) {
+    errors.push('Invalid application label')
   }
 
   return errors

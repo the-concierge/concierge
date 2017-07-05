@@ -4,9 +4,9 @@ import clone from '../git/clone'
 import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key } = req.query
+  const { repository, name, key, label } = req.query
 
-  const body = { repository, name, key }
+  const body = { repository, name, key, label }
   const errors = validate(body)
 
   if (errors.length) {

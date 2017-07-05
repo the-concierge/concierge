@@ -65,6 +65,9 @@ declare module Concierge {
     id: number
     name: string
 
+    /** Autoatmically preprended image tag prefix for use during Docker image builds */
+    label: string
+
     /** {namespace}/{repository} */
     repository: string
 
