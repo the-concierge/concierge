@@ -6,7 +6,7 @@ const handler: RequestHandler = async (req, res) => {
   const id = req.params.id
   const app = await get.one(id)
   const tags = await getTags(app)
-  res.json({ message: tags })
+  res.json(tags)
 }
 
 export default handler
