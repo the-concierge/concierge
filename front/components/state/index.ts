@@ -101,7 +101,7 @@ class StateManager {
         this.images.destroyAll()
 
         for (const image of images) {
-          image.name = getTag(image.RepoTags)
+          image.name = getTag(image.RepoTags || [])
         }
 
         this.images.push(...images.filter(image => image.name !== undefined))
