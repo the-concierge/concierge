@@ -115,7 +115,7 @@ function getEnvs(info: ImageInspectInfo) {
   const envs = info.Config.Env
     .map(env => {
       const split = env.split('=')
-      const pair = { key: split[0], value: ko.observable(split[1]) }
+      const pair = { key: split[0], value: ko.observable(split.slice(1).join('=')) }
       return pair
     })
 
