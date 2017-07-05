@@ -4,7 +4,7 @@ import { writeFile, chmod, unlink } from 'fs'
 /**
  * Execute abritrary Git commands in an Application's git repository
  */
-export default async function gitCommand(application: Concierge.Application, workingDirectory: string, command: string) {
+export default async function execCommand(application: Concierge.Application, workingDirectory: string, command: string) {
   log.debug(`Executing ${command}`)
   const isPrivate = !!application.key
 
@@ -21,7 +21,7 @@ export default async function gitCommand(application: Concierge.Application, wor
           resolve(stdout)
         }
       )
-      proc.on('message', msg => log.debug(`[GIT:${application.name}] ${msg}`))
+      proc.on('message', msg => log.debug(`[EXEC:${application.name}] ${msg}`))
     })
     const result = await (promise)
     return result
@@ -119,7 +119,7 @@ function spawnAsync(command: string, options: childProcess.SpawnOptions) {
   const promise = new Promise<string>((resolve, reject) => {
     let buffer = ''
 
-    const buf = (msg: any, prefix: string) => {
+    const buf = (msg: any) => {
       buffer += (msg || '').toString()
     }
 
@@ -129,8 +129,8 @@ function spawnAsync(command: string, options: childProcess.SpawnOptions) {
 
     const proc = childProcess.spawn(baseCommand, commandArgs, options)
 
-    proc.on('message', msg => buf(msg, 'ONMSG'))
-    proc.on('data', msg => buf(msg, 'ONDATA'))
+    proc.on('message', msg => buf(msg))
+    proc.on('data', msg => buf(msg))
 
     proc.on('close', code => {
       if (code !== 0) {
@@ -139,9 +139,9 @@ function spawnAsync(command: string, options: childProcess.SpawnOptions) {
       resolve(buffer)
     })
 
-    proc.on('error', err => buf(err, 'ONERROR'))
-    proc.stdout.on('data', data => buf(data, 'STDOUTON'))
-    proc.stderr.on('data', data => buf(data, 'STDERRON'))
+    proc.on('error', err => buf(err))
+    proc.stdout.on('data', data => buf(data))
+    proc.stderr.on('data', data => buf(data))
   })
   return promise
 }
