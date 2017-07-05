@@ -1,6 +1,6 @@
 import { ContainerInfo, ImageInfo } from 'dockerode'
 
-type HostId = { concierge: { hostId: number } }
+type HostId = { concierge: { hostId: number, host: { id: number, hostname: string, capacity: number, dockerPort: number } } }
 
 export type Stats = {
   memory: string

@@ -21,13 +21,18 @@ export const getAll: RequestHandler = async (req, res) => {
 
 async function getContainers(host: Concierge.Host) {
   const client = getClient(host)
+  const hostDto = { ...host }
+  delete hostDto.privateKey
+  delete hostDto.sshUsername
+  delete hostDto.sshPort
   const containers = await client.listContainers({
     all: 1
   })
 
   containers.forEach(container => {
     container['concierge'] = {
-      hostId: host.id
+      hostId: host.id,
+      host: hostDto
     }
   })
   return containers

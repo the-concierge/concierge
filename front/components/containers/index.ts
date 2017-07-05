@@ -18,11 +18,20 @@ class Containers {
         Names: [],
         Image: '',
         State: '',
-        Status: ''
+        Status: '',
+        Urls: []
       } as any
     }
 
-    return this.containers().find(c => c.Id === id)
+    const container = { ...this.containers().find(c => c.Id === id), Urls: [] as Array<{ url: string }> }
+    const hostname = container.concierge.host.hostname
+    const urls = container.Ports
+      .filter(port => port.Type === 'tcp')
+      .filter(port => port.hasOwnProperty('PublicPort'))
+      .map(port => ({ url: `http://${hostname}:${port.PublicPort}` }))
+
+    container.Urls = urls
+    return container
   })
 
   modalName = ko.computed(() => {

@@ -6,8 +6,8 @@
       <th>Image</th>
       <th>State</th>
       <th>Status</th>
-      <th>CPU</th>
-      <th>Memory</th>
+      <th style="min-width: 150px">CPU</th>
+      <th style="min-width: 150px">Memory</th>
       <th>Rx</th>
       <th>Tx</th>
     </tr>
@@ -51,9 +51,13 @@
 
             <div class="column col-2"><b>Status</b></div>
             <div class="column col-10" data-bind="text: modalContainer().Status"></div>
+
+            <div class="column col-2"><b>Urls</b></div>
+            <div class="column col-10" data-bind="foreach: modalContainer().Urls">
+              <div><a data-bind="attr: { href: url }, text: url" target="_blank"></a></div>
+            </div>
           </div>
         </div>
-        <!-- content here -->
       </div>
     </div>
     <div class="modal-footer">
