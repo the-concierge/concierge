@@ -51,18 +51,18 @@ class Containers {
     this.containerWaiting(false)
   }
 
-  modifyContainer = async (command: string) => {
+  modifyContainer = async (command: string, method: string = 'GET') => {
     const container = this.modalContainer()
     const route = `/api/containers/${container.Id}/${command}/${container.concierge.hostId}`
     this.loading()
-    const res = await fetch(route)
+    const res = await fetch(route, { method })
     this.resetButtons()
     return res.json()
   }
 
   stopContainer = async () => this.modifyContainer('stop')
   startContainer = async () => this.modifyContainer('start')
-  removeContainer = async () => this.modifyContainer('remove')
+  removeContainer = async () => this.modifyContainer('host', 'DELETE')
     .then(() => this.currentContainer(''))
     .then(() => this.hideModal())
 

@@ -8,5 +8,6 @@ const router = Router()
 router.get('/:id/start/:hostid', start)
 router.get('/:id/stop/:hostid', stop)
 router.get('/:id/remove/:hostid', remove)
+router.delete('/:id/host/:hostid', remove)
 
 export default router

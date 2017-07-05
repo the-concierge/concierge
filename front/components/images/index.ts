@@ -27,7 +27,7 @@ class Images {
   images = state.images
 
   toMb = (size: number) => `${common.round(size / 1024 / 1024, 2)}MB`
-  toDate = (timestamp: number) => new Date(timestamp * 1000).toString()
+  toDate = (timestamp: number) => new Date(timestamp * 1000).toUTCString()
 
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
