@@ -15,8 +15,8 @@ export function host(hostname: string, event: any) {
   emitter.emit('host', hostname, event)
 }
 
-export function variant(name: string, event: any) {
-  emitter.emit('variant', name, event)
+export function build(name: string, event: any) {
+  emitter.emit('build', name, event)
 }
 
 emitter.addListener('container', (subdomain, event) => {
@@ -27,8 +27,8 @@ emitter.addListener('host', (hostname, event) => {
   socket.emit('event', newEvent(hostname, 'Host', event))
 })
 
-emitter.addListener('variant', (name, event) => {
-  socket.emit('event', newEvent(name, 'Variant', event))
+emitter.addListener('build', (name, event) => {
+  socket.emit('event', newEvent(name, 'Build', event))
 })
 
 emitter.addListener('container-stats', (subdomain, stats) => {
