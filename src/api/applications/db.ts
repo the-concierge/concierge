@@ -14,3 +14,9 @@ export async function all() {
     .orderBy('id', 'asc')
   return applications
 }
+
+export async function remove(id: number) {
+  return db.applications()
+    .delete()
+    .where('id', id)
+}
