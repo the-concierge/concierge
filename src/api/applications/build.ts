@@ -1,5 +1,6 @@
 import pack from '../git/pack'
 import docker from '../docker'
+import { build as emitBuild } from '../stats/emitter'
 import * as getHost from '../hosts/db'
 
 export default async function buildImage(application: Concierge.Application, ref: string, tag: string, hostId?: number) {
@@ -16,7 +17,7 @@ export default async function buildImage(application: Concierge.Application, ref
         return reject(err)
       }
 
-      handleBuildStream(buildStream)
+      handleBuildStream(`${application.id}/${ref}`, buildStream)
         .then(res => resolve(res))
         .catch(res => reject(res))
     })
@@ -41,7 +42,7 @@ async function getAvailableHost() {
  * - Emit build events over web socket (application, ref, message)
  * - Have front-end monitor build events for application + ref
  */
-function handleBuildStream(stream: NodeJS.ReadableStream) {
+function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream) {
   const buildResponses: object[] = []
   let previousMessage = ''
   const promise = new Promise((resolve, reject) => {
@@ -54,6 +55,7 @@ function handleBuildStream(stream: NodeJS.ReadableStream) {
       }
 
       buildResponses.push(json)
+      emitBuild(buildName, json)
       previousMessage = ''
     })
 
