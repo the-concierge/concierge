@@ -16,6 +16,7 @@ export default async function getRemoteTags(application: Concierge.Application) 
       return { type, ref }
     })
     .filter(ref => !!ref.ref)
+    .filter(ref => !ref.ref.endsWith('^{}'))
 
   return tags
 }

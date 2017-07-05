@@ -5,6 +5,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Label</th>
       <th>Repository</th>
       <th>
 
@@ -14,6 +15,7 @@
   <tbody data-bind="foreach: applications">
     <tr>
       <td data-bind="text: name"></td>
+      <td data-bind="text: label"></td>
       <td data-bind="text: repository"></td>
       <td>
         <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Deploy</button>
@@ -37,7 +39,19 @@
         <!-- /ko -->
 
         <!-- ko if: deployModalLoading() === false -->
+        <p>
+          <div>Image Tag: <code data-bind="text: finalImageTag"></code></div>
+        </p>
         <form class="form-horizonal">
+          <div class="form-group">
+            <div class="col-3">Docker image tag</div>
+            <div class="col-9">
+              <input class="form-input" type="text" data-bind="textInput: imageTag" placeholder="E.g. latest, v1.3, alpha, beta, test... Uses your ref by default"
+              />
+            </div>
+          </div>
+
+
           <div class="form-group">
             <div class="col-3">
               <label class="form-label">Ref type</label>
@@ -61,7 +75,7 @@
             </div>
 
             <div class="col-9">
-              <select class="form-select" data-bind="options: deployableBranches, optionsText: 'ref', value: selectedRef">
+              <select class="form-select" data-bind="options: deployableBranches, optionsText: 'ref', value: selectedBranch">
               </select>
             </div>
           </div>
@@ -74,7 +88,7 @@
             </div>
 
             <div class="col-9">
-              <select class="form-select" data-bind="options: deployableTags, optionsText: 'ref', value: selectedRef">
+              <select class="form-select" data-bind="options: deployableTags, optionsText: 'ref', value: selectedTag">
               </select>
             </div>
           </div>
@@ -102,6 +116,11 @@
           <div class="form-group">
             <label class="form-label">Name</label>
             <input class="form-input" type="text" data-bind="textInput: name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Label <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite></label>
+            <input class="form-input" type="text" data-bind="textInput: label" />
           </div>
 
           <div class="form-group">
