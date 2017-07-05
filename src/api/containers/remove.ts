@@ -19,14 +19,12 @@ const handler: RequestHandler = async (req, res) => {
   const client = docker(host)
   try {
     const container = client.getContainer(containerId)
-    try {
-      // Stop the container before removing
-      // If we fail to stop, it's most likely because it's already stopped
-      // TODO: Deterministically determine if we need to stop first
-      await container.stop()
-    } finally {
-      await container.remove()
-    }
+    // Stop the container before removing
+    // If we fail to stop, it's most likely because it's already stopped
+    // TODO: Deterministically determine if we need to stop first
+    await container.stop()
+      .catch(() => { /** Intentional NOOP */ })
+    await container.remove()
     return res.json({ message: 'Removed OK' })
   } catch (ex) {
     return res
