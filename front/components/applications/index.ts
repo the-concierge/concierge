@@ -13,8 +13,8 @@ class Applications {
   imageTag = ko.observable('')
   refType = ko.observable('branch')
 
-  selectedBranch = ko.observable({ type: 'branch', ref: '' })
-  selectedTag = ko.observable({ type: 'tag', ref: '' })
+  selectedBranch = ko.observable({ type: 'branch', ref: '', sha: '' })
+  selectedTag = ko.observable({ type: 'tag', ref: '', sha: '' })
   selectedRef = ko.computed(() => {
     return this.refType() === 'branch'
       ? this.selectedBranch()
@@ -27,7 +27,7 @@ class Applications {
 
   deployModalLoading = ko.observable(false)
   deployingApplication = ko.observable<Partial<Concierge.Application>>({ id: 0, name: '' })
-  deployableRefs = ko.observableArray<{ type: string, ref: string }>([])
+  deployableRefs = ko.observableArray<{ type: string, ref: string, sha: string }>([])
   deployableBranches = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'branch'))
   deployableTags = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'tag'))
 
@@ -123,8 +123,9 @@ class Applications {
     const id = app.id
     const ref = this.selectedRef()
     const tag = this.finalImageTag()
-    const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}`
-
+    const sha = ref.sha
+    const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}&sha=${sha}`
+    
     state.monitor('build', `${id}/${tag}`)
     state.toast.primary(`Attempting to deploy application...`)
     this.hideDeployModal()

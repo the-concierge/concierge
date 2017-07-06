@@ -7,16 +7,16 @@ import * as getHost from '../hosts/db'
 
 const logBasePath = path.resolve(__dirname, '..', '..', '..', 'logs')
 
-export default async function buildImage(application: Concierge.Application, ref: string, tag: string, hostId?: number) {
+export default async function buildImage(application: Concierge.Application, sha: string, tag: string, hostId?: number) {
   const host = hostId
     ? await getHost.getOne(hostId)
     : await getAvailableHost()
 
   const client = docker(host)
-  const stream = await pack(application, ref)
+  const stream = await pack(application, sha)
   await createApplicationLogPath(application)
 
-  const logFile = getLogFilename(application, ref)
+  const logFile = getLogFilename(application, sha)
 
   client.buildImage(stream, { t: tag, forcerm: true, nocache: true }, async (err, buildStream: NodeJS.ReadableStream) => {
     const buildName = `${application.id}/${tag}`

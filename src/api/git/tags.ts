@@ -10,10 +10,12 @@ export default async function getRemoteTags(application: Concierge.Application) 
     .split('\n')
     .filter(line => !!line.trim())
     .map(raw => {
-      const rawRef = raw.split('refs/')[1]
+      const split = raw.split('refs/')
+      const rawRef = split[1].trim()
+      const sha = split[0].trim()
       const ref = rawRef.replace('heads/', '').replace('tags/', '')
       const type = rawRef.startsWith('heads/') ? 'branch' : 'tag'
-      return { type, ref }
+      return { type, ref, sha }
     })
     .filter(ref => !!ref.ref)
     .filter(ref => !ref.ref.endsWith('^{}'))

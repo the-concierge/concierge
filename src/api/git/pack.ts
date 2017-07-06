@@ -9,7 +9,7 @@ const sentinal: { [appId: number]: boolean } = {}
  * - refs/heads/branch-name
  * - refs/tags/tag-name
  */
-export default async function refToStream(application: Concierge.Application, ref: string): Promise<NodeJS.ReadableStream> {
+export default async function refToStream(application: Concierge.Application, sha: string): Promise<NodeJS.ReadableStream> {
   const id = Number(application.id)
   const isBusy = !!sentinal[id]
   if (isBusy) {
@@ -20,11 +20,11 @@ export default async function refToStream(application: Concierge.Application, re
   const workDir = appPath(application)
 
   try {
-    await cmd(application, workDir, `git fetch origin ${ref}`)
-    await cmd(application, workDir, `git checkout ${ref}`)
+    await cmd(application, workDir, `git fetch origin`)
+    await cmd(application, workDir, `git checkout ${sha}`)
   } catch (ex) {
     sentinal[id] = false
-    throw new Error(`Failed to pack ${ref}: ${ex.message || ex}`)
+    throw new Error(`Failed to pack ${sha}: ${ex.message || ex}`)
   }
 
   const stream = tar.pack(workDir)

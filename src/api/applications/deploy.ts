@@ -2,13 +2,17 @@ import * as db from './db'
 import { RequestHandler } from 'express'
 import build from './build'
 
+type Body = {
+  ref: string
+  tag: string
+  type: string
+  sha: string
+}
+
 const handler: RequestHandler = async (req, res) => {
   const { id } = req.params as { id: number }
-  const { ref, tag, type } = req.query as { ref: string, tag: string, type: string }
+  const { ref, tag, type, sha } = req.query as Body
   const app = await db.one(id)
-  const fullRef = type === 'branch'
-    ? `refs/heads/${ref}`
-    : `refs/tags/${ref}`
 
   if (!app) {
     res
@@ -25,7 +29,7 @@ const handler: RequestHandler = async (req, res) => {
      *
      * It will not await the entire build
      */
-    await build(app, fullRef, tag)
+    await build(app, sha, tag)
     res.json({ message: `Building image '${tag}'...` })
   } catch (ex) {
     log.error(ex.message || ex)
