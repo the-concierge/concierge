@@ -9,9 +9,23 @@
   "tasks": [
     {
       "isBuildCommand": true,
-      "taskName": "buiid",
+      "taskName": "build",
       "args": [
         "build"
+      ]
+    },
+    {
+      "isBuildCommand": true,
+      "taskName": "build:front",
+      "args": [
+        "build:front"
+      ]
+    },
+    {
+      "isBuildCommand": true,
+      "taskName": "build:back",
+      "args": [
+        "build:back"
       ]
     }
   ]
