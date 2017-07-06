@@ -74,6 +74,7 @@ class StateManager {
             const newContainer = { ...existing }
             newContainer.State = container.State
             newContainer.Status = container.Status
+            newContainer.Ports = container.Ports
             newContainer.stats = existing.stats
             this.containers.replace(existing, newContainer)
             return

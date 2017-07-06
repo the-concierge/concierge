@@ -47,7 +47,7 @@
           <div class="form-group">
             <label class="form-switch">
                   <input type="checkbox" />
-                  <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i><span data-bind="text: port"></span>
+                  <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i><span data-bind="text: port + '/' + type"></span>
               </label>
           </div>
           <!-- /ko -->
@@ -83,7 +83,7 @@
 
     </div>
     <div class="modal-footer">
-      <button class="btn btn-md" data-bind="click: runContainer">Run</button>
+      <button class="btn btn-md" data-bind="click: runContainer, disable: containerCreating">Run</button>
     </div>
   </div>
 </div>

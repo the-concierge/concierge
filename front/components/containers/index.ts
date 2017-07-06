@@ -23,12 +23,12 @@ class Containers {
       } as any
     }
 
-    const container = { ...this.containers().find(c => c.Id === id), Urls: [] as Array<{ url: string }> }
+    const container = { ...this.containers().find(c => c.Id === id), Urls: [] as Array<{ url: string, private: number }> }
     const hostname = container.concierge.host.hostname
     const urls = container.Ports
       .filter(port => port.Type === 'tcp')
       .filter(port => port.hasOwnProperty('PublicPort'))
-      .map(port => ({ url: `http://${hostname}:${port.PublicPort}` }))
+      .map(port => ({ url: `http://${hostname}:${port.PublicPort}`, private: port.PrivatePort }))
 
     container.Urls = urls
     return container

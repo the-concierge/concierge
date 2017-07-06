@@ -7,12 +7,13 @@ import { ImageInspectInfo } from 'dockerode'
 type NewContainer = {
   name: KnockoutObservable<string>,
   envs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
-  ports: KnockoutObservableArray<{ port: number, expose: KnockoutObservable<boolean> }>
+  ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean> }>
   volumes: KnockoutObservableArray<{ path: string, hostPath: KnockoutObservable<string> }>
 }
 
 class Images {
   modalActive = ko.observable(false)
+  creatingContainer = ko.observable(false)
   modalImage = ko.observable<Partial<Image>>({
     name: '...'
   })
@@ -57,6 +58,7 @@ class Images {
   }
 
   runContainer = async () => {
+    const image = this.modalImage()
     const container = this.newContainer
 
     const name = container.name()
@@ -68,8 +70,9 @@ class Images {
       }))
 
     const ports = container.ports()
-      .map(({ port, expose }) => ({
+      .map(({ port, expose, type }) => ({
         port,
+        type,
         expose: expose()
       }))
 
@@ -81,12 +84,30 @@ class Images {
 
     const newContainer = {
       name,
+      image: image.name,
       ports,
       envs,
       volumes
     }
 
-    console.log(newContainer)
+    this.creatingContainer(true)
+    const result = await fetch(`/api/images/run`, {
+      body: JSON.stringify(newContainer),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    this.creatingContainer(false)
+    this.hideModal()
+
+    if (result.status < 400) {
+      state.toast.success(`Successfully created container`)
+      return
+    }
+
+    const msg = await result.json()
+    state.toast.error(`Failed to create container: ${msg.message}`)
   }
 }
 
@@ -105,8 +126,11 @@ function getPorts(info: ImageInspectInfo) {
   }
 
   const ports = Object.keys(info.Config.ExposedPorts)
-    .map(port => port.split('/')[0])
-    .map(port => ({ port: Number(port), expose: ko.observable(false) }))
+    .map(port => {
+      const split = port.split('/')
+      return { port: split[0], type: split[1] }
+    })
+    .map(port => ({ port: Number(port.port), type: port.type, expose: ko.observable(false) }))
 
   return ports
 }
