@@ -125,7 +125,7 @@ class Applications {
     const tag = this.finalImageTag()
     const sha = ref.sha
     const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}&sha=${sha}`
-    
+
     state.monitor('build', `${id}/${tag}`)
     state.toast.primary(`Attempting to deploy application...`)
     this.hideDeployModal()

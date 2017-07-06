@@ -36,13 +36,17 @@ const handler: RequestHandler = async (req, res) => {
     },
     {} as any)
 
+  const binds = volumes
+    .filter(vol => !!vol.hostPath)
+    .map(vol => `${vol.hostPath}:${vol.path}`)
+
   const options: ContainerCreateOptions = {
     name,
     Image: image,
     Env: envs.map(env => `${env.key}=${env.value}`),
     ExposedPorts: exposedPorts,
     HostConfig: {
-      Binds: volumes.map(vol => `${vol.hostPath}:${vol.path}`),
+      Binds: binds,
       PortBindings: portBindings,
       RestartPolicy: {
         Name: 'on-failure',
