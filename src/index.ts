@@ -36,6 +36,7 @@ async function start() {
 
   // Listen for Performance (memory and CPU) and Docker events on all Containers
   await watchContainers()
+  setInterval(() => watchContainers(), 5000)
 
   // Listen for Docker events on all Hosts
   await watchHosts()

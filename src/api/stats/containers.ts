@@ -20,7 +20,6 @@ export default async function monitorAll() {
 
 export function watchContainer(host: Concierge.Host, containerId: string) {
   if (containerStats[containerId] !== undefined) {
-    log.debug(`[${containerId.slice(0, 10)}] Already monitoring container`)
     return
   }
 
