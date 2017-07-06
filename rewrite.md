@@ -1,30 +1,31 @@
 # Features to re-implement
+Some features will be implemented in version 3 (where version 2 is the initial pass of the front-end refactor)
 
 - Containers
-  - Create on specific host
-  - Replace image (re-create container with volume using different image)
-  - View per host
-  - Fork
-  - Create with volume
-  - Download volume
-  - Inject volume
-  - Port publishing
-  - Run options
-  - Proxying
+  - Create on specific host `Post-refactor`
+  - Replace image (re-create container with volume using different image) `Post-refactor`
+  - View per host `Post-refactor`
+  - Fork `Post-refactor`
+  - Create with volume `Post-refactor`
+  - Download volume `Post-refactor`
+  - Inject volume `Post-refactor`
+  - ~~Port publishing~~
+  - ~~Run options~~
+  - Proxying `Post-refactor`
     - [containerPort].[label].[hostname]:[proxyPort]
     - E.g. 80.foo.my-host.com:5926
 - Hosts
-  - Create
-  - Update
+  - ~~Create~~
+  - ~~Update~~
   - Delete
   - Control Docker host via SSH
 - Applications
-  - Create
+  - ~~Create~~
   - Update
-  - Delete
-  - Create image from branch/tag
+  - ~~Delete~~
+  - ~~Create image from branch/tag~~
 - Configuration
   - Update
 - Images
-  - Read
+  - ~~Read~~
   - Delete
