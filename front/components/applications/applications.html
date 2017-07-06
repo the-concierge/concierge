@@ -19,6 +19,7 @@
       <td data-bind="text: repository"></td>
       <td>
         <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Deploy</button>
+        <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
         <button class="btn btn-md" data-bind="click: $parent.removeApplication">Remove</button>
       </td>
     </tr>
@@ -137,6 +138,28 @@
     </div>
     <div class="modal-footer">
       <button class="btn btn-md" data-bind="click: createApplication">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" data-bind="css: { active: logsModalActive }">
+  <div class="modal-overlay" data-bind="click: hideLogsModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="btn btn-clear float-right" data-bind="click: hideLogsModal"></button>
+      <div class="modal-title">Application Build Logs</div>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <!-- ko foreach: buildLogs -->
+        <div>
+          <a data-bind="attr: { href: url }, text: name"></a>
+        </div>
+        <!-- /ko -->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: hideLogsModal">Close</button>
     </div>
   </div>
 </div>

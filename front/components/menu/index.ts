@@ -7,7 +7,8 @@ class Menu {
     { name: 'Images', component: 'ko-images', url: ['/images'] },
     { name: 'Applications', component: 'ko-applications', url: ['/applications'] },
     { name: 'Concierges', component: 'ko-not-found', url: ['/concierges'] },
-    { name: 'Configuration', component: 'ko-not-found', url: ['/configuration'] }
+    { name: 'Configuration', component: 'ko-not-found', url: ['/configuration'] },
+    { name: 'Logs', component: 'ko-logs', url: ['/logs'] }
   ])
 
   currentItem = ko.observable(this.items()[0])

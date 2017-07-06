@@ -1,7 +1,7 @@
-import { Container, ConciergeEvent } from './types'
+import { Container, ConciergeEvent, ContainerEvent } from './types'
 import * as analysis from 'analysis'
 
-export default function updateContainer(container: Container, event: ConciergeEvent) {
+export default function updateContainer(container: Container, event: ConciergeEvent<ContainerEvent>) {
   const memStats = event.event.memory_stats
   const memory = (memStats.usage / 1024 / 1024) / (memStats.limit / 1024 / 1024) * 100
   const memPercent = analysis.common.round(memory, 2)

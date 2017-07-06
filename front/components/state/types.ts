@@ -12,13 +12,13 @@ export type Stats = {
 export type Container = ContainerInfo & HostId & { stats: Stats }
 export type Image = ImageInfo & HostId & { name: string }
 
-export interface ConciergeEvent {
-  event: ContainerEvent
+export interface ConciergeEvent<T> {
+  event: T
   name: string
   type: string
 }
 
-interface ContainerEvent {
+export interface ContainerEvent {
   id: string
   name: string
   read: string
@@ -40,7 +40,7 @@ interface ContainerEvent {
   }
 }
 
-interface CpuStats {
+export interface CpuStats {
   cpu_usage: {
     percpu_usage: { [cpu: number]: number }
     total_usage: number
@@ -56,7 +56,7 @@ interface CpuStats {
   }
 }
 
-interface MemoryStats {
+export interface MemoryStats {
   limit: number
   max_usage: number
   usage: number

@@ -23,11 +23,15 @@ class Applications {
 
   createModalActive = ko.observable(false)
   deployModalActive = ko.observable(false)
+  logsModalActive = ko.observable(false)
+
   deployModalLoading = ko.observable(false)
   deployingApplication = ko.observable<Partial<Concierge.Application>>({ id: 0, name: '' })
   deployableRefs = ko.observableArray<{ type: string, ref: string }>([])
   deployableBranches = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'branch'))
   deployableTags = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'tag'))
+
+  buildLogs = ko.observableArray<{ url: string, name: string }>([])
 
   computedImageTag = ko.computed(() => {
     const setTag = this.imageTag()
@@ -51,6 +55,7 @@ class Applications {
 
   hideCreateModal = () => this.createModalActive(false)
   hideDeployModal = () => this.deployModalActive(false)
+  hideLogsModal = () => this.logsModalActive(false)
 
   refresh = () => state.getApplications()
 
@@ -81,6 +86,18 @@ class Applications {
     this.deployModalLoading(false)
   }
 
+  showLogsModal = async (app: Concierge.Application) => {
+    this.buildLogs.destroyAll()
+    this.logsModalActive(true)
+    const logs = await fetch(`/api/applications/${app.id}/logs`).then(r => r.json()) as string[]
+    const buildLogs = logs.map(log => ({
+      name: log,
+      url: `/api/applications/${app.id}/logs/${log}`
+    }))
+
+    this.buildLogs.push(...buildLogs)
+  }
+
   createApplication = async () => {
     const repository = this.repository()
     const name = this.name()
@@ -101,7 +118,27 @@ class Applications {
     state.toast.error(`Failed to create application: ${error.message}`)
   }
 
-  deployApplication = () => {
+  deployApplication = async () => {
+    const app = this.deployingApplication()
+    const id = app.id
+    const ref = this.selectedRef()
+    const tag = this.finalImageTag()
+    const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}`
+
+    state.monitor('build', `${id}/${tag}`)
+    state.toast.primary(`Attempting to deploy application...`)
+    this.hideDeployModal()
+
+    const result = await fetch(url, { method: 'PUT' })
+    const msg = await result.json()
+    const success = result.status < 400
+
+    if (success) {
+      state.toast.success(msg.message)
+      return
+    }
+
+    state.toast.error(`Failed to start deployment: ${msg.message}`)
   }
 
   removeApplication = async (app: Concierge.Application) => {

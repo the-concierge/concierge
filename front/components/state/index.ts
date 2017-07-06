@@ -1,14 +1,13 @@
 import * as ko from 'knockout'
-import * as io from 'socket.io-client'
-import { Image, Container, ConciergeEvent, Stats } from './types'
+import { Image, Container, ConciergeEvent, Stats, ContainerEvent } from './types'
 import updateContainer from './update'
+import socket from './socket'
+import Monitor from './monitor'
 
 export {
   Image,
   Container,
 }
-
-const socket = io()
 
 class StateManager {
   images = ko.observableArray<Image>([])
@@ -17,6 +16,7 @@ class StateManager {
   concierges = ko.observableArray<Concierge.Concierge>([])
   registries = ko.observableArray<Concierge.Registry>([])
   applications = ko.observableArray<Concierge.Application>([])
+  monitors = ko.observableArray<Monitor<string>>([])
 
   toasts = ko.observableArray<{ msg: string, cls: string, remove: () => void }>([])
   toast = {
@@ -34,7 +34,7 @@ class StateManager {
 
     setInterval(() => this.getContainers(), 5000)
 
-    socket.on('stats', (event: ConciergeEvent) => {
+    socket.on('stats', (event: ConciergeEvent<ContainerEvent>) => {
       const container = this.containers().find(container => container.Id === event.name)
       if (!container) {
         return
@@ -42,14 +42,23 @@ class StateManager {
 
       const newContainer = updateContainer(container, event)
       this.containers.replace(container, newContainer)
-
     })
+
   }
 
   showToast = (cls: string, msg: string, duration: number = 5000) => {
     const toast = { msg, cls, remove: () => this.toasts.remove(toast) }
     this.toasts.push(toast)
     setTimeout(toast.remove, duration)
+  }
+
+  monitor = (event: string, name: string) => {
+    const monitors = this.monitors()
+    const match = monitors.find(mon => mon.event === event && mon.name === name)
+    if (match) {
+      return
+    }
+    this.monitors.push(new Monitor<string>(event, name))
   }
 
   getContainers = () =>

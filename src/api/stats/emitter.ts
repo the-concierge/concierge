@@ -28,7 +28,7 @@ emitter.addListener('host', (hostname, event) => {
 })
 
 emitter.addListener('build', (name, event) => {
-  socket.emit('event', newEvent(name, 'Build', event))
+  socket.emit('build', newEvent(name, 'Build', event))
 })
 
 emitter.addListener('container-stats', (subdomain, stats) => {
