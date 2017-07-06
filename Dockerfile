@@ -12,6 +12,7 @@ RUN apk update \
 	&& yarn build \
 	&& yarn bundle
 
-VOLUME /concierge/db concierge/repositories concierge/logs
+VOLUME /concierge/db /concierge/repositories /concierge/logs
+EXPOSE 3141
 
 ENTRYPOINT node .
