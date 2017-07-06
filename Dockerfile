@@ -1,18 +1,17 @@
-FROM node:6
+FROM mhart/alpine-node:8
 
 ADD ./ /concierge
 WORKDIR /concierge
 
-RUN apt-get install git -y
-
-RUN rm -rf node_modules \
-	&& rm -rf archive \
-	&& rm -rf db \
+RUN apk update \
+	&& apk add git \
 	&& mkdir archive \
 	&& mkdir db \
-	&& npm install
-	&& npm run build
+	&& mkdir repositores \
+	&& yarn	\
+	&& yarn build \
+	&& yarn bundle
 
-VOLUME ["/concierge/db"]
+VOLUME /concierge/db concierge/repositories concierge/logs
 
-CMD ["node", "."]
+ENTRYPOINT node .

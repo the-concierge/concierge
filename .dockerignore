@@ -1,0 +1,11 @@
+node_modules/
+archive/
+.vscode/
+db/
+logs/
+docs/
+test/
+certificates/
+repositories/
+*.db
+*.log
