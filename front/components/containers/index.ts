@@ -46,7 +46,7 @@ class Containers {
     }
 
     const container = { ...this.containers().find(c => c.Id === id), Urls: [] as Array<{ url: string, private: number }> }
-    const hostname = container.concierge.host.hostname
+    const hostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
     const urls = container.Ports
       .filter(port => port.Type === 'tcp')
       .filter(port => port.hasOwnProperty('PublicPort'))

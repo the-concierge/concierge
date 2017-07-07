@@ -57,6 +57,7 @@ function hostTable() {
   return db.schema.createTable('Hosts', tbl => {
     tbl.increments('id').primary()
     tbl.text('hostname').unique()
+    tbl.text('vanityHostname').defaultTo('')
     tbl.integer('capacity').defaultTo(5)
     tbl.integer('dockerPort').defaultTo(2375)
     tbl.text('sshUsername').notNullable()
