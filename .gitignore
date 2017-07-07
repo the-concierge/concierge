@@ -13,6 +13,7 @@ Gruntfile.*
 WebEssentials-Settings.json
 .brackets.json
 *.db
+*-journal
 !variants-test.db
 *.swp
 *.*~
