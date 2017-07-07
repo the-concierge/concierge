@@ -1,0 +1,36 @@
+<div class="container">
+  <div class="columns">
+    <div class="col-1">
+      <button class="btn btn-md" data-bind="click: editConfig, disable: isEditing" style="width: 100%">Edit</button>
+    </div>
+
+    <div class="divider-vert"></div>
+
+    <div class="col-1">
+      <button class="btn btn-md" data-bind="click: cancelEditing, enable: isEditing" style="width: 100%">Cancel Editing</button>
+    </div>
+
+    <div class="divider-vert"></div>
+
+    <div class="col-1">
+      <button class="btn btn-md" data-bind="click: saveConfig, enable: isEditing" style="width: 100%">Save Configuration</button>
+    </div>
+
+    <div class="divider-vert"></div>
+
+    <div class="col-9"></div>
+
+  </div>
+</div>
+
+<div class="form-horizontal" data-bind="foreach: fields">
+  <div class="form-group">
+    <div class="col-2">
+      <label data-bind="text: label" class="form-label"></label>
+    </div>
+    <div class="col-4">
+      <input type="text" class="form-input" data-bind="textInput: value, css: cls, enable: $parent.isEditing" />
+    </div>
+    <div class="col-6"></div>
+  </div>
+</div>
