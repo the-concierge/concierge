@@ -5,6 +5,28 @@ import * as fs from 'fs'
 class Containers {
   containers = state.containers
 
+  hosts = ko.computed(() => {
+    const hosts = state
+      .hosts()
+      .map(host => ({ id: host.id, hostname: host.hostname }))
+
+    return [
+      { id: 0, hostname: 'Show contaiers for all hosts' },
+      ...hosts
+    ]
+  })
+
+  selectedHost = ko.observable(this.hosts()[0])
+  filteredContainers = ko.computed(() => {
+    const host = this.selectedHost()
+    const containers = this.containers()
+    if (host.id === 0) {
+      return containers
+    }
+
+    return containers.filter(container => container.concierge.hostId === host.id)
+  })
+
   modalActive = ko.observable(false)
 
   currentContainer = ko.observable<string | undefined>()
