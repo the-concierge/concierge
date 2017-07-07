@@ -16,7 +16,7 @@ export default async function buildImage(application: Concierge.Application, sha
   const stream = await pack(application, sha)
   await createApplicationLogPath(application)
 
-  const logFile = getLogFilename(application, sha)
+  const logFile = getLogFilename(application, tag)
 
   client.buildImage(stream, { t: tag, forcerm: true, nocache: true }, async (err, buildStream: NodeJS.ReadableStream) => {
     const buildName = `${application.id}/${tag}`
