@@ -3,6 +3,7 @@ export type Body = {
   name: string
   key: string
   label: string
+  dockerfile: string
 }
 
 export default function validate(body: Body) {

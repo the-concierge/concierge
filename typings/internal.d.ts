@@ -73,6 +73,9 @@ declare module Concierge {
 
     /** For fetching/cloning the repository */
     key: string
+
+    /** The Dockerfile to use in the repository when buidling the image */
+    dockerfile: string
   }
 
   interface NewContainer {

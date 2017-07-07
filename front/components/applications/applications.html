@@ -1,5 +1,16 @@
-<button class="btn btn-md" data-bind="click: showCreateModal">Create Application</button>
-<button class="btn btn-md" data-bind="click: refresh">Refresh</button>
+<div class="container">
+  <div class="columns">
+    <div class="col-1">
+      <button class="btn btn-md" style="width: 100%" data-bind="click: showCreateModal">Create Application</button>
+    </div>
+
+    <div class="divider-vert"></div>
+
+    <div class="col-1">
+      <button class="btn btn-md" data-bind="click: refresh">Refresh</button>
+    </div>
+  </div>
+</div>
 
 <table class="table table-striped table-hover">
   <thead>
@@ -117,6 +128,11 @@
           <div class="form-group">
             <label class="form-label">Name</label>
             <input class="form-input" type="text" data-bind="textInput: name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Dockerfile <cite>The Dockerfile to use inside the repository</cite></label>
+            <input class="form-input" type="text" data-bind="textInput: dockerfile" />
           </div>
 
           <div class="form-group">

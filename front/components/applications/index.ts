@@ -9,6 +9,7 @@ class Applications {
   repository = ko.observable('')
   key = ko.observable('')
   label = ko.observable('')
+  dockerfile = ko.observable('')
 
   imageTag = ko.observable('')
   refType = ko.observable('branch')
@@ -103,8 +104,9 @@ class Applications {
     const name = this.name()
     const key = this.key()
     const label = this.label()
+    const dockerfile = this.dockerfile()
 
-    const result = await fetch(`/api/applications?name=${name}&repository=${repository}&key=${key}&label=${label}`, {
+    const result = await fetch(`/api/applications?name=${name}&repository=${repository}&key=${key}&label=${label}&dockerfile=${dockerfile}`, {
       method: 'POST'
     })
 

@@ -3,10 +3,18 @@ import validate from './validate'
 import clone from '../git/clone'
 import * as db from '../../data'
 
-const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key, label } = req.query as { repository: string, name: string, key: string, label: string }
+type Body = {
+  name: string
+  label: string
+  repository: string
+  key: string
+  dockerfile: string
+}
 
-  const body = { repository, name, key, label }
+const handler: RequestHandler = async (req, res) => {
+  const { repository, name, key, label, dockerfile } = req.query as Body
+
+  const body = { repository, name, key, label, dockerfile }
   const errors = validate(body)
 
   if (errors.length) {
