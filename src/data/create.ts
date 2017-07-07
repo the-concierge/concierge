@@ -49,6 +49,7 @@ function applicationTable() {
     tbl.text('name').unique()
     tbl.text('repository').notNullable()
     tbl.text('key').defaultTo('')
+    tbl.text('dockerfile').defaultTo('')
   })
 }
 
