@@ -30,3 +30,4 @@ repositories/
 *.js
 !front/libs/*.js
 *.lock
+*.tmp*
