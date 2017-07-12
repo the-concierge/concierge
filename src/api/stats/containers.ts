@@ -30,8 +30,10 @@ export function watchContainer(host: Concierge.Host, containerId: string) {
     .stats((err, stream: Readable) => {
       log.info(`[${containerId.slice(0, 10)}] Monitoring container`)
       stream.on('data', (data: Buffer) => parseData(containerId, data))
-      stream.on('close', () => log.info(`[${containerId.slice(0, 10)}] Stats stream closed`))
-      stream.on('end', () => log.info(`[${containerId.slice(0, 10)}] Stats stream ended`))
+      stream.on('end', () => {
+        log.info(`[${containerId.slice(0, 10)}] Stats stream ended`)
+        delete containerStats[containerId]
+      })
       stream.on('error', (err) => log.info(`[${containerId.slice(0, 10)}] Stats stream errored: ${err}`) )
     })
 }
