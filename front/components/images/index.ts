@@ -43,6 +43,7 @@ class Images {
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
 
+  clearFilter = () => this.imageFilter('')
   refresh = () => state.getImages()
 
   removeImage = async (image: Image) => {

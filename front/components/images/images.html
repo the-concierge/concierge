@@ -1,16 +1,17 @@
 <div class="container">
   <div class="columns">
-    <div class="col-1">
+    <div class="col-2">
       <input class="form-input" type="text" placeholder="Filter for images..." data-bind="textInput: imageFilter" />
     </div>
 
     <div class="divider-vert"></div>
-    
-    <div class="col-1">
+
+    <div class="col-2">
+      <button class="btn btn-md" data-bind="click: clearFilter">Clear Filter</button>
       <button class="btn btn-md" data-bind="click: refresh">Refresh</button>
     </div>
 
-    <div class="col-10"></div>
+    <div class="col-8"></div>
   </div>
 </div>
 
