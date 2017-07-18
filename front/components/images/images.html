@@ -6,12 +6,13 @@
 
     <div class="divider-vert"></div>
 
-    <div class="col-2">
+    <div class="col-3">
       <button class="btn btn-md" data-bind="click: clearFilter">Clear Filter</button>
       <button class="btn btn-md" data-bind="click: refresh">Refresh</button>
+      <button class="btn btn-md" data-bind="click: showPullModal">Pull Image</button>
     </div>
 
-    <div class="col-8"></div>
+    <div class="col-7"></div>
   </div>
 </div>
 
@@ -36,6 +37,34 @@
     </tr>
   </tbody>
 </table>
+
+<div class="modal" data-bind="css: { active: pullModalActive }">
+  <div class="modal-overlay" data-bind="click: hidePullModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      Pull Image
+    </div>
+
+    <div class="modal-body">
+      <div class="content">
+        <div class="form-group">
+          <label class="form-label">Image Name</label>
+          <input class="form-input" type="text" data-bind="textInput: pullImage.imageName" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Image Tag</label>
+          <input class="form-input" type="text" data-bind="textInput: pullImage.tag" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: hidePullModal">Cancel</button>
+      <button class="btn btn-md" data-bind="click: runPullImage, enable: pullImageEnabled">Submit</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal" data-bind="css: { active: modalActive }">
   <div class="modal-overlay" data-bind="click: hideModal"></div>
@@ -67,7 +96,7 @@
           <div data-bind="foreach: newContainer.links">
             <div class="input-group" style="margin-bottom: 10px">
               <span class="input-group-addon" data-bind="text: containerName"></span>
-              <input type="text" class="form-input" data-bind="textInput: alias" placeholder="[Required] Link alias..."/>
+              <input type="text" class="form-input" data-bind="textInput: alias" placeholder="[Required] Link alias..." />
               <button class="btn btn-md" data-bind="click: $parent.removeContainerLink">Remove</button>
             </div>
           </div>
@@ -116,6 +145,7 @@
 
     </div>
     <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: hideModal">Cancel</button>
       <button class="btn btn-md" data-bind="click: runContainer, enable: canRunContainer">Run</button>
     </div>
   </div>

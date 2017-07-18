@@ -19,10 +19,17 @@ type ContainerLink = {
 
 class Images {
   modalActive = ko.observable(false)
+  pullModalActive = ko.observable(false)
+  pullImageEnabled = ko.observable(true)
   creatingContainer = ko.observable(false)
   modalImage = ko.observable<Partial<Image>>({
     name: '...'
   })
+
+  pullImage = {
+    imageName: ko.observable(''),
+    tag: ko.observable('')
+  }
 
   newContainer: NewContainer = {
     name: ko.observable(''),
@@ -84,6 +91,13 @@ class Images {
 
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
+
+  hidePullModal = () => this.pullModalActive(false)
+  showPullModal = () => {
+    this.pullImage.imageName('')
+    this.pullImage.tag('')
+    this.pullModalActive(true)
+  }
 
   clearFilter = () => this.imageFilter('')
   refresh = () => state.getImages()
@@ -150,6 +164,31 @@ class Images {
     this.newContainer.envs.push(...envs)
     this.newContainer.volumes.push(...volumes)
     this.refreshLinkableContainers()
+  }
+
+  runPullImage = async () => {
+    const imageName = this.pullImage.imageName()
+    const tag = this.pullImage.tag()
+
+    if (!imageName || !tag) {
+      state.toast.error(`Must specify image name and tag`)
+      return
+    }
+
+    this.pullImageEnabled(false)
+    const result = await fetch(`/api/images/pull?imageName=${imageName}&tag=${tag}`, {
+      method: 'POST'
+    })
+    this.pullImageEnabled(true)
+
+    if (result.status < 400) {
+      state.toast.success('Successfully begun pulling image')
+      this.hidePullModal()
+      return
+    }
+
+    const msg = await result.json()
+    state.toast.error(`Failed to pull image: ${msg.message}`)
   }
 
   runContainer = async () => {

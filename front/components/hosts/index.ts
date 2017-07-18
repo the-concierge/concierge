@@ -8,7 +8,6 @@ class Hosts {
   modalActive = ko.observable(false)
   editModalActive = ko.observable(false)
 
-
   hostname = ko.observable('')
   vanityHostname = ko.observable('')
   capacity = ko.observable(5)
