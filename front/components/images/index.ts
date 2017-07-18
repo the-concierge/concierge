@@ -71,12 +71,12 @@ class Images {
       alias: ko.observable('')
     })
 
-    this.linkableContainers(this.getLinkableContainers())
+    this.refreshLinkableContainers()
   }
 
   removeContainerLink = (link: ContainerLink) => {
     this.newContainer.links.remove(container => container.containerName === link.containerName)
-    this.linkableContainers(this.getLinkableContainers())
+    this.refreshLinkableContainers()
   }
 
   toMb = (size: number) => `${common.round(size / 1024 / 1024, 2)}MB`
@@ -123,17 +123,21 @@ class Images {
       }))
   }
 
+  refreshLinkableContainers = () => {
+    this.linkableContainers.destroyAll()
+    this.linkableContainers.push(...this.getLinkableContainers())
+  }
+
   configureImage = async (image: Image) => {
     this.modalImage(image)
     this.modalActive(true)
 
     // Reset existing values
     this.newContainer.name('')
-    this.newContainer.ports.destroyAll()
-    this.newContainer.envs.destroyAll()
-    this.newContainer.volumes.destroyAll()
-    this.newContainer.links.destroyAll()
-
+    this.newContainer.ports.removeAll()
+    this.newContainer.envs.removeAll()
+    this.newContainer.volumes.removeAll()
+    this.newContainer.links.removeAll()
 
     const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
       .then(res => res.json())
@@ -145,7 +149,7 @@ class Images {
     this.newContainer.ports.push(...ports)
     this.newContainer.envs.push(...envs)
     this.newContainer.volumes.push(...volumes)
-    this.linkableContainers(this.getLinkableContainers())
+    this.refreshLinkableContainers()
   }
 
   runContainer = async () => {

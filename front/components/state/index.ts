@@ -101,7 +101,7 @@ class StateManager {
     fetch('/api/hosts')
       .then(res => res.json())
       .then(hosts => {
-        this.hosts.destroyAll()
+        this.hosts.removeAll()
         this.hosts.push(...hosts)
       })
   }
@@ -110,7 +110,7 @@ class StateManager {
     fetch('/api/images')
       .then(res => res.json())
       .then(images => {
-        this.images.destroyAll()
+        this.images.removeAll()
 
         for (const image of images) {
           image.name = getTag(image.RepoTags || [])
