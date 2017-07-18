@@ -51,9 +51,26 @@
         <form>
           <div class="form-group">
             <label class="form-label">Name</label>
-            <input class="form-input" type="text" data-bind="textInput: newContainer.name" placeholder="Vanity name..." />
+            <input class="form-input" type="text" data-bind="textInput: newContainer.name" placeholder="[Optional] Vanity name..." />
           </div>
 
+          <div class="divider"></div>
+          <strong>Links</strong>
+
+          <!-- ko if: linkableContainers().length > 0 -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <select class="form-select" data-bind="options: linkableContainers, optionsText: 'label', value: selectedContainerLink"></select>
+            <button class="btn btn-md" data-bind="click: addContainerLink">Add</button>
+          </div>
+          <!-- /ko -->
+
+          <div data-bind="foreach: newContainer.links">
+            <div class="input-group" style="margin-bottom: 10px">
+              <span class="input-group-addon" data-bind="text: containerName"></span>
+              <input type="text" class="form-input" data-bind="textInput: alias" placeholder="[Required] Link alias..."/>
+              <button class="btn btn-md" data-bind="click: $parent.removeContainerLink">Remove</button>
+            </div>
+          </div>
 
           <!-- ko if: newContainer.ports().length > 0 -->
           <div class="divider"></div>
@@ -99,7 +116,7 @@
 
     </div>
     <div class="modal-footer">
-      <button class="btn btn-md" data-bind="click: runContainer, disable: creatingContainer">Run</button>
+      <button class="btn btn-md" data-bind="click: runContainer, enable: canRunContainer">Run</button>
     </div>
   </div>
 </div>

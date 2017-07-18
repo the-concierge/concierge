@@ -9,6 +9,12 @@ type NewContainer = {
   envs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
   ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean> }>
   volumes: KnockoutObservableArray<{ path: string, hostPath: KnockoutObservable<string> }>
+  links: KnockoutObservableArray<{ containerName: string, alias: KnockoutObservable<string> }>
+}
+
+type ContainerLink = {
+  containerName: string
+  alias: KnockoutObservable<string>
 }
 
 class Images {
@@ -22,11 +28,24 @@ class Images {
     name: ko.observable(''),
     envs: ko.observableArray([]),
     ports: ko.observableArray([]),
-    volumes: ko.observableArray([])
+    volumes: ko.observableArray([]),
+    links: ko.observableArray([])
   }
+
+  canRunContainer = ko.computed(() => {
+    const container = this.newContainer
+
+    const isCreatingContainer = this.creatingContainer()
+    const allLinksAliases = container
+      .links()
+      .every(link => link.alias() !== '')
+
+    return allLinksAliases && !isCreatingContainer
+  })
 
   images = state.images
   imageFilter = ko.observable('')
+
   filteredImages = ko.computed(() => {
     const filter = this.imageFilter()
     const images = this.images()
@@ -36,6 +55,29 @@ class Images {
 
     return images.filter(image => image.name.indexOf(filter) > -1)
   })
+
+  selectedContainerLink = ko.observable({
+    name: '',
+    image: '',
+    label: ''
+  })
+
+  linkableContainers = ko.observableArray([])
+
+  addContainerLink = () => {
+    const container = this.selectedContainerLink()
+    this.newContainer.links.push({
+      containerName: container.name,
+      alias: ko.observable('')
+    })
+
+    this.linkableContainers(this.getLinkableContainers())
+  }
+
+  removeContainerLink = (link: ContainerLink) => {
+    this.newContainer.links.remove(container => container.containerName === link.containerName)
+    this.linkableContainers(this.getLinkableContainers())
+  }
 
   toMb = (size: number) => `${common.round(size / 1024 / 1024, 2)}MB`
   toDate = (timestamp: number) => new Date(timestamp * 1000).toUTCString()
@@ -64,6 +106,23 @@ class Images {
     this.refresh()
   }
 
+  getLinkableContainers = () => {
+    const links = this.newContainer.links()
+    return state
+      .containers()
+      .filter(container => {
+        const name = container.Names[0].slice(1)
+        const isRunning = container.State === 'running'
+        const isNotLinked = links.every(link => link.containerName !== name)
+        return isRunning && isNotLinked
+      })
+      .map(container => ({
+        name: container.Names[0].slice(1),
+        image: container.Image,
+        label: `[${container.Image.slice(0, 20)}] ${container.Names[0].slice(1)}`
+      }))
+  }
+
   configureImage = async (image: Image) => {
     this.modalImage(image)
     this.modalActive(true)
@@ -73,6 +132,8 @@ class Images {
     this.newContainer.ports.destroyAll()
     this.newContainer.envs.destroyAll()
     this.newContainer.volumes.destroyAll()
+    this.newContainer.links.destroyAll()
+
 
     const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
       .then(res => res.json())
@@ -84,6 +145,7 @@ class Images {
     this.newContainer.ports.push(...ports)
     this.newContainer.envs.push(...envs)
     this.newContainer.volumes.push(...volumes)
+    this.linkableContainers(this.getLinkableContainers())
   }
 
   runContainer = async () => {
@@ -111,12 +173,18 @@ class Images {
         hostPath: hostPath()
       }))
 
+    const links = container.links().map(link => ({
+      containerName: link.containerName,
+      alias: link.alias()
+    }))
+
     const newContainer = {
       name,
       image: image.name,
       ports,
       envs,
-      volumes
+      volumes,
+      links
     }
 
     this.creatingContainer(true)

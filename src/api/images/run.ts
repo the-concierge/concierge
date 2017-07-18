@@ -9,14 +9,16 @@ type Body = {
   envs: Env[]
   volumes: Volume[]
   ports: Port[]
+  links: Link[]
 }
 
+type Link = { containerName: string, alias: string }
 type Port = { expose: boolean, port: number, type: string }
 type Volume = { hostPath: string, path: string }
 type Env = { key: string, value: string }
 
 const handler: RequestHandler = async (req, res) => {
-  const { name, image, envs, ports, volumes } = req.body as Body
+  const { name, image, envs, ports, volumes, links } = req.body as Body
 
   const exposedPorts = ports
     .filter(port => port.expose)
@@ -40,6 +42,8 @@ const handler: RequestHandler = async (req, res) => {
     .filter(vol => !!vol.hostPath)
     .map(vol => `${vol.hostPath}:${vol.path}`)
 
+  const containerLinks = links.map(link => `${link.containerName}:${link.alias}`)
+
   const options: ContainerCreateOptions = {
     name,
     Image: image,
@@ -51,7 +55,8 @@ const handler: RequestHandler = async (req, res) => {
       RestartPolicy: {
         Name: 'on-failure',
         MaximumRetryCount: 3
-      }
+      },
+      Links: containerLinks
     }
   }
 
