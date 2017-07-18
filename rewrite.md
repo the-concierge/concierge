@@ -2,13 +2,13 @@
 Some features will be implemented in version 3 (where version 2 is the initial pass of the front-end refactor)
 
 - Containers
-  - Create on specific host `Post-refactor`
-  - Replace image (re-create container with volume using different image) `Post-refactor`
+  - ~~Create on specific host~~ Use `docker swarm` instead
+  - ~~Replace image (re-create container with volume using different image)~~ `wont-fix`
   - ~~View per host~~
-  - Fork `Post-refactor`
-  - Create with volume `Post-refactor`
-  - Download volume `Post-refactor`
-  - Inject volume `Post-refactor`
+  - ~~Fork~~ `wont-fix`
+  - ~~Create with volume~~ `wont-fix`
+  - ~~Download volume~~ `wont-fix`
+  - ~~Inject volume~~ `wont-fix`
   - ~~Port publishing~~
   - ~~Run options~~
   - Proxying `Post-refactor`
