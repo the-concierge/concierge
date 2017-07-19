@@ -3,24 +3,20 @@ import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
   const hostname = req.body.hostname || ''
-  const vanityHostname = req.body.hostname || hostname
+  const vanityHostname = req.body.hostname || hostname || 'localhost'
   const dockerPort = req.body.dockerPort || 2375
   const sshPort = req.body.sshPort || 22
   const capacity = req.body.capacity || 5
   const privateKey = req.body.privateKey || ''
   const sshUsername = req.body.sshUsername || ''
 
-  if (!hostname.length) {
-    res
-      .status(400)
-      .json({ message: 'Invalid hostname provided' })
-    return
-  }
+  const hasHostname = !!hostname.length
+  const hasUsername = !!sshUsername.length
 
-  if (!sshUsername.length) {
+  if (hasHostname && !hasUsername) {
     res
       .status(400)
-      .json({ message: 'Invalid SSH username provided' })
+      .json({ message: 'Invalid SSH username provided: Must provided credentials if providing a hostname' })
     return
   }
 

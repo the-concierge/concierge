@@ -1,8 +1,13 @@
 import * as DockerClient from 'dockerode'
 
 export default function getDockerClient(host: Concierge.Host, timeout?: number) {
+  // If no hostname is provided, try and use the local unix socket
   if (!host.hostname) {
-    throw new Error(`Invalid host provided: must container field 'hostname' (Typeof ${typeof host})`)
+    const dockerClient = new DockerClient({
+      socketPath: '/var/run/docker.sock',
+      timeout: timeout || 0
+    })
+    return dockerClient
   }
 
   const dockerClient = new DockerClient({
