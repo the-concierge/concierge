@@ -4,7 +4,7 @@ import docker from '../docker'
 
 const handler: RequestHandler = async (req, res) => {
   const imageName = req.query.imageName
-  const tag = req.query.tag
+  const tag = req.query.tag || 'latest'
 
   const hosts = await db.getAll()
   if (hosts.length === 0) {
