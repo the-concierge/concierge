@@ -1,4 +1,4 @@
-import state, { Container } from '../state'
+import state, { ObservableContainer } from '../state'
 import * as ko from 'knockout'
 import * as fs from 'fs'
 
@@ -24,46 +24,47 @@ class Containers {
       return containers
     }
 
-    return containers.filter(container => container.concierge.hostId === host.id)
+    return containers.filter(container => container.host.id === host.id)
   })
 
   modalActive = ko.observable(false)
 
   currentContainer = ko.observable<string | undefined>()
 
-  modalContainer = ko.computed(() => {
+  defaultModalContainer: ObservableContainer = {
+    id: ko.observable('...'),
+    name: ko.observable('...'),
+    image: ko.observable('...'),
+    state: ko.observable('...'),
+    status: ko.observable('...'),
+    stats: {
+      mbIn: ko.observable('...'),
+      mbOut: ko.observable('...'),
+      cpu: ko.observable('...'),
+      memory: ko.observable('...')
+    },
+    ports: ko.observableArray([]),
+    host: {
+      capacity: 0,
+      dockerPort: 0,
+      hostname: '...',
+      id: 0,
+      vanityHostname: '...'
+    }
+  }
+
+  modalContainer = ko.computed((): ObservableContainer => {
     const id = this.currentContainer()
     if (!id) {
-      return {
-        Host: '',
-        Id: '',
-        Names: [],
-        Image: '',
-        State: '',
-        Status: '',
-        Urls: []
-      } as any
+      return this.defaultModalContainer
     }
 
-    const container = { ...this.containers().find(c => c.Id === id), Urls: [] as Array<{ url: string, private: number }> }
-    const hostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
-    const urls = container.Ports
-      .filter(port => port.Type === 'tcp')
-      .filter(port => port.hasOwnProperty('PublicPort'))
-      .map(port => ({ url: `http://${hostname}:${port.PublicPort}`, private: port.PrivatePort }))
-
-    container.Urls = urls
+    const container = this.containers().find(c => c.id().startsWith(id))
     return container
   })
 
-  modalName = ko.computed(() => {
-    const container = this.modalContainer()
-    const names = container.Names || []
-    return (names[0] || '').slice(1)
-  })
-
-  showStartButton = ko.computed(() => this.modalContainer().State === 'exited')
-  showStopButton = ko.computed(() => this.modalContainer().State === 'running')
+  showStartButton = ko.computed(() => this.modalContainer().state() === 'exited')
+  showStopButton = ko.computed(() => this.modalContainer().state() === 'running')
   containerWaiting = ko.observable(false)
   buttonLoading = ko.observable('')
 
@@ -84,7 +85,7 @@ class Containers {
 
   modifyContainer = async (command: string, method: string = 'GET') => {
     const container = this.modalContainer()
-    const route = `/api/containers/${container.Id}/${command}/${container.concierge.hostId}`
+    const route = `/api/containers/${container.id()}/${command}/${container.host.id}`
     this.loading()
     const res = await fetch(route, { method })
     this.resetButtons()
@@ -97,8 +98,8 @@ class Containers {
     .then(() => this.currentContainer(''))
     .then(() => this.hideModal())
 
-  showModal = (container: Container) => {
-    this.currentContainer(ko.unwrap(container).Id)
+  showModal = (container: ObservableContainer) => {
+    this.currentContainer(ko.unwrap(container).id())
     this.modalActive(true)
   }
 

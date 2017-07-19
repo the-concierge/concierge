@@ -125,15 +125,15 @@ class Images {
     return state
       .containers()
       .filter(container => {
-        const name = container.Names[0].slice(1)
-        const isRunning = container.State === 'running'
+        const name = container.name()
+        const isRunning = container.state() === 'running'
         const isNotLinked = links.every(link => link.containerName !== name)
         return isRunning && isNotLinked
       })
       .map(container => ({
-        name: container.Names[0].slice(1),
-        image: container.Image,
-        label: `[${container.Image.slice(0, 20)}] ${container.Names[0].slice(1)}`
+        name: container.name(),
+        image: container.image(),
+        label: `[${container.image().slice(0, 20)}] ${container.name()}`
       }))
   }
 

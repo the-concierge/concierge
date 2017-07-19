@@ -1,5 +1,5 @@
 import * as ko from 'knockout'
-import { Image, Container, ConciergeEvent, Stats, ContainerEvent } from './types'
+import { Image, Container, ConciergeEvent, ContainerEvent, ObservableContainer } from './types'
 import updateContainer from './update'
 import socket from './socket'
 import Monitor from './monitor'
@@ -7,11 +7,12 @@ import Monitor from './monitor'
 export {
   Image,
   Container,
+  ObservableContainer
 }
 
 class StateManager {
   images = ko.observableArray<Image>([])
-  containers = ko.observableArray<Container>([])
+  containers = ko.observableArray<ObservableContainer>([])
   hosts = ko.observableArray<Concierge.Host>([])
   concierges = ko.observableArray<Concierge.Concierge>([])
   registries = ko.observableArray<Concierge.Registry>([])
@@ -37,13 +38,12 @@ class StateManager {
     setInterval(() => this.getContainers(), 5000)
 
     socket.on('stats', (event: ConciergeEvent<ContainerEvent>) => {
-      const container = this.containers().find(container => container.Id === event.name)
+      const container = this.containers().find(container => event.name.startsWith(container.id()))
       if (!container) {
         return
       }
 
-      const newContainer = updateContainer(container, event)
-      this.containers.replace(container, newContainer)
+      updateContainer(container, event)
     })
 
   }
@@ -63,39 +63,32 @@ class StateManager {
     this.monitors.push(new Monitor<string>(event, name))
   }
 
-  getContainers = () =>
-    fetch('/api/hosts/containers')
+  getContainers = async () => {
+    const containers: Container[] = await fetch('/api/hosts/containers')
       .then(res => res.json())
-      .then(containers => {
-        const seenContainers: string[] = []
-        const stateContainers = this.containers()
-        containers.forEach(container => {
-          seenContainers.push(container.Id)
-          const existing = stateContainers.find(c => c.Id === container.Id)
-          if (existing) {
-            const newContainer = { ...existing }
-            newContainer.State = container.State
-            newContainer.Status = container.Status
-            newContainer.Ports = container.Ports
-            newContainer.stats = existing.stats
-            this.containers.replace(existing, newContainer)
-            return
-          }
 
-          const stats: Stats = {
-            cpu: '...',
-            memory: '...',
-            mbIn: '...',
-            mbOut: '...'
-          }
+    const seenContainers: string[] = []
+    const stateContainers = this.containers()
+    containers.forEach(container => {
+      seenContainers.push(container.Id)
+      const existing = stateContainers.find(c => container.Id.startsWith(c.id()))
+      if (existing) {
+        existing.state(container.State)
+        existing.status(container.Status)
 
-          container.stats = stats
-          this.containers.push(container)
-        })
+        const ports = portsToUrls(container)
+        existing.ports.removeAll()
+        existing.ports.push(...ports)
+        return
+      }
 
-        // Remove every unseen container as it's probably been deleted
-        this.containers.remove(c => seenContainers.every(s => s !== c.Id))
-      })
+      const newContainer = toObservableContainer(container)
+      this.containers.push(newContainer)
+    })
+
+    // Remove every unseen container as it's probably been deleted
+    this.containers.remove(c => seenContainers.every(seen => seen.startsWith(c.id())))
+  }
 
   getHosts = () => {
     fetch('/api/hosts')
@@ -144,3 +137,36 @@ function getTag(tags: string[]) {
 const state = new StateManager()
 
 export default state
+
+function toObservableContainer(container: Container) {
+  const ports = portsToUrls(container)
+
+  const newContainer: ObservableContainer = {
+    id: ko.observable(container.Id.slice(0, 10)),
+    image: ko.observable(container.Image),
+    name: ko.observable((container.Names[0] || '').slice(1)),
+    state: ko.observable(container.State),
+    status: ko.observable(container.Status),
+    stats: {
+      mbIn: ko.observable('...'),
+      mbOut: ko.observable('...'),
+      cpu: ko.observable('...'),
+      memory: ko.observable('...')
+    },
+    host: container.concierge.host,
+    ports: ko.observableArray(ports)
+  }
+
+  return newContainer
+}
+
+declare const _container: Container
+type Ports = typeof _container.Ports
+
+function portsToUrls(container: Container) {
+  const ports = container.Ports
+  const hostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
+  return ports.filter(port => port.Type === 'tcp')
+    .filter(port => port.hasOwnProperty('PublicPort'))
+    .map(port => ({ url: `http://${hostname}:${port.PublicPort}`, private: port.PrivatePort }))
+}

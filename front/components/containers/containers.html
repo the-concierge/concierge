@@ -25,12 +25,12 @@
   <tbody data-bind="foreach: containers">
     <tr>
       <td>
-        <a data-bind="text: Names[0].slice(1), click: function() { $parent.showModal($data) }" style="cursor: pointer"></a>
+        <a data-bind="text: name, click: function() { $parent.showModal($data) }" style="cursor: pointer"></a>
       </td>
-      <td data-bind="text: Id.slice(0, 10)"></td>
-      <td data-bind="text: Image"></td>
-      <td data-bind="text: State"></td>
-      <td data-bind="text: Status"></td>
+      <td data-bind="text: id"></td>
+      <td data-bind="text: image"></td>
+      <td data-bind="text: state"></td>
+      <td data-bind="text: status"></td>
       <td data-bind="text: stats.cpu"></td>
       <td data-bind="text: stats.memory"></td>
       <td data-bind="text: stats.mbIn"></td>
@@ -44,26 +44,26 @@
   <div class="modal-container">
     <div class="modal-header">
       <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
-      <div class="modal-title" data-bind="text: modalName"></div>
+      <div class="modal-title" data-bind="text: name"></div>
     </div>
     <div class="modal-body">
       <div class="content">
         <div class="container">
           <div class="columns">
             <div class="column col-2"><b>Id</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().Id.slice(0, 10)"></div>
+            <div class="column col-10" data-bind="text: modalContainer().id"></div>
 
             <div class="column col-2"><b>Image</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().Image"></div>
+            <div class="column col-10" data-bind="text: modalContainer().image"></div>
 
             <div class="column col-2"><b>State</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().State"></div>
+            <div class="column col-10" data-bind="text: modalContainer().state"></div>
 
             <div class="column col-2"><b>Status</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().Status"></div>
+            <div class="column col-10" data-bind="text: modalContainer().status"></div>
 
             <div class="column col-2"><b>Urls</b></div>
-            <div class="column col-10" data-bind="foreach: modalContainer().Urls">
+            <div class="column col-10" data-bind="foreach: modalContainer().ports">
               <div>
                 <b data-bind="text: private"></b>
                 <a data-bind="attr: { href: url }, text: url" target="_blank"></a>

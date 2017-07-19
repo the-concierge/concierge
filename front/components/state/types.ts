@@ -12,6 +12,23 @@ export type Stats = {
 export type Container = ContainerInfo & HostId & { stats: Stats }
 export type Image = ImageInfo & HostId & { name: string }
 
+declare const _hostId: HostId
+export interface ObservableContainer {
+  id: KnockoutObservable<string>
+  image: KnockoutObservable<string>
+  name: KnockoutObservable<string>
+  status: KnockoutObservable<string>
+  state: KnockoutObservable<string>
+  stats: {
+    mbIn: KnockoutObservable<string>,
+    mbOut: KnockoutObservable<string>
+    cpu: KnockoutObservable<string>
+    memory: KnockoutObservable<string>
+  }
+  ports: KnockoutObservableArray<{ url: string, private: number }>
+  host: typeof _hostId.concierge.host
+}
+
 export interface ConciergeEvent<T> {
   event: T
   name: string
