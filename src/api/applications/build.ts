@@ -82,7 +82,7 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
       }
 
       buildResponses.push(msg)
-      emitBuild(buildName, text.trim())
+      emitBuild(buildName, typeof text === 'string' ? text.trim() : text)
       appendAsync(logFile, msg + '\n')
     })
 
