@@ -35,7 +35,10 @@ class StateManager {
     this.getApplications()
     this.getConfiguration()
 
-    setInterval(() => this.getContainers(), 5000)
+    setInterval(() => {
+      this.getContainers()
+      this.getImages()
+    }, 5000)
 
     socket.on('stats', (event: ConciergeEvent<ContainerEvent>) => {
       const container = this.containers().find(container => event.name.startsWith(container.id()))
@@ -117,13 +120,24 @@ class StateManager {
     fetch('/api/images')
       .then(res => res.json())
       .then(images => {
-        this.images.removeAll()
-
         for (const image of images) {
-          image.name = getTag(image.RepoTags || [])
-        }
+          const name = getTag(image.RepoTags || [])
+          image.name = name
+          const existing = this.images().find(existing => existing.name === name)
+          if (existing) {
+            // Take no action if we already have the image and the Id has not changed
+            if (existing.Id === image.Id) {
+              continue
+            }
 
-        this.images.push(...images.filter(image => image.name !== undefined))
+            // Remove an existing image if it has a new Id
+            // I.e. The image has been replaced with a new build
+            this.images.replace(existing, image)
+            continue
+          }
+
+          this.images.push(image)
+        }
       })
   }
 
