@@ -47,7 +47,8 @@
     "build:back": "tsc -p tsconfig.node.json",
     "build": "tsc -p tsconfig.node.json && tsc -p tsconfig.front.json",
     "bundle": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
-    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json"
+    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json",
+    "prepare": "yarn run build && yarn run bundle"
   },
   "author": "Carl Winkler",
   "license": "MIT",
