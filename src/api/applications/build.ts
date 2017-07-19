@@ -21,14 +21,11 @@ export default async function buildImage(application: Concierge.Application, sha
   const options: any = {
     t: tag,
     forcerm: true,
-    nocache: true
+    nocache: true,
+    dockerfile: application.dockerfile || 'Dockerfile'
   }
 
-  if (application.dockerfile) {
-    options.dockerfile = application.dockerfile
-  }
-
-  client.buildImage(stream, { t: tag, forcerm: true, nocache: true }, async (err, buildStream: NodeJS.ReadableStream) => {
+  client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
     const buildName = `${application.id}/${tag}`
     if (err) {
       appendAsync(logFile, err.message || err)
