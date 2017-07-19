@@ -75,8 +75,13 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
     stream.on('data', (data: Buffer) => {
       const msg = data.toString()
       const output = tryParse(msg)
-      buildResponses.push(msg)
+
       const text = output.stream || output.errorDetail || output
+      if (!text) {
+        return
+      }
+
+      buildResponses.push(msg)
       emitBuild(buildName, text.trim())
       appendAsync(logFile, msg + '\n')
     })
