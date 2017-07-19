@@ -1,6 +1,4 @@
 import db from '../data/connection'
-import * as states from '../types/states'
-import ActiveState = states.ActiveState
 import Config = Concierge.Configuration
 
 /**
@@ -22,7 +20,6 @@ export async function initialise() {
 export async function get(): Promise<Concierge.Configuration> {
   const config: Concierge.Configuration = await db('Configurations')
     .select()
-    .where('isActive', ActiveState.Active)
     .first()
 
   return config
