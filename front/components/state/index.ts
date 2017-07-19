@@ -77,8 +77,19 @@ class StateManager {
         existing.status(container.Status)
 
         const ports = portsToUrls(container)
-        existing.ports.removeAll()
-        existing.ports.push(...ports)
+
+        for (const port of ports) {
+          const existingPort = existing.ports().find(ep => ep.private === port.private)
+          if (!existingPort) {
+            existing.ports.push(port)
+            continue
+          }
+
+          if (existingPort.url !== port.url) {
+            existing.ports.remove(existingPort)
+            existing.ports.push(port)
+          }
+        }
         return
       }
 

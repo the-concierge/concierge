@@ -54,9 +54,14 @@ See the [Contribution Guide](./CONTRIBUTING.md)
  - This is to use the native V8 debugger
 
 **Installation**
-- Clone the code
-- `npm install --production`
-
+- Clone the repository  
+- Build the project with `yarn` or `npm`
+- With `yarn`:
+-- Simply run `yarn`
+- With `npm`
+-- `npm install`
+-- `npm run prepare`
+  
 **Running**
 - `npm start` or `node .`
 
@@ -67,6 +72,17 @@ Configure the Docker registry URL
  - See below for instruction for setting up a Docker Registry
 
 ## How do I set up a Docker registry?
+
+### Using the Concierge
+You can use the Concierge to pull and run the Docker Registry
+
+1. Go to the `Images` view
+2. Click on `Pull Image`
+3. Enter image name `registy` and tag `latest`
+4. Click `Pull`
+5. 
+
+### Manually
 The simplest way to do this is to use the public [Docker image](https://hub.docker.com/_/registry/).
 - `sudo docker pull registry:latest`
 - `sudo docker run -d -p 5000:5000 --name=registry -v /var/registry:/var/lib/registry --restart=unless-stopped registry:latest`
