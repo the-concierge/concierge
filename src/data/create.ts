@@ -50,6 +50,7 @@ function applicationTable() {
     tbl.text('repository').notNullable()
     tbl.text('key').defaultTo('')
     tbl.text('dockerfile').defaultTo('')
+    tbl.text('label').defaultTo('')
   })
 }
 

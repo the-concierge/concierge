@@ -98,7 +98,10 @@ class StateManager {
     })
 
     // Remove every unseen container as it's probably been deleted
-    this.containers.remove(c => seenContainers.every(seen => seen.startsWith(c.id())))
+    this.containers.remove(c => {
+      const wasSeen = seenContainers.some(seenId => seenId.startsWith(c.id()))
+      return !wasSeen
+    })
   }
 
   getHosts = () => {

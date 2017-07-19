@@ -74,8 +74,10 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
   const promise = new Promise((resolve, reject) => {
     stream.on('data', (data: Buffer) => {
       const msg = data.toString()
+      const output = tryParse(msg)
       buildResponses.push(msg)
-      emitBuild(buildName, msg)
+      const text = output.stream || output.errorDetail || output
+      emitBuild(buildName, text.trim())
       appendAsync(logFile, msg + '\n')
     })
 
@@ -90,6 +92,15 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
   })
 
   return promise
+}
+
+function tryParse(text: string): { stream?: string, errorDetail?: string } & string {
+  try {
+    const json = JSON.parse(text.trim())
+    return json
+  } catch (_) {
+    return text
+  }
 }
 
 function appendAsync(file: string, content: any) {

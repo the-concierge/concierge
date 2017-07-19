@@ -88,8 +88,12 @@ class Containers {
     const route = `/api/containers/${container.id()}/${command}/${container.host.id}`
     this.loading()
     const res = await fetch(route, { method })
+    const result = await res.json()
+    if (res.status >= 400) {
+      state.toast.error(`Failed to start container: ${result.message}`)
+    }
     this.resetButtons()
-    return res.json()
+    return result
   }
 
   stopContainer = async () => this.modifyContainer('stop')
