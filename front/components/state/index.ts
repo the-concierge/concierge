@@ -122,6 +122,9 @@ class StateManager {
       .then(images => {
         for (const image of images) {
           const name = getTag(image.RepoTags || [])
+          if (!name) {
+            continue
+          }
           image.name = name
           const existing = this.images().find(existing => existing.name === name)
           if (existing) {

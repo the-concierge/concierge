@@ -56,7 +56,7 @@
 
         <div class="form-group">
           <label class="form-label">Image Tag <sub style="float: right">(Optional) Defaults to 'latest'</sub></label>
-          <input class="form-input" type="text" data-bind="textInput: pullImage.tag" placeholder="Defaults to 'latest'"/>
+          <input class="form-input" type="text" data-bind="textInput: pullImage.tag" placeholder="Defaults to 'latest'" />
         </div>
       </div>
     </div>
@@ -130,14 +130,29 @@
           <!-- /ko -->
           <!-- /ko -->
 
+          <div class="divider"></div>
+          <strong>Custom Environment Variables:</strong>
+          <div class="input-group" style="margin-bottom: 10px">
+            <input type="text" class="form-input" data-bind="textInput: newCustomVariableName" placeholder="Variable name" />
+            <button class="btn btn-md" data-bind="click: addCustomVariable">Add</button>
+          </div>
+
+          <!-- ko foreach: newContainer.customEnvs -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <span class="input-group-addon" data-bind="text: key"></span>
+            <input type="text" class="form-input" data-bind="textInput: value" />
+            <button class="btn btn-md" data-bind="click: $parent.removeCustomVariable">Remove</button>
+          </div>
+          <!-- /ko -->
+
           <!-- ko if: newContainer.envs().length > 0 -->
           <div class="divider"></div>
           <strong>Environment Variables:</strong>
 
           <!-- ko foreach: newContainer.envs -->
-          <div class="form-group">
-            <label class="form-label" data-bind="text: key"></label>
-            <input class="form-input" type="text" data-bind="textInput: value" />
+          <div class="input-group" style="margin-bottom: 10px">
+            <span class="input-group-addon" data-bind="text: key"></span>
+            <input type="text" class="form-input" data-bind="textInput: value" />
           </div>
           <!-- /ko -->
           <!-- /ko -->

@@ -6,6 +6,7 @@ import { ImageInspectInfo } from 'dockerode'
 
 type NewContainer = {
   name: KnockoutObservable<string>,
+  customEnvs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
   envs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
   ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean> }>
   volumes: KnockoutObservableArray<{ path: string, hostPath: KnockoutObservable<string> }>
@@ -31,8 +32,10 @@ class Images {
     tag: ko.observable('')
   }
 
+  newCustomVariableName = ko.observable('')
   newContainer: NewContainer = {
     name: ko.observable(''),
+    customEnvs: ko.observableArray([]),
     envs: ko.observableArray([]),
     ports: ko.observableArray([]),
     volumes: ko.observableArray([]),
@@ -70,6 +73,21 @@ class Images {
   })
 
   linkableContainers = ko.observableArray([])
+
+  addCustomVariable = () => {
+    const key = this.newCustomVariableName()
+    if (!key) {
+      return
+    }
+
+    this.newContainer.customEnvs.push({ key, value: ko.observable('') })
+    this.newCustomVariableName('')
+  }
+
+  removeCustomVariable = (customEnv: { key: string }) => {
+    console.log('Remove', customEnv.key)
+    this.newContainer.customEnvs.remove(env => env.key === customEnv.key)
+  }
 
   addContainerLink = () => {
     const container = this.selectedContainerLink()
@@ -152,6 +170,7 @@ class Images {
     this.newContainer.envs.removeAll()
     this.newContainer.volumes.removeAll()
     this.newContainer.links.removeAll()
+    this.newContainer.customEnvs.removeAll()
 
     const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
       .then(res => res.json())
@@ -198,6 +217,7 @@ class Images {
     const name = container.name()
 
     const envs = container.envs()
+      .concat(container.customEnvs())
       .map(({ key, value }) => ({
         key,
         value: value()
