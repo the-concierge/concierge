@@ -108,11 +108,19 @@
           <strong>Expose Ports:</strong>
 
           <!-- ko foreach: newContainer.ports -->
-          <div class="form-group">
+          <div class="form-horizontal">
+            <div class="form-group">
             <label class="form-switch">
-                  <input type="checkbox" />
-                  <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i><span data-bind="text: port + '/' + type"></span>
-              </label>
+              <input type="checkbox" />
+              <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i>
+            </label>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <span data-bind="text: port + '/' + type"></span>
+                </span>
+                <input type="text" class="form-input" data-bind="textInput: hostPort" placeholder="Host Port" />
+              </div>
+            </div>
           </div>
           <!-- /ko -->
           <!-- /ko -->

@@ -8,7 +8,7 @@ type NewContainer = {
   name: KnockoutObservable<string>,
   customEnvs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
   envs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
-  ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean> }>
+  ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean>, hostPort: KnockoutObservable<string> }>
   volumes: KnockoutObservableArray<{ path: string, hostPath: KnockoutObservable<string> }>
   links: KnockoutObservableArray<{ containerName: string, alias: KnockoutObservable<string> }>
 }
@@ -85,7 +85,6 @@ class Images {
   }
 
   removeCustomVariable = (customEnv: { key: string }) => {
-    console.log('Remove', customEnv.key)
     this.newContainer.customEnvs.remove(env => env.key === customEnv.key)
   }
 
@@ -224,9 +223,10 @@ class Images {
       }))
 
     const ports = container.ports()
-      .map(({ port, expose, type }) => ({
+      .map(({ port, expose, type, hostPort }) => ({
         port,
         type,
+        hostPort: hostPort(),
         expose: expose()
       }))
 
@@ -290,7 +290,7 @@ function getPorts(info: ImageInspectInfo) {
       const split = port.split('/')
       return { port: split[0], type: split[1] }
     })
-    .map(port => ({ port: Number(port.port), type: port.type, expose: ko.observable(false) }))
+    .map(port => ({ port: Number(port.port), type: port.type, expose: ko.observable(false), hostPort: ko.observable('') }))
 
   return ports
 }

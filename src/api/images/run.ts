@@ -13,7 +13,7 @@ type Body = {
 }
 
 type Link = { containerName: string, alias: string }
-type Port = { expose: boolean, port: number, type: string }
+type Port = { expose: boolean, port: number, type: string, hostPort: string }
 type Volume = { hostPath: string, path: string }
 type Env = { key: string, value: string }
 
@@ -33,7 +33,13 @@ const handler: RequestHandler = async (req, res) => {
     .filter(port => port.expose)
     .reduce((prev, curr) => {
       const key = `${curr.port}/${curr.type}`
-      prev[key] = [{}]
+      const hostCfg: any = {}
+
+      // If a hostPort is specified, pass the option through to Docker
+      if (curr.hostPort) {
+        hostCfg.HostPort = curr.hostPort
+      }
+      prev[key] = [hostCfg]
       return prev
     },
     {} as any)
