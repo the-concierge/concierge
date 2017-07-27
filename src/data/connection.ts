@@ -1,9 +1,12 @@
 import * as knex from 'knex'
+import * as path from 'path'
+
+const dbLocation = process.env.CONCIERGE_DB_PATH || path.resolve(__dirname, '..', '..', 'db', 'concierge.db')
 
 const connection = knex({
   client: 'sqlite3',
   connection: {
-    filename: "./db/concierge.db"
+    filename: dbLocation
   },
   useNullAsDefault: true
 } as any)

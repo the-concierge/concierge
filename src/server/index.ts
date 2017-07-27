@@ -17,11 +17,12 @@ const router = express.Router()
 
 export default function start() {
   return new Promise((resolve, reject) => {
-    const port = process.env.PORT || 3141
+    const port = process.env.CONCIERGE_PORT || 3141
     server.listen(port, err => {
       if (err) {
         return reject(err)
       }
+      log.info(`HTTP server started on port ${port}`)
       resolve(port)
     })
   })

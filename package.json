@@ -1,6 +1,6 @@
 {
-  "name": "node-concierge",
-  "version": "1.0.0",
+  "name": "the-concierge",
+  "version": "0.2.2",
   "description": "Concierge Service",
   "main": "src/index.js",
   "dependencies": {
@@ -15,6 +15,7 @@
     "http-proxy": "^1.13.3",
     "knex": "^0.11.7",
     "knockout": "^3.4.1",
+    "minimist": "^1.2.0",
     "node-dockerfile": "^0.5.1",
     "observers": "^0.5.1",
     "rimraf": "^2.5.3",
@@ -29,6 +30,7 @@
     "@types/history": "^2.0.39",
     "@types/knex": "^0.0.53",
     "@types/knockout": "^3.4.39",
+    "@types/minimist": "^1.2.0",
     "@types/node": "^6.0.38",
     "brfs": "^1.4.3",
     "browserify": "^14.1.0",
@@ -46,11 +48,14 @@
     "build:front": "tsc -p tsconfig.front.json && yarn bundle",
     "build:back": "tsc -p tsconfig.node.json",
     "build": "tsc -p tsconfig.node.json && tsc -p tsconfig.front.json",
+    "postbuild": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "bundle": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
-    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json",
-    "prepare": "yarn run build && yarn run bundle"
+    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json"
   },
   "author": "Carl Winkler",
   "license": "MIT",
-  "contributors": []
+  "contributors": [],
+  "bin": {
+    "the-concierge": "./src/cli.js"
+  }
 }

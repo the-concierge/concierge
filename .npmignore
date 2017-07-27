@@ -1,0 +1,12 @@
+.git/
+.vagrant/
+.vscode/
+archive/
+certificates/*
+db/*.db
+test/
+typings/
+logs/*
+Vagrantfile
+node.sh
+docker.sh

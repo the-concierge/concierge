@@ -1,24 +1,13 @@
-## _This is currently under-going a large refactor_
-Current progress is being tracked in `REWRITE.MD`  
-The original, pre-refactor state is available on the `master` branch
-
 # Concierge
 
 Docker orchestration with Node and TypeScript
 
-# FAQ
-
-- [Setting up a Host](./docs/host.md)
-- [Setting up an Application](./docs/application.md)
-- [Creating Variants](./docs/variant.md)
-- [Creating Containers](./docs/container.md)
-
 ## Browser Targets
-Current major version of:
+~~Current major version of:~~ Definitely Chrome. Probably Firefox too.
 
-- Chrome 
-- Firefox
-- Edge
+- ~~Chrome~~
+- ~~Firefox~~
+- ~~Edge~~
 
 ## What should I know before starting?
 - [How to create an SSH key pair](https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key)
@@ -46,21 +35,46 @@ See the [Contribution Guide](./CONTRIBUTING.md)
 
 ## How do I set up a Concierge from scratch?
 
-**External Requirements**
+### External Requirements*
 - Docker Registry
  - The registry isn't needed for the Concierge to run, but is needed for Variant and Container operations
  - This registry should be private. I.e., only accessible inside a private network
 - NodeJS 6.4+
  - This is to use the native V8 debugger
 
-**Installation**
+### Configuration
+
+#### Environment Variables
+- `CONCIERGE_DB_PATH`: The path to store the application's SQLite database
+- `CONCIERGE_PORT`: The port for the HTTP server
+
+#### Launch with custom values
+- `path`: Location for the SQLite database
+- `port`: Port for the HTTP API
+```sh
+# E.g.
+> the-concierge --path=/Users/me/concierge.sqlite --port=3141
+```
+
+### Installation
+
+#### Method 1
+**Install globally using NPM**
+```sh
+> npm install the-concierge -g
+> the-concierge
+```
+
+#### Method 2
+**Build and run manually**
 - Clone the repository  
 - Build the project with `yarn` or `npm`
 - With `yarn`:
--- Simply run `yarn`
+-- `yarn`
+-- `yarn build`
 - With `npm`
 -- `npm install`
--- `npm run prepare`
+-- `npm run build`
   
 **Running**
 - `npm start` or `node .`
