@@ -11,7 +11,7 @@ class Containers {
       .map(host => ({ id: host.id, hostname: host.hostname }))
 
     return [
-      { id: 0, hostname: 'Show contaiers for all hosts' },
+      { id: 0, hostname: 'Show containers for all hosts' },
       ...hosts
     ]
   })
