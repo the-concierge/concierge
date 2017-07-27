@@ -3,23 +3,25 @@
 Docker orchestration with Node and TypeScript
 
 ## What does the Concierge do?
-- It fetches source code from a Git repository by tag
-- It uses the Dockerfile provided in the repository to build a Docker image
+- It fetches source code from a Git repository by tag or branch
+- It uses the Dockerfile provided or a custom Dockerfile elsewhere in the repository to build a Docker image 
 - ~~It pushes images to a Docker registry~~ `Not available since refactoring`
-- It tells servers (called *Hosts*) to create Docker containers from the Variant images
+- Allows configurable creation of containers from images
 - It controls (stop/start/delete) the containers on all Hosts.
-- Allows you to create copies of running containers
-- Allows you to create copies of containers running on other Concierges
-- Allows you to download the application data from running containers
-- Allows you to provision new containers with custom application data
 - Monitors memory and CPU usage of containers
 - Runs a central web server to proxy requests to container
-- Provides free SSL/HTTPS via the proxy
 
 ## How can I contribute?      
 See the [Contribution Guide](./CONTRIBUTING.md)
 
 ## How do I set up a Concierge from scratch?
+
+### To control your local install of Docker on a Mac or Linux
+
+After starting the concierge:
+- Create a new `Host`
+- Set the **Vanity** hostname to `localhost`, `127.0.0.1` or any other hostname your machine uses
+- That's it!
 
 ### External Requirements*
 - Docker Registry
