@@ -2,24 +2,10 @@
 
 Docker orchestration with Node and TypeScript
 
-## Browser Targets
-~~Current major version of:~~ Definitely Chrome. Probably Firefox too.
-
-- ~~Chrome~~
-- ~~Firefox~~
-- ~~Edge~~
-
-## What should I know before starting?
-- [How to create an SSH key pair](https://git-scm.com/book/en/v2/Git-on-the-Server-Generating-Your-SSH-Public-Key)
-- [How to add a public key to `authorized_keys` of a user account](http://askubuntu.com/questions/46424/adding-ssh-keys-to-authorized-keys)
-- How to connect to an SSH server using Public Key Authentication
-- [How to install Docker](https://github.com/seikho/vim-config/blob/master/docker.sh)
-- [Disabling Password Authentication to an SSH server](http://askubuntu.com/questions/435615/disable-password-authentication-in-ssh)
-
 ## What does the Concierge do?
 - It fetches source code from a Git repository by tag
-- It uses the Dockerfile provided in the repository to build a Docker image which we call *Variants* or *Images*
-- It pushes images to a Docker registry
+- It uses the Dockerfile provided in the repository to build a Docker image
+- ~~It pushes images to a Docker registry~~ `Not available since refactoring`
 - It tells servers (called *Hosts*) to create Docker containers from the Variant images
 - It controls (stop/start/delete) the containers on all Hosts.
 - Allows you to create copies of running containers
@@ -70,11 +56,11 @@ See the [Contribution Guide](./CONTRIBUTING.md)
 - Clone the repository  
 - Build the project with `yarn` or `npm`
 - With `yarn`:
--- `yarn`
--- `yarn build`
+  - `yarn`
+  - `yarn build`
 - With `npm`
--- `npm install`
--- `npm run build`
+  - `npm install`
+  - `npm run build`
   
 **Running**
 - `npm start` or `node .`

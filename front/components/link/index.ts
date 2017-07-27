@@ -18,7 +18,11 @@ class LinkVM {
 
   navigate = () => {
     window.history.pushState({}, 'Concierge', this.reference())
-    window.dispatchEvent(new Event('push-state'))
+    try {
+      window.dispatchEvent(new Event('push-state'))
+    } catch (ex) {
+      window.dispatchEvent(new CustomEvent('push-state'))
+    }
   }
 }
 

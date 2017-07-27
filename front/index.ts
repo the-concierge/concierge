@@ -1,5 +1,5 @@
-// Polyfill fetch
-import 'whatwg-fetch'
+// Registry polyfills
+import './polyfill'
 
 // Register components
 import './components'
