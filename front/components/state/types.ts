@@ -17,6 +17,7 @@ export interface ObservableContainer {
   id: KnockoutObservable<string>
   image: KnockoutObservable<string>
   name: KnockoutObservable<string>
+  restart: KnockoutObservable<string>
   status: KnockoutObservable<string>
   state: KnockoutObservable<string>
   stats: {
