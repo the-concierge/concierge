@@ -4,6 +4,7 @@ import pack from '../git/pack'
 import docker from '../docker'
 import { build as emitBuild } from '../stats/emitter'
 import * as getHost from '../hosts/db'
+import push from './push'
 
 const logBasePath = path.resolve(__dirname, '..', '..', '..', 'logs')
 
@@ -34,6 +35,7 @@ export default async function buildImage(application: Concierge.Application, sha
     }
 
     handleBuildStream(buildName, buildStream, logFile)
+      .then(() => push(host, tag))
   })
 }
 
