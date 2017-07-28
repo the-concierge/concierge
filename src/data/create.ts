@@ -31,7 +31,7 @@ function configurationTable() {
     tbl.integer('debug').defaultTo(1)
     tbl.integer('heartbeatFrequency').defaultTo(60000)
     tbl.integer('heartbeatBinSize').defaultTo(1440)
-    tbl.text('dockerRegistry').defaultTo('http://0.0.0.0:5000')
+    tbl.text('dockerRegistry').defaultTo('0.0.0.0:5000')
   })
 }
 
