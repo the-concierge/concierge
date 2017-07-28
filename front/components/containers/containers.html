@@ -25,7 +25,7 @@
   <tbody data-bind="foreach: containers">
     <tr>
       <td>
-        <a data-bind="text: name, click: function() { $parent.showModal($data) }" style="cursor: pointer"></a>
+        <a data-bind="text: name, click: function() { $parent.inspectContainer($data) }" style="cursor: pointer"></a>
       </td>
       <td data-bind="text: id"></td>
       <td data-bind="text: image"></td>
@@ -39,51 +39,4 @@
   </tbody>
 </table>
 
-<div class="modal" data-bind="css: { active: modalActive }">
-  <div class="modal-overlay" data-bind="click: hideModal"></div>
-  <div class="modal-container">
-    <div class="modal-header">
-      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
-      <div class="modal-title" data-bind="text: name"></div>
-    </div>
-    <div class="modal-body">
-      <div class="content">
-        <div class="container">
-          <div class="columns">
-            <div class="column col-2"><b>Id</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().id"></div>
-
-            <div class="column col-2"><b>Image</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().image"></div>
-
-            <div class="column col-2"><b>State</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().state"></div>
-
-            <div class="column col-2"><b>Status</b></div>
-            <div class="column col-10" data-bind="text: modalContainer().status"></div>
-
-            <div class="column col-2"><b>Urls</b></div>
-            <div class="column col-10" data-bind="foreach: modalContainer().ports">
-              <div>
-                <b data-bind="text: private"></b>
-                <a data-bind="attr: { href: url }, text: url" target="_blank"></a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-md" data-bind="
-        visible: showStopButton,
-        click: stopContainer,
-        disable: containerWaiting">Stop</button>
-
-      <button class="btn btn-md" data-bind="
-        visible: showStartButton,
-        click: startContainer,
-        disable: containerWaiting">Start</button>
-      <button class="btn btn-md" data-bind="disable: containerWaiting, click: removeContainer">Remove</button>
-    </div>
-  </div>
-</div>
+<ko-inspect />
