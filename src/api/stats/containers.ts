@@ -132,8 +132,6 @@ async function persist(stats: Stats) {
       timestamp: Date.now()
     })
 
-  log.debug(`Saved ${stats.containerId} stats bin`)
-
   // Reset stats bin
   stats.cpu = []
   stats.memory = []
