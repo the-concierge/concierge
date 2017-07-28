@@ -10,7 +10,7 @@ class Containers {
   hosts = ko.computed(() => {
     const hosts = state
       .hosts()
-      .map(host => ({ id: host.id, hostname: host.hostname }))
+      .map(host => ({ id: host.id, hostname: host.vanityHostname || host.hostname }))
 
     return [
       { id: 0, hostname: 'Show containers for all hosts' },
