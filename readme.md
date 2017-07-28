@@ -46,14 +46,27 @@ After starting the concierge:
 
 ### Installation
 
-#### Method 1
+#### Method 1: Global NPM package
 **Install globally using NPM**
 ```sh
 > npm install the-concierge -g
 > the-concierge
 ```
 
-#### Method 2
+#### Method 2: Docker
+**Use the public Docker image**
+```sh
+# Specify the flag below to keep a local copy of the Concierge SQLite database
+# -v /your/host/folder:/concierge/db
+
+# With access to your local Docker socket
+> docker run -dt -p 3141:3141 -v /var/run/docker.sock:/var/run/docker.sock --restart=always --name concierge theconcierge/concierge:latest
+
+# Without access to your local Docker socket
+> docker run -dt -p 3141:3141 --restart=always --name concierge theconcierge/concierge:latest
+```
+
+#### Method 3: Manual build
 **Build and run manually**
 - Clone the repository  
 - Build the project with `yarn` or `npm`
