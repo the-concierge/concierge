@@ -1,0 +1,107 @@
+<div class="modal" data-bind="css: { active: modalActive }">
+  <div class="modal-overlay" data-bind="click: hideModal"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
+      <div class="modal-title">
+        <strong>Image:</strong> <span data-bind="text: modalImage().name"></span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="content">
+        <form>
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-input" type="text" data-bind="textInput: newContainer.name" placeholder="[Optional] Vanity name..." />
+          </div>
+
+          <div class="divider"></div>
+          <strong>Links</strong>
+
+          <!-- ko if: linkableContainers().length > 0 -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <select class="form-select" data-bind="options: linkableContainers, optionsText: 'label', value: selectedContainerLink"></select>
+            <button class="btn btn-md" data-bind="click: addContainerLink">Add</button>
+          </div>
+          <!-- /ko -->
+
+          <div data-bind="foreach: newContainer.links">
+            <div class="input-group" style="margin-bottom: 10px">
+              <span class="input-group-addon" data-bind="text: containerName"></span>
+              <input type="text" class="form-input" data-bind="textInput: alias" placeholder="[Required] Link alias..." />
+              <button class="btn btn-md" data-bind="click: $parent.removeContainerLink">Remove</button>
+            </div>
+          </div>
+
+          <!-- ko if: newContainer.ports().length > 0 -->
+          <div class="divider"></div>
+          <strong>Expose Ports:</strong>
+
+          <!-- ko foreach: newContainer.ports -->
+          <div class="form-horizontal">
+            <div class="form-group">
+            <label class="form-switch">
+              <input type="checkbox" />
+              <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i>
+            </label>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <span data-bind="text: port + '/' + type"></span>
+                </span>
+                <input type="text" class="form-input" data-bind="textInput: hostPort" placeholder="Host Port" />
+              </div>
+            </div>
+          </div>
+          <!-- /ko -->
+          <!-- /ko -->
+
+
+          <!-- ko if: newContainer.volumes().length > 0 -->
+          <div class="divider"></div>
+          <strong>Volumes:</strong>
+
+          <!-- ko foreach: newContainer.volumes -->
+          <div class="form-group">
+            <label class="form-label" data-bind="text: path"></label>
+            <input class="form-input" type="text" data-bind="textInput: hostPath" placeholder="Host path mount" />
+          </div>
+          <!-- /ko -->
+          <!-- /ko -->
+
+          <div class="divider"></div>
+          <strong>Custom Environment Variables:</strong>
+          <div class="input-group" style="margin-bottom: 10px">
+            <input type="text" class="form-input" data-bind="textInput: newCustomVariableName" placeholder="Variable name" />
+            <button class="btn btn-md" data-bind="click: addCustomVariable">Add</button>
+          </div>
+
+          <!-- ko foreach: newContainer.customEnvs -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <span class="input-group-addon" data-bind="text: key"></span>
+            <input type="text" class="form-input" data-bind="textInput: value" />
+            <button class="btn btn-md" data-bind="click: $parent.removeCustomVariable">Remove</button>
+          </div>
+          <!-- /ko -->
+
+          <!-- ko if: newContainer.envs().length > 0 -->
+          <div class="divider"></div>
+          <strong>Environment Variables:</strong>
+
+          <!-- ko foreach: newContainer.envs -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <span class="input-group-addon" data-bind="text: key"></span>
+            <input type="text" class="form-input" data-bind="textInput: value" />
+          </div>
+          <!-- /ko -->
+          <!-- /ko -->
+
+        </form>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: hideModal">Cancel</button>
+      <button class="btn btn-md" data-bind="click: runContainer, enable: canRunContainer">Run</button>
+    </div>
+  </div>
+</div>
