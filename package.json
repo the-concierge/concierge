@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Concierge Service",
   "main": "src/index.js",
   "dependencies": {
@@ -51,7 +51,8 @@
     "build": "tsc -p tsconfig.node.json && tsc -p tsconfig.front.json",
     "postbuild": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "bundle": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
-    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json"
+    "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json",
+    "create-registry": "openssl req -newkey rsa:2048 -nodes -keyout certificates/registry.key -x509 -days 999 -out certificates/registry.crt -subj \"/CN=Registry\" && docker-compose -f registry.compose.yml up -d"
   },
   "author": "Carl Winkler",
   "license": "MIT",

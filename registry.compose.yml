@@ -1,0 +1,11 @@
+registry:
+  restart: always
+  image: registry:latest
+  ports:
+    - 5000:5000
+  environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/registry.key
+  volumes:
+    - ./certificates:/certs
+    - ./registry:/var/lib/registry

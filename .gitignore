@@ -31,3 +31,7 @@ repositories/
 !front/libs/*.js
 *.lock
 *.tmp*
+*.key
+*.crt
+*.pem
+registry/
