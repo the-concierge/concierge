@@ -29,8 +29,8 @@ function configurationTable() {
     tbl.text('proxyIp').defaultTo('0.0.0.0')
     tbl.integer('httpPort').defaultTo(5926)
     tbl.integer('debug').defaultTo(1)
-    tbl.integer('heartbeatFrequency').defaultTo(60000)
-    tbl.integer('heartbeatBinSize').defaultTo(1440)
+    tbl.integer('statsBinSize').defaultTo(60) // Default to 1 minute per bin
+    tbl.integer('statsRetentionDays').defaultTo(1) // Truncate stats older than 1 day by default
     tbl.text('dockerRegistry').defaultTo('0.0.0.0:5000')
   })
 }
@@ -82,7 +82,6 @@ function heartbeatTable() {
     tbl.integer('containerId').notNullable()
     tbl.text('cpu').notNullable()
     tbl.text('memory').notNullable()
-    tbl.integer('responseTime').notNullable()
     tbl.increments('timestamp').notNullable()
   })
 }

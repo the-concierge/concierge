@@ -1,9 +1,20 @@
 import { Readable } from 'stream'
 import * as getHosts from '../hosts/db'
+import { heartbeats } from '../../data'
 import docker from '../docker'
 import * as emitter from './emitter'
+import * as analysis from 'analysis'
+import { cache as config } from '../configuration/db'
 
-const containerStats: { [id: string]: string } = {}
+type Stats = {
+  containerId: string
+  hostId: number
+  json: string
+  cpu: number[]
+  memory: number[]
+}
+
+const containerStats: { [id: string]: Stats } = {}
 
 export default async function monitorAll() {
   const hosts = await getHosts.getAll()
@@ -24,7 +35,7 @@ export function watchContainer(host: Concierge.Host, containerId: string) {
   }
 
   const client = docker(host)
-  containerStats[containerId] = ''
+  containerStats[containerId] = { json: '', cpu: [], memory: [], hostId: host.id, containerId }
 
   client.getContainer(containerId)
     .stats((err, stream: Readable) => {
@@ -34,19 +45,96 @@ export function watchContainer(host: Concierge.Host, containerId: string) {
         log.info(`[${containerId.slice(0, 10)}] Stats stream ended`)
         delete containerStats[containerId]
       })
-      stream.on('error', (err) => log.info(`[${containerId.slice(0, 10)}] Stats stream errored: ${err}`) )
+      stream.on('error', (err) => log.info(`[${containerId.slice(0, 10)}] Stats stream errored: ${err}`))
     })
 }
 
 function parseData(containerId: string, buffer: Buffer) {
-  const preStats = containerStats[containerId]
-  const stats = preStats + buffer.toString()
+  const stats = containerStats[containerId]
+  const rawJson = stats.json + buffer.toString()
 
   try {
-    const json = JSON.parse(stats)
+    const json = JSON.parse(rawJson)
+    const memory = getMemory(json)
+    const cpu = getCPU(json)
+    const io = getDataTransfer(json)
+
+    json.memory = isNaN(memory) ? '...' : memory + '%'
+    json.cpu = isNaN(cpu) ? '...' : cpu + '%'
+    json.tx = io.tx
+    json.rx = io.rx
+
     emitter.containerStats(containerId, json)
-    containerStats[containerId] = ''
+    stats.cpu.push(cpu)
+    stats.memory.push(memory)
+    stats.json = ''
+    persist(stats)
+
   } catch (_) {
-    containerStats[containerId] = stats
+    stats.json = rawJson
   }
+}
+
+function getCPU(event: ContainerEvent) {
+  const postCpuStats = event.cpu_stats
+  const preCpuStats = event.precpu_stats
+  const x = preCpuStats.cpu_usage.total_usage - postCpuStats.cpu_usage.total_usage
+  const y = preCpuStats.system_cpu_usage - postCpuStats.system_cpu_usage
+  const cpuPercent = analysis.common.round((x / (x + y) * 100), 2)
+  return isNaN(cpuPercent) ? 0 : cpuPercent
+}
+
+function getDataTransfer(event: ContainerEvent) {
+  const networks = event.networks || {}
+  const eth0 = networks['eth0']
+  if (eth0) {
+    return {
+      rx: analysis.common.round(eth0.rx_bytes / 1024 / 1024, 2) + 'MB',
+      tx: analysis.common.round(eth0.tx_bytes / 1024 / 1024, 2) + 'MB'
+    }
+  }
+
+  return {
+    rx: '...',
+    tx: '...'
+  }
+}
+
+function getMemory(event: ContainerEvent) {
+  const memStats = event.memory_stats
+  const memory = (memStats.usage / 1024 / 1024) / (memStats.limit / 1024 / 1024) * 100
+  const memPercent = analysis.common.round(memory, 2)
+  return isNaN(memPercent) ? 0 : memPercent
+}
+
+async function persist(stats: Stats) {
+  if (!config) {
+    return
+  }
+
+  const binSize = Number(config.statsBinSize)
+
+  // CPU and Memory will be same length in container stats
+  // Use either
+  if (stats.cpu.length < binSize) {
+    return
+  }
+
+  const cpu = analysis.descriptive.box(stats.cpu)
+  const memory = analysis.descriptive.box(stats.memory)
+
+  await heartbeats()
+    .insert({
+      hostId: stats.hostId,
+      containerId: stats.containerId,
+      cpu: JSON.stringify(cpu),
+      memory: JSON.stringify(memory),
+      timestamp: Date.now()
+    })
+
+  log.debug(`Saved ${stats.containerId} stats bin`)
+
+  // Reset stats bin
+  stats.cpu = []
+  stats.memory = []
 }

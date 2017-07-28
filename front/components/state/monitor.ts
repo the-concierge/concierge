@@ -1,6 +1,5 @@
 import * as ko from 'knockout'
 import socket from './socket'
-import { ConciergeEvent } from './types'
 
 class Monitor<T> {
   entries = ko.observableArray<string>([])

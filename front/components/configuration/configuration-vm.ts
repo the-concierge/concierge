@@ -14,8 +14,8 @@ class Configuration {
     debug: 'Debug Level',
     httpPort: 'Proxy Port',
     dockerRegistry: 'Docker Registry',
-    heartbeatFrequency: 'Heartbeat Frequency (ms)',
-    heartbeatBinSize: 'Heartbeat Bin Size (samples)'
+    statsBinSize: 'Stats Samples per Bin (1Hz)',
+    statsRetentionDays: 'Stats Retention Time (days)'
   }
 
   fields = ko.computed(() => {

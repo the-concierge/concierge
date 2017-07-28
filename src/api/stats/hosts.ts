@@ -16,7 +16,7 @@ export default async function watchHosts() {
 
     const client = docker(host)
     const hostId = host.id
-    const hostname = host.hostname
+    const hostname = host.hostname || host.vanityHostname
     client.getEvents({}, (err, stream: NodeJS.ReadableStream) => {
       if (err) {
         log.error(`[${hostname}] Failed to monitor host: ${err}`)

@@ -10,5 +10,11 @@ export async function get() {
 export async function update(config: Partial<Concierge.Configuration>) {
   const result = await db.configurations()
     .update(config)
+
+  cache = { ...cache, ...config }
   return result
 }
+
+export let cache: Concierge.Configuration | undefined
+
+get().then(cfg => cache = cfg)

@@ -22,7 +22,7 @@ export default async function push(host: Concierge.Host, imageName: string): Pro
 
   const { repo, tag } = pushInfo
 
-  const result = await image.tag({
+  await image.tag({
     repo,
     tag
   })

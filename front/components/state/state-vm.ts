@@ -1,5 +1,5 @@
 import * as ko from 'knockout'
-import { Image, Container, ConciergeEvent, ContainerEvent, ObservableContainer } from './types'
+import { Image, Container, ObservableContainer } from './types'
 import updateContainer from './update'
 import socket from './socket'
 import Monitor from './monitor'
