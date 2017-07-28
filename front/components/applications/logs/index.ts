@@ -1,0 +1,1 @@
+export { default as default } from './app-logs-vm'

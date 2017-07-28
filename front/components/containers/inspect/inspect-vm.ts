@@ -85,7 +85,7 @@ class Inspect {
 
 const viewModel = new Inspect()
 
-ko.components.register('ko-inspect', {
+ko.components.register('ko-inspect-container', {
   template: fs.readFileSync(`${__dirname}/inspect.html`).toString(),
   viewModel: {
     createViewModel: () => viewModel
