@@ -5,7 +5,7 @@ Docker orchestration with Node and TypeScript
 ## What does the Concierge do?
 - It fetches source code from a Git repository by tag or branch
 - It uses the Dockerfile provided or a custom Dockerfile elsewhere in the repository to build a Docker image 
-- ~~It pushes images to a Docker registry~~ `Not available since refactoring`
+- It pushes images to a Docker registry
 - Allows configurable creation of containers from images
 - It controls (stop/start/delete) the containers on all Hosts.
 - Monitors memory and CPU usage of containers
