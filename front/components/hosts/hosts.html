@@ -1,4 +1,4 @@
-<button class="btn btn-md" data-bind="click: showModal">Create Host</button>
+<button class="btn btn-md" data-bind="click: showCreateHost">Create Host</button>
 <table class="table table-striped table-hover">
   <thead>
     <tr>
@@ -18,141 +18,11 @@
       <td data-bind="text: sshPort"></td>
       <td data-bind="text: dockerPort"></td>
       <td>
-        <button class="btn btn-md" data-bind="click: $parent.editHost">Edit</button>
+        <button class="btn btn-md" data-bind="click: $parent.showEditHost">Edit</button>
       </td>
     </tr>
   </tbody>
 </table>
 
-<div class="modal" data-bind="css: { active: modalActive }">
-  <div class="modal-overlay" data-bind="click: hideModal"></div>
-  <div class="modal-container">
-    <div class="modal-header">
-      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
-      <div class="modal-title">Create Host</div>
-    </div>
-    <div class="modal-body">
-      <div class="content">
-        <form>
-          <div class="form-group">
-            <label class="form-label">Hostname <sub style="float: right">(Optional) Will use the local unix socket if not provided</sub></label>
-            <input class="form-input" type="text" data-bind="textInput: hostname" placeholder="127.0.0.1" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Vanity Hostname</label>
-            <input class="form-input" type="text" data-bind="textInput: vanityHostname" placeholder="127.0.0.1 (Optional)" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">SSH Authorisation Style</label>
-            <label class="form-radio">
-              <input type="radio" value="Key" data-bind="checked: displayAuth" />
-              <i class="form-icon" data-bind="click: useKey"></i>Key
-            </label>
-            <label class="form-radio">
-              <input type="radio" value="Password" data-bind="checked: displayAuth" />
-              <i class="form-icon" data-bind="click: usePassword"></i>Password
-            </label>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group">Username</label>
-            <input class="form-input" type="text" data-bind="textInput: username" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" data-bind="text: displayAuth"></label>
-            <textarea class="form-input" type="text" data-bind="textInput: privateKey, visible: isKey"></textarea>
-            <input class="form-input" type="password" data-bind="textInput: password, visible: isPassword" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Container Capacity</label>
-            <input class="form-input" type="text" data-bind="textInput: capacity" placeholder="5" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">SSH Port</label>
-            <input class="form-input" type="text" data-bind="textInput: sshPort" placeholder="22" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Docker Port</label>
-            <input class="form-input" type="text" data-bind="textInput: dockerPort" placeholder="2375" />
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-md" data-bind="click: createHost">Save</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" data-bind="css: { active: editModalActive }">
-  <div class="modal-overlay" data-bind="click: hideEditModal"></div>
-  <div class="modal-container">
-    <div class="modal-header">
-      <button class="btn btn-clear float-right" data-bind="click: hideEditModal"></button>
-      <div class="modal-title">Edit Host</div>
-    </div>
-    <div class="modal-body">
-      <div class="content">
-        <form>
-          <div class="form-group">
-            <label class="form-label">Hostname</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.hostname" placeholder="127.0.0.1" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Vanity Hostname</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.vanityHostname" placeholder="127.0.0.1 (Optional)" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">SSH Authorisation Style</label>
-            <label class="form-radio">
-              <input type="radio" value="Key" data-bind="checked: displayAuth" />
-              <i class="form-icon" data-bind="click: useKey"></i>Key
-            </label>
-            <label class="form-radio">
-              <input type="radio" value="Password" data-bind="checked: displayAuth" />
-              <i class="form-icon" data-bind="click: usePassword"></i>Password
-            </label>
-          </div>
-
-          <div class="form-group">
-            <label class="form-group">Username</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.sshUsername" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" data-bind="text: displayAuth"></label>
-            <textarea class="form-input" type="text" data-bind="textInput: modifiedHost.privateKey, visible: isKey"></textarea>
-            <input class="form-input" type="password" data-bind="textInput: modifiedHost.password, visible: isPassword" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Container Capacity</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.capacity" placeholder="5" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">SSH Port</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.sshPort" placeholder="22" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Docker Port</label>
-            <input class="form-input" type="text" data-bind="textInput: modifiedHost.dockerPort" placeholder="2375" />
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-md" data-bind="click: hideEditModal">Cancel</button>
-      <button class="btn btn-md" data-bind="click: saveEditHost">Save</button>
-    </div>
-  </div>
-</div>
+<ko-edit-host />
+<ko-create-host />
