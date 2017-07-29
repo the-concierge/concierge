@@ -37,12 +37,14 @@
     "browserify": "^14.1.0",
     "browserify-fs": "^1.0.0",
     "chai": "^3.4.1",
+    "del": "^3.0.0",
     "mocha": "^2.2.5",
     "tslint": "^4.4.2",
     "tslint-config-standard": "^4.0.0",
     "typescript": "^2.3.4"
   },
   "scripts": {
+    "clean": "node clean.js",
     "test": "mocha",
     "debug": "node --inspect start.js",
     "start": "node .",
