@@ -35,3 +35,4 @@ repositories/
 *.crt
 *.pem
 registry/
+logs/*
