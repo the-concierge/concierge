@@ -16,7 +16,7 @@ See the [Contribution Guide](./CONTRIBUTING.md)
 
 ## How do I set up a Concierge from scratch?
 
-### To control your local install of Docker on a Mac or Linux
+### To control your local install of Docker on Windows, Mac or Linux
 
 After starting the concierge:
 - Create a new `Host`
