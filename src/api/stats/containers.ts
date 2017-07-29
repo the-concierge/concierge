@@ -4,7 +4,7 @@ import { heartbeats } from '../../data'
 import docker from '../docker'
 import * as emitter from './emitter'
 import * as analysis from 'analysis'
-import { cache as config } from '../configuration/db'
+import { getConfig } from '../configuration/db'
 
 type Stats = {
   containerId: string
@@ -108,9 +108,7 @@ function getMemory(event: ContainerEvent) {
 }
 
 async function persist(stats: Stats) {
-  if (!config) {
-    return
-  }
+  const config = await getConfig()
 
   const binSize = Number(config.statsBinSize)
 
