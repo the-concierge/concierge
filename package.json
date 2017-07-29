@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "Concierge Service",
   "main": "src/index.js",
   "dependencies": {
