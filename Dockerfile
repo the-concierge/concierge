@@ -5,9 +5,9 @@ WORKDIR /concierge
 
 RUN apk update \
 	&& apk add git \
-	&& mkdir archive \
-	&& mkdir db \
-	&& mkdir repositores \
+	&& mkdir -p archive \
+	&& mkdir -p db \
+	&& mkdir -p repositores \
 	&& yarn	\
 	&& yarn build \
 	&& yarn bundle
