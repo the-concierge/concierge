@@ -12,7 +12,7 @@
         <form>
           <div class="form-group">
             <label class="form-label">Name</label>
-            <input class="form-input" type="text" data-bind="textInput: newContainer.name" placeholder="[Optional] Vanity name..." />
+            <input class="form-input" type="text" data-bind="textInput: name" placeholder="[Optional] Vanity name..." />
           </div>
 
           <div class="divider"></div>
@@ -25,7 +25,7 @@
           </div>
           <!-- /ko -->
 
-          <div data-bind="foreach: newContainer.links">
+          <div data-bind="foreach: links">
             <div class="input-group" style="margin-bottom: 10px">
               <span class="input-group-addon" data-bind="text: containerName"></span>
               <input type="text" class="form-input" data-bind="textInput: alias" placeholder="[Required] Link alias..." />
@@ -33,11 +33,11 @@
             </div>
           </div>
 
-          <!-- ko if: newContainer.ports().length > 0 -->
+          <!-- ko if: ports().length > 0 -->
           <div class="divider"></div>
           <strong>Expose Ports:</strong>
 
-          <!-- ko foreach: newContainer.ports -->
+          <!-- ko foreach: ports -->
           <div class="form-horizontal">
             <div class="form-group">
             <label class="form-switch">
@@ -55,12 +55,26 @@
           <!-- /ko -->
           <!-- /ko -->
 
+          <div class="divider"></div>
+          <strong>Custom Volumes:</strong>
+          <div class="input-group" style="margin-bottom: 10px">
+            <input type="text" class="form-input" data-bind="textInput: newCustomVolume" placeholder="Container Path" />
+            <button class="btn btn-md" data-bind="click: addCustomVolume">Add</button>
+          </div>
 
-          <!-- ko if: newContainer.volumes().length > 0 -->
+          <!-- ko foreach: customVolumes -->
+          <div class="input-group" style="margin-bottom: 10px">
+            <span class="input-group-addon" data-bind="text: path"></span>
+            <input type="text" class="form-input" data-bind="textInput: hostPath" placeholder="Host Path..." />
+            <button class="btn btn-md" data-bind="click: $parent.removeCustomVolume">Remove</button>
+          </div>
+          <!-- /ko -->
+
+          <!-- ko if: volumes().length > 0 -->
           <div class="divider"></div>
           <strong>Volumes:</strong>
 
-          <!-- ko foreach: newContainer.volumes -->
+          <!-- ko foreach: volumes -->
           <div class="form-group">
             <label class="form-label" data-bind="text: path"></label>
             <input class="form-input" type="text" data-bind="textInput: hostPath" placeholder="Host path mount" />
@@ -75,7 +89,7 @@
             <button class="btn btn-md" data-bind="click: addCustomVariable">Add</button>
           </div>
 
-          <!-- ko foreach: newContainer.customEnvs -->
+          <!-- ko foreach: customEnvs -->
           <div class="input-group" style="margin-bottom: 10px">
             <span class="input-group-addon" data-bind="text: key"></span>
             <input type="text" class="form-input" data-bind="textInput: value" />
@@ -83,11 +97,11 @@
           </div>
           <!-- /ko -->
 
-          <!-- ko if: newContainer.envs().length > 0 -->
+          <!-- ko if: envs().length > 0 -->
           <div class="divider"></div>
           <strong>Environment Variables:</strong>
 
-          <!-- ko foreach: newContainer.envs -->
+          <!-- ko foreach: envs -->
           <div class="input-group" style="margin-bottom: 10px">
             <span class="input-group-addon" data-bind="text: key"></span>
             <input type="text" class="form-input" data-bind="textInput: value" />

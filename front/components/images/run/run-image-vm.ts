@@ -8,27 +8,21 @@ type ContainerLink = {
   alias: KnockoutObservable<string>
 }
 
-type NewContainer = {
-  name: KnockoutObservable<string>,
-  customEnvs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
-  envs: KnockoutObservableArray<{ key: string, value: KnockoutObservable<string> }>
-  ports: KnockoutObservableArray<{ port: number, type: string, expose: KnockoutObservable<boolean>, hostPort: KnockoutObservable<string> }>
-  volumes: KnockoutObservableArray<{ path: string, hostPath: KnockoutObservable<string> }>
-  links: KnockoutObservableArray<{ containerName: string, alias: KnockoutObservable<string> }>
-}
-
 class Run {
   modalActive = ko.observable(false)
 
   newCustomVariableName = ko.observable('')
-  newContainer: NewContainer = {
-    name: ko.observable(''),
-    customEnvs: ko.observableArray([]),
-    envs: ko.observableArray([]),
-    ports: ko.observableArray([]),
-    volumes: ko.observableArray([]),
-    links: ko.observableArray([])
-  }
+  newCustomVolume = ko.observable('')
+
+  name = ko.observable('')
+  ports = ko.observableArray<{ port: number, type: string, expose: KnockoutObservable<boolean>, hostPort: KnockoutObservable<string> }>([])
+  links = ko.observableArray<{ containerName: string, alias: KnockoutObservable<string> }>([])
+
+  envs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
+  customEnvs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
+
+  volumes = ko.observableArray<{ path: string, hostPath: KnockoutObservable<string> }>([])
+  customVolumes = ko.observableArray<{ path: string, hostPath: KnockoutObservable<string> }>([])
 
   creatingContainer = ko.observable(false)
   modalImage = ko.observable<Partial<Image>>({
@@ -36,10 +30,8 @@ class Run {
   })
 
   canRunContainer = ko.computed(() => {
-    const container = this.newContainer
-
     const isCreatingContainer = this.creatingContainer()
-    const allLinksAliases = container
+    const allLinksAliases = this
       .links()
       .every(link => link.alias() !== '')
 
@@ -57,23 +49,37 @@ class Run {
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
 
+  addCustomVolume = () => {
+    const key = this.newCustomVolume()
+    if (!key) {
+      return
+    }
+
+    this.customVolumes.push({ path: key, hostPath: ko.observable('') })
+    this.newCustomVolume('')
+  }
+
+  removeCustomVolume = (customVolume: { path: string }) => {
+    this.customVolumes.remove(env => env.path === customVolume.path)
+  }
+
   addCustomVariable = () => {
     const key = this.newCustomVariableName()
     if (!key) {
       return
     }
 
-    this.newContainer.customEnvs.push({ key, value: ko.observable('') })
+    this.customEnvs.push({ key, value: ko.observable('') })
     this.newCustomVariableName('')
   }
 
   removeCustomVariable = (customEnv: { key: string }) => {
-    this.newContainer.customEnvs.remove(env => env.key === customEnv.key)
+    this.customEnvs.remove(env => env.key === customEnv.key)
   }
 
   addContainerLink = () => {
     const container = this.selectedContainerLink()
-    this.newContainer.links.push({
+    this.links.push({
       containerName: container.name,
       alias: ko.observable('')
     })
@@ -82,12 +88,12 @@ class Run {
   }
 
   removeContainerLink = (link: ContainerLink) => {
-    this.newContainer.links.remove(container => container.containerName === link.containerName)
+    this.links.remove(container => container.containerName === link.containerName)
     this.refreshLinkableContainers()
   }
 
   getLinkableContainers = () => {
-    const links = this.newContainer.links()
+    const links = this.links()
     return state
       .containers()
       .filter(container => {
@@ -113,12 +119,15 @@ class Run {
     this.modalActive(true)
 
     // Reset existing values
-    this.newContainer.name('')
-    this.newContainer.ports.removeAll()
-    this.newContainer.envs.removeAll()
-    this.newContainer.volumes.removeAll()
-    this.newContainer.links.removeAll()
-    this.newContainer.customEnvs.removeAll()
+    this.newCustomVariableName('')
+    this.newCustomVolume('')
+    this.ports.removeAll()
+    this.envs.removeAll()
+    this.volumes.removeAll()
+    this.name('')
+    this.links.removeAll()
+    this.customVolumes.removeAll()
+    this.customEnvs.removeAll()
 
     const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
       .then(res => res.json())
@@ -127,26 +136,25 @@ class Run {
     const envs = getEnvs(info)
     const volumes = getVolumes(info)
 
-    this.newContainer.ports.push(...ports)
-    this.newContainer.envs.push(...envs)
-    this.newContainer.volumes.push(...volumes)
+    this.ports.push(...ports)
+    this.envs.push(...envs)
+    this.volumes.push(...volumes)
     this.refreshLinkableContainers()
   }
 
   runContainer = async () => {
     const image = this.modalImage()
-    const container = this.newContainer
 
-    const name = container.name()
+    const name = this.name()
 
-    const envs = container.envs()
-      .concat(container.customEnvs())
+    const envs = this.envs()
+      .concat(this.customEnvs())
       .map(({ key, value }) => ({
         key,
         value: value()
       }))
 
-    const ports = container.ports()
+    const ports = this.ports()
       .map(({ port, expose, type, hostPort }) => ({
         port,
         type,
@@ -154,13 +162,14 @@ class Run {
         expose: expose()
       }))
 
-    const volumes = container.volumes()
+    const volumes = this.volumes()
+      .concat(this.customVolumes())
       .map(({ path, hostPath }) => ({
         path,
         hostPath: hostPath()
       }))
 
-    const links = container.links().map(link => ({
+    const links = this.links().map(link => ({
       containerName: link.containerName,
       alias: link.alias()
     }))
