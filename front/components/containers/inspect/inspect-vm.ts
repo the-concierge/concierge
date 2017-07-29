@@ -1,13 +1,17 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import state, { ObservableContainer } from '../../state'
+import stats from '../stats'
 
 class Inspect {
   containerId = ko.observable('')
+  containerFullId = ko.observable('')
+
   modalActive = ko.observable(false)
 
   defaultContainer: ObservableContainer = {
     id: ko.observable('...'),
+    fullId: ko.observable('...'),
     name: ko.observable('...'),
     image: ko.observable('...'),
     state: ko.observable('...'),
@@ -48,9 +52,14 @@ class Inspect {
   buttonLoading = ko.observable('')
 
   inspect = (container: ObservableContainer) => {
-    this.containerId(ko.unwrap(container.id))
+    this.containerId(container.id())
+    this.containerFullId(container.fullId())
+
+    this.refreshStatistics()
     this.modalActive(true)
   }
+
+  refreshStatistics = () => stats.getStats(this.containerFullId())
 
   hideModal = () => this.modalActive(false)
 

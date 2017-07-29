@@ -130,6 +130,14 @@ async function persist(stats: Stats) {
       timestamp: Date.now()
     })
 
+  const now = new Date()
+  const boundary = now.setDate(now.getDate() - Number(config.statsRentionDays)).valueOf()
+
+  // Truncate records older than the retention limit
+  await heartbeats()
+    .delete()
+    .andWhere('timestamp', '<', boundary)
+
   // Reset stats bin
   stats.cpu = []
   stats.memory = []

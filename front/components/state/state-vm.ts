@@ -174,6 +174,7 @@ function toObservableContainer(container: Container) {
 
   const newContainer: ObservableContainer = {
     id: ko.observable(container.Id.slice(0, 10)),
+    fullId: ko.observable(container.Id),
     image: ko.observable(container.Image),
     name: ko.observable((container.Names[0] || '').slice(1)),
     restart: ko.observable(''),

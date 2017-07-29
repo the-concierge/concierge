@@ -5,9 +5,6 @@
       <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
       <div class="modal-title">
         <span data-bind="text: container().name"></span>
-        <span style="float: right">
-          <a data-bind="">View Performance Chart</a>
-        </span>
       </div>
     </div>
     <div class="modal-body">
@@ -40,11 +37,25 @@
               <span data-bind="text: container().stats.mbIn"></span> /
               <span data-bind="text: container().stats.mbOut"></span>
             </div>
+
+            <div class="divider"></div>
+
+            <div class="column col-12">
+              <div id="cpu-chart"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="column col-12">
+              <div id="memory-chart"></div>
+            </div>
+            <ko-stats></ko-stats>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-md" data-bind="click: refreshStatistics">Refresh Charts</button>
       <button class="btn btn-md" data-bind="
         visible: showStopButton,
         click: stopContainer,

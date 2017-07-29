@@ -1,12 +1,14 @@
 {
   "name": "the-concierge",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Concierge Service",
   "main": "src/index.js",
   "dependencies": {
+    "@types/c3": "^0.4.44",
     "@types/dockerode": "^2.4.1",
     "analysis": "0.x.x",
     "body-parser": "^1.16.1",
+    "c3": "^0.4.15",
     "chalk": "^1.0.0",
     "compression": "^1.6.2",
     "dockerode": "^2.4.3",

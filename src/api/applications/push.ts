@@ -13,6 +13,13 @@ export default async function push(host: Concierge.Host, imageName: string): Pro
     return
   }
 
+  // This is the registry configured by default
+  // Do not attempt to push to the default registry as it doesn't exist
+  const defaultRegistry = '0.0.0.0:5000'
+  if (config.dockerRegistry === defaultRegistry) {
+    return
+  }
+
   const image = client.getImage(imageName)
   const registry = config.dockerRegistry
   const pushInfo = getRepoTag(registry, imageName)

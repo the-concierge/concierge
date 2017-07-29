@@ -15,6 +15,7 @@ export type Image = ImageInfo & HostId & { name: string }
 declare const _hostId: HostId
 export interface ObservableContainer {
   id: KnockoutObservable<string>
+  fullId: KnockoutObservable<string>
   image: KnockoutObservable<string>
   name: KnockoutObservable<string>
   restart: KnockoutObservable<string>
