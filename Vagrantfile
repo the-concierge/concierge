@@ -8,10 +8,10 @@ Vagrant.configure(2) do |config|
   config.vm.provision "shell", inline: "apt-get install git g++ -y"
 
   # Install Node v6.*
-  config.vm.provision "shell", path: "node.sh"
+  config.vm.provision "shell", path: "./scripts/node.sh"
 
   # Install Docker v1.*
-  config.vm.provision "shell", path: "docker.sh"
+  config.vm.provision "shell", path: "./scripts/docker.sh"
 
   # Copy Concierge source to Guest (without node_modules and database)
   config.vm.provision "file", source: ".", destination: "/home/vagrant/concierge"

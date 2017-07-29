@@ -10,7 +10,7 @@
         ]
     },
     "include": [
-        "front/**/*.ts",
-        "typings/**/*.ts"
+        "../front/**/*.ts",
+        "../typings/**/*.ts"
     ]
 }

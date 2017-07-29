@@ -46,18 +46,18 @@
     "typescript": "^2.3.4"
   },
   "scripts": {
-    "clean": "node clean.js",
+    "clean": "node scripts/clean.js",
     "test": "mocha",
     "debug": "node --inspect start.js",
     "start": "node .",
-    "build:front": "tsc -p tsconfig.front.json && yarn bundle",
-    "build:back": "tsc -p tsconfig.node.json",
-    "build": "tsc -p tsconfig.node.json && tsc -p tsconfig.front.json",
+    "build:front": "tsc -p scripts/tsconfig.front.json && yarn bundle",
+    "build:back": "tsc -p scripts/tsconfig.node.json",
+    "build": "tsc -p scripts/tsconfig.node.json && tsc -p scripts/tsconfig.front.json",
     "postbuild": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "bundle": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "lint": "tslint --project . --exclude \"repositories/**\" --rules tslint.json",
     "create-cert": "openssl req -newkey rsa:2048 -nodes -keyout certificates/registry.key -x509 -days 999 -out certificates/registry.crt -subj \"/CN=localhost\"",
-    "create-registry": "npm run create-cert && docker-compose -f registry.compose.yml up -d"
+    "create-registry": "npm run create-cert && docker-compose -f scripts/registry.compose.yml up -d"
   },
   "author": "Carl Winkler",
   "license": "MIT",
