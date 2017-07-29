@@ -22,11 +22,6 @@ The routing uses components and does not using the History API of the browser.
  - E.g. Given the Proxy Hostname `mypaypac.com.au`, a container with the subdomain `example` would be accessed via `example.mypaypac.com.au` is Proxying is enabled
 - Tag
  - See the `Git tag`
-- Variant
- - A variant represents the Docker Image of an Application at a particular point in time using the `Git Tag` as the reference point.
- - The source code of the Application is fetched at the commit that the `Git Tag` points
- - the [Docker build](https://docs.docker.com/v1.8/reference/commandline/build/) command is executed against this source code.
- - If the Docker build successfully completes, the resulting Docker image is pushed to the `Docker registry` and can now be used to create `Containers` 
 - Volume
  - See `App Data`
 
