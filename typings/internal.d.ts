@@ -57,7 +57,7 @@ declare module Concierge {
     httpPort: number
     debug: number
     statsBinSize: number // Samples per bin at 1Hert per container
-    statsRentionDays: number // Truncate stats records older than N day(s)
+    statsRetentionDays: number // Truncate stats records older than N day(s)
     dockerRegistry?: string
   }
 

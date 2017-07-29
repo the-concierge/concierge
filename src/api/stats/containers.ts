@@ -112,6 +112,13 @@ async function persist(stats: Stats) {
 
   const binSize = Number(config.statsBinSize)
 
+  // Truncate records older than the retention limit
+  const now = new Date()
+  const boundary = now.setDate(now.getDate() - config.statsRetentionDays).valueOf()
+  await heartbeats()
+    .delete()
+    .where('timestamp', '<', boundary)
+
   // CPU and Memory will be same length in container stats
   // Use either
   if (stats.cpu.length < binSize) {
@@ -129,14 +136,6 @@ async function persist(stats: Stats) {
       memory: JSON.stringify(memory),
       timestamp: Date.now()
     })
-
-  const now = new Date()
-  const boundary = now.setDate(now.getDate() - Number(config.statsRentionDays)).valueOf()
-
-  // Truncate records older than the retention limit
-  await heartbeats()
-    .delete()
-    .andWhere('timestamp', '<', boundary)
 
   // Reset stats bin
   stats.cpu = []
