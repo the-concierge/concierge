@@ -16,10 +16,10 @@
   - Allow fetching between date ranges
 - Implement SSH tunneling to Docker clients to remove the current 'internal network only' limitation
 - ~~Implement client-side routing~~
-- Implement supporting multiple exposed ports
-  - Currently only one is supported
+- ~~Implement supporting multiple exposed ports~~
+  - ~~Currently only one is supported~~
 - Select which Host a Container will be created on
 - Move a Container to another Host
-- When forking/creating a Container, allow custom Environment Variables
+- ~~When forking/creating a Container, allow custom Environment Variables~~
 
 [![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/todos)](https://github.com/paypac/node-concierge)
