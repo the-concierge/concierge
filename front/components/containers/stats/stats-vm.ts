@@ -21,7 +21,7 @@ type ExtractedData = {
   mean: Array<string | number>
   min: Array<string | number>
   max: Array<string | number>
-  x: Array<string | number>
+  x: Array<number>
 }
 
 class Performance {
@@ -35,9 +35,7 @@ class Performance {
     c3.generate({
       bindto: elementId,
       data: {
-        x: 'x',
         columns: [
-          extracted.x,
           extracted.mean,
           extracted.min,
           extracted.max
@@ -45,10 +43,17 @@ class Performance {
       },
       axis: {
         x: {
-          type: 'timeseries',
+          type: 'indexed',
           label: 'Time HH:mm:ss',
           tick: {
-            format: (x: Date) => x.toTimeString().slice(0, 8)
+            rotate: 90,
+            count: 50,
+            culling: {
+              max: 25
+            },
+            format: (index: number) => {
+              return new Date(extracted.x[Math.round(index)]).toTimeString().slice(0, 8)
+            }
           }
         },
         y: {
@@ -66,7 +71,7 @@ class Performance {
       prev.max.push(common.round(curr.range.maximum, 2))
       prev.x.push(this.timestamp[index])
       return prev
-    }, { mean: ['Mean'], min: ['Min'], max: ['Max'], x: ['x'] })
+    }, { mean: ['Mean'], min: ['Min'], max: ['Max'], x: [] })
   }
 
   getStats = async (containerId: string) => {
