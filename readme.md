@@ -1,6 +1,6 @@
 # Concierge
-
-Docker orchestration with Node and TypeScript
+Docker orchestration and code deployment with NodeJS and TypeScript  
+Previously at [paypac/node-concierge](https://github.com/paypac/node-concierge)
 
 ## What does the Concierge do?
 - It can manage local or remote Docker hosts
@@ -25,8 +25,8 @@ After starting the concierge:
 - That's it!
 
 ### External Requirements*
-- Docker Registry
- - The registry isn't needed for the Concierge to run, but is needed for Variant and Container operations
+- Docker Registry (Optional)
+ - The registry isn't needed for the Concierge to run
  - This registry should be private. I.e., only accessible inside a private network
 - NodeJS 6.4+
  - This is to use the native V8 debugger
@@ -96,7 +96,15 @@ You can use the Concierge to pull and run the Docker Registry
 2. Click on `Pull Image`
 3. Enter image name `registy` and tag `latest`
 4. Click `Pull`
-5. 
+  - The image will automatically appear in the Images list once it has been downloaded
+5. Click `Run` on the `registry:latest` image in the Images list
+6. Ensure the `5000` port is exposed
+  - It is highly recommended to provide a fixed port
+
+### Using the scripts provided
+In `package.json` there is `create-registry` script provided. It will:
+- Create a certificate
+- Create a container from `registry:latest` and use the previously created certificates
 
 ### Manually
 The simplest way to do this is to use the public [Docker image](https://hub.docker.com/_/registry/).
@@ -121,26 +129,19 @@ store data from the `containerPath` on the host at `hostPath`
 `registry:latest`  
 the name and tag of the Docker image we are using
 
-## I want to create a Variant
-To create a Variant, the following is required:
+## I want to create an Image
+To create/build an image, the following is required:
 - At least one Host
 - At least one Application
-- A private registry is configured
+- (Optional) A private registry is configured
+  - This is required to pushing images to your internal registry after a successful build
 
 ### Hosts
-At least one Host is required to create Containers and deploy Variants.  
+At least one Host is required to create Containers and to build/push images.  
 See [Host.md](./docs/host.md)
 
 ### Applications
 At least one Application should be set up.  
 See  [Application.md](./docs/application.md)
-
-
-## Clone Container From Another Concierge
-- Head to the **Concierges** view and create a Concierge record
-- Save the new record (`Actions` -> `Save All`)
-- Choose `View Containers` from the Concierge Actions dropdown
-- Choose `Clone Container` from the Container Actions dropdown
-- Complete the dialog and and `Submit`
 
 [![Analytics](https://ga-beacon.appspot.com/UA-61186849-1/node-concierge/readme)](https://github.com/paypac/node-concierge)
