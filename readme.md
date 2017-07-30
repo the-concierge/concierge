@@ -2,6 +2,8 @@
 Docker orchestration and code deployment with NodeJS and TypeScript  
 Previously at [paypac/node-concierge](https://github.com/paypac/node-concierge)
 
+<img src="https://github.com/the-concierge/concierge/blob/master/docs/containers.png?raw=true" alt="Concierge Example" width="75%">
+
 ## What does the Concierge do?
 - It can manage local or remote Docker hosts
 - Provides a simple Web UI for controlling containers, hosts, images and applications
