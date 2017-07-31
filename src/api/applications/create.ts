@@ -13,7 +13,7 @@ type Body = {
 }
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key, label, dockerfile, username } = req.query as Body
+  const { repository, name, key, label, dockerfile, username } = req.body as Body
 
   const body = { repository, name, key, label, dockerfile, username }
   const errors = validate(body)

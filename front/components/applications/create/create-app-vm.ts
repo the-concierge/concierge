@@ -46,8 +46,20 @@ class CreateApp {
     const label = this.label()
     const dockerfile = this.dockerfile()
 
-    const result = await fetch(`/api/applications?name=${name}&repository=${repository}&username=${username}&key=${password || key}&label=${label}&dockerfile=${dockerfile}`, {
-      method: 'POST'
+    const result = await fetch(`/api/applications`, {
+      method: 'POST',
+      body: JSON.stringify({
+        repository,
+        name,
+        username,
+        password,
+        key,
+        label,
+        dockerfile
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
 
     if (result.status === 200) {
