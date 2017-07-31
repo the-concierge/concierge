@@ -1,13 +1,13 @@
 <div class="modal" data-bind="css: { active: modalActive }">
   <div class="modal-overlay" data-bind="click: hideModal"></div>
-  <div class="modal-container">
+  <div class="modal-container" style="min-height: 80vh; min-width: 80vw">
     <div class="modal-header">
       <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
       <div class="modal-title">
         <span data-bind="text: container().name"></span>
       </div>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="max-height: 80vh">
       <div class="content">
         <div class="container">
           <div class="columns">
