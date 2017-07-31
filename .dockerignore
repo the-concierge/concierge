@@ -1,3 +1,4 @@
+.vagrant/
 node_modules/
 archive/
 .vscode/
@@ -7,5 +8,6 @@ docs/
 test/
 certificates/
 repositories/
+registry/
 *.db
 *.log
