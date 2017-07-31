@@ -7,7 +7,7 @@ RUN apk update \
 	&& apk add git openssh \
 	&& mkdir -p archive \
 	&& mkdir -p db \
-	&& mkdir -p repositores \
+	&& mkdir -p repositories \
 	&& yarn	\
 	&& yarn build \
 	&& yarn bundle
