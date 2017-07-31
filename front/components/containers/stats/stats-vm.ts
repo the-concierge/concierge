@@ -1,6 +1,7 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import state from '../../state'
+import { activeContainer } from '../common'
 import { BoxData, common } from 'analysis'
 import * as c3 from 'c3'
 
@@ -74,7 +75,8 @@ class Performance {
     }, { mean: ['Mean'], min: ['Min'], max: ['Max'], x: [] })
   }
 
-  getStats = async (containerId: string) => {
+  getStats = async () => {
+    const containerId = activeContainer().fullId()
     const result = await fetch(`/api/containers/${containerId}/stats`)
     if (result.status >= 400) {
       state.toast.error(`Failed to retrieve container stats: ${result.statusText}`)
@@ -100,7 +102,7 @@ class Performance {
 
 const viewModel = new Performance()
 
-ko.components.register('ko-stats', {
+ko.components.register('ko-container-stats', {
   template: fs.readFileSync(`${__dirname}/stats.html`).toString(),
   viewModel: {
     createViewModel: () => viewModel

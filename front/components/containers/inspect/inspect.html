@@ -1,57 +1,34 @@
 <div class="modal" data-bind="css: { active: modalActive }">
   <div class="modal-overlay" data-bind="click: hideModal"></div>
-  <div class="modal-container" style="min-height: 80vh; min-width: 80vw">
+  <div class="modal-container" style="min-width: 80vw">
     <div class="modal-header">
       <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
       <div class="modal-title">
-        <span data-bind="text: container().name"></span>
+
+        <div class="navbar">
+          <section class="navbar-section">
+            <span style="margin-right: 5px; margin-top: 15px">
+              <h5><strong data-bind="text: container().name"></strong></h5>
+            </span>
+            <ul class="tab">
+              <li class="tab-item">
+                <a class="btn btn-link" data-bind="click: viewDetails">Details</a>
+              </li>
+              <li class="tab-item">
+                <a class="btn btn-link" data-bind="click: viewStats">Performance</a>
+              </li>
+              <li class="tab-item">
+                <a class="btn btn-link" data-bind="click: viewLogs">Logs</a>
+              </li>
+            </ul>
+          </section>
+          <section class="navbar-center"></section>
+        </div>
+
       </div>
     </div>
     <div class="modal-body" style="max-height: 80vh">
-      <div class="content">
-        <div class="container">
-          <div class="columns">
-
-            <div class="column col-2"><b>Id</b></div>
-            <div class="column col-10" data-bind="text: container().id"></div>
-
-            <div class="column col-2"><b>Image</b></div>
-            <div class="column col-10" data-bind="text: container().image"></div>
-
-            <div class="column col-2"><b>State</b></div>
-            <div class="column col-10" data-bind="text: container().state"></div>
-
-            <div class="column col-2"><b>Status</b></div>
-            <div class="column col-10" data-bind="text: container().status"></div>
-
-            <div class="column col-2"><b>Urls</b></div>
-            <div class="column col-10" data-bind="foreach: container().ports">
-              <div>
-                <b data-bind="text: private"></b>
-                <a data-bind="attr: { href: url }, text: url" target="_blank"></a>
-              </div>
-            </div>
-
-            <div class="column col-2"><b>Data In/Out</b></div>
-            <div class="column col-10">
-              <span data-bind="text: container().stats.mbIn"></span> /
-              <span data-bind="text: container().stats.mbOut"></span>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="column col-12">
-              <div id="cpu-chart"></div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="column col-12">
-              <div id="memory-chart"></div>
-            </div>
-            <ko-stats></ko-stats>
-          </div>
-        </div>
+      <div class="content" data-bind="component: currentComponent">
       </div>
     </div>
     <div class="modal-footer">
