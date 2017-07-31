@@ -7,14 +7,15 @@ type Body = {
   name: string
   label: string
   repository: string
+  username: string
   key: string
   dockerfile: string
 }
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key, label, dockerfile } = req.query as Body
+  const { repository, name, key, label, dockerfile, username } = req.query as Body
 
-  const body = { repository, name, key, label, dockerfile }
+  const body = { repository, name, key, label, dockerfile, username }
   const errors = validate(body)
 
   if (errors.length) {
