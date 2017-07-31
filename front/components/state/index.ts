@@ -1,1 +1,1 @@
-export { default as default, ObservableContainer, Image } from './state-vm'
+export { default, ObservableContainer, Image } from './state-vm'

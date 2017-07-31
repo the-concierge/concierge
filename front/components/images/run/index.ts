@@ -1,1 +1,1 @@
-export { default as default } from './run-image-vm'
+export { default } from './run-image-vm'

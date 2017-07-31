@@ -1,1 +1,1 @@
-export { default as default } from './create-app-vm'
+export { default } from './create-app-vm'

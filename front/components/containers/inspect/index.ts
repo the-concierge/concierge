@@ -1,1 +1,1 @@
-export { default as default } from './inspect-vm'
+export { default } from './inspect-vm'

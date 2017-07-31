@@ -1,1 +1,1 @@
-export { default as default } from './stats-vm'
+export { default } from './stats-vm'

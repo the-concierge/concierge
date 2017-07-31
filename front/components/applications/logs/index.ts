@@ -1,1 +1,1 @@
-export { default as default } from './app-logs-vm'
+export { default } from './app-logs-vm'

@@ -1,1 +1,1 @@
-export { default as default } from './pull-image-vm'
+export { default } from './pull-image-vm'

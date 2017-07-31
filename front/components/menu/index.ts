@@ -1,1 +1,1 @@
-export { default as default } from './menu-vm'
+export { default } from './menu-vm'

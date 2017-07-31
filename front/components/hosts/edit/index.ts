@@ -1,1 +1,1 @@
-export { default as default } from './edit-host-vm'
+export { default } from './edit-host-vm'

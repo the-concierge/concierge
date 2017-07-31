@@ -1,1 +1,1 @@
-export { default as default } from './create-host-vm'
+export { default } from './create-host-vm'
