@@ -1,11 +1,9 @@
-FROM mhart/alpine-node:8
+FROM node:8-wheezy
 
 ADD ./ /concierge
 WORKDIR /concierge
 
-RUN apk update \
-	&& apk add git openssh \
-	&& mkdir -p archive \
+RUN mkdir -p archive \
 	&& mkdir -p db \
 	&& mkdir -p repositories \
 	&& yarn	\
