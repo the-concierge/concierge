@@ -9,7 +9,6 @@ export default async function create() {
     configurationTable,
     applicationTable,
     hostTable,
-    instanceTable,
     conciergeTable,
     heartbeatTable
   ]
@@ -32,14 +31,6 @@ function configurationTable() {
     tbl.integer('statsBinSize').defaultTo(60) // Default to 1 minute per bin
     tbl.integer('statsRetentionDays').defaultTo(1) // Truncate stats older than 1 day by default
     tbl.text('dockerRegistry').defaultTo('0.0.0.0:5000')
-  })
-}
-
-function instanceTable() {
-  return db.schema.createTable('Instances', tbl => {
-    tbl.bigIncrements('id').primary()
-    tbl.integer('hostId')
-    tbl.text('containerId')
   })
 }
 
