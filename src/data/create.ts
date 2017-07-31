@@ -39,6 +39,7 @@ function applicationTable() {
     tbl.increments('id').primary()
     tbl.text('name').unique()
     tbl.text('repository').notNullable()
+    tbl.text('username').defaultTo('')
     tbl.text('key').defaultTo('')
     tbl.text('dockerfile').defaultTo('')
     tbl.text('label').defaultTo('')
@@ -73,6 +74,6 @@ function heartbeatTable() {
     tbl.integer('containerId').notNullable()
     tbl.text('cpu').notNullable()
     tbl.text('memory').notNullable()
-    tbl.increments('timestamp').notNullable()
+    tbl.integer('timestamp').notNullable()
   })
 }

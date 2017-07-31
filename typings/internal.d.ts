@@ -71,6 +71,9 @@ declare module Concierge {
     /** {namespace}/{repository} */
     repository: string
 
+    /** Username for http/https git repositories */
+    username: string
+
     /** For fetching/cloning the repository */
     key: string
 
