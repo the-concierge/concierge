@@ -1,11 +1,10 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
-import state from '../state'
+import state, { ObservableContainer } from '../state'
 import inspect from './inspect'
 
 class Containers {
   containers = state.containers
-  inspectContainer = inspect.inspect
 
   hosts = ko.computed(() => {
     const hosts = state
@@ -29,6 +28,17 @@ class Containers {
 
     return containers.filter(container => container.host.id === host.id)
   })
+
+  inspectContainer = (container: ObservableContainer) => {
+    window.history.pushState({}, 'Concierge', '/inspect')
+    try {
+      window.dispatchEvent(new Event('push-state'))
+    } catch (ex) {
+      window.dispatchEvent(new CustomEvent('push-state'))
+    }
+
+    inspect.inspect(container)
+  }
 }
 
 const viewModel = new Containers()

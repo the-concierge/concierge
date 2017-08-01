@@ -23,7 +23,7 @@
   <tbody data-bind="foreach: containers">
     <tr>
       <td>
-        <a data-bind="text: name, click: function() { $parent.inspectContainer($data) }" style="cursor: pointer"></a>
+        <a data-bind="text: name, click: $parent.inspectContainer" style="cursor: pointer"></a>
       </td>
       <td data-bind="text: id"></td>
       <td data-bind="text: image"></td>
@@ -34,5 +34,3 @@
     </tr>
   </tbody>
 </table>
-
-<ko-inspect-container></ko-inspect-container>

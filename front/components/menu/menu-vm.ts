@@ -1,15 +1,21 @@
 import * as ko from 'knockout'
 
 class Menu {
-  items = ko.observableArray([
+  items = ko.observableArray<{ name: string, component: string, url: string[], hide?: boolean }>([
     { name: 'Containers', component: 'ko-containers', url: ['/containers', '/'] },
+    { name: 'Containers', component: 'ko-inspect-container', url: ['/inspect'], hide: true },
     { name: 'Hosts', component: 'ko-hosts', url: ['/hosts'] },
     { name: 'Images', component: 'ko-images', url: ['/images'] },
     { name: 'Applications', component: 'ko-applications', url: ['/applications'] },
-    // { name: 'Concierges', component: 'ko-not-found', url: ['/concierges'] },
     { name: 'Configuration', component: 'ko-configuration', url: ['/configuration'] },
     { name: 'Logs', component: 'ko-logs', url: ['/logs'] }
   ])
+
+  displayItems = ko.computed(() => {
+    return this
+      .items()
+      .filter(item => item.hide !== true)
+  })
 
   currentItem = ko.observable(this.items()[0])
 

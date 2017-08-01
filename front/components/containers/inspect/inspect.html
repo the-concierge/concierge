@@ -1,48 +1,21 @@
-<div class="modal" data-bind="css: { active: modalActive }">
-  <div class="modal-overlay" data-bind="click: hideModal"></div>
-  <div class="modal-container" style="min-width: 80vw">
-    <div class="modal-header">
-      <button class="btn btn-clear float-right" data-bind="click: hideModal"></button>
-      <div class="modal-title">
+<ko-link class="btn btn-link" params="href: '/containers'">
+  < Back to Containers
+</ko-link>
+<div class="columns">
+  <div class="column col-1"></div>
+  <div class="column col-10">
+    <h4>Details: <span data-bind="text: container().name"></span></h4>
+    <ko-container-details></ko-container-details>
 
-        <div class="navbar">
-          <section class="navbar-section">
-            <span style="margin-right: 5px; margin-top: 15px">
-              <h5><strong data-bind="text: container().name"></strong></h5>
-            </span>
-            <ul class="tab">
-              <li class="tab-item">
-                <a class="btn btn-link" data-bind="click: viewDetails">Details</a>
-              </li>
-              <li class="tab-item">
-                <a class="btn btn-link" data-bind="click: viewStats">Performance</a>
-              </li>
-              <li class="tab-item">
-                <a class="btn btn-link" data-bind="click: viewLogs">Logs</a>
-              </li>
-            </ul>
-          </section>
-          <section class="navbar-center"></section>
-        </div>
+    <div class="divider"></div>
 
-      </div>
-    </div>
-    <div class="modal-body" style="max-height: 80vh">
-      <div class="content" data-bind="component: currentComponent">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-md" data-bind="click: refreshStatistics">Refresh Charts</button>
-      <button class="btn btn-md" data-bind="
-        visible: showStopButton,
-        click: stopContainer,
-        disable: containerWaiting">Stop</button>
+    <h4>Performance Statistics</h4>
+    <ko-container-stats></ko-container-stats>
 
-      <button class="btn btn-md" data-bind="
-        visible: showStartButton,
-        click: startContainer,
-        disable: containerWaiting">Start</button>
-      <button class="btn btn-md" data-bind="disable: containerWaiting, click: removeContainer">Remove</button>
-    </div>
+    <div class="divider"></div>
+
+    <h4>Logs</h4>
+    <ko-container-logs></ko-container-logs>
   </div>
+  <div class="column col-1"></div>
 </div>

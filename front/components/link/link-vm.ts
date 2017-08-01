@@ -6,7 +6,7 @@ type Context = {
   templateNodes: Element[]
 }
 
-class LinkVM {
+export class Link {
   reference = ko.observable('')
   className = ko.observable('')
 
@@ -29,8 +29,8 @@ class LinkVM {
 ko.components.register('ko-link', {
   template: fs.readFileSync(`${__dirname}/link.html`).toString(),
   viewModel: {
-    createViewModel: (params: any, info: Context) => new LinkVM(params, info)
+    createViewModel: (params: any, info: Context) => new Link(params, info)
   }
 })
 
-export default LinkVM
+export default Link

@@ -5,6 +5,7 @@ import state from '../state'
 
 class Body {
   items = menu.items
+  displayItems = menu.displayItems
   item = menu.currentItem
   toasts = state.toasts
 
