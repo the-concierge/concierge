@@ -26,9 +26,16 @@ class Logs {
       return
     }
 
-    const logs = await result.json()
+    const logs: string[] = await result.json()
+
+    const flattenedLogs = logs
+      .reduce((prev, entry) => {
+        return prev.concat(entry.split('\n'))
+      }, [])
+      .filter(line => !!line.trim())
+
     this.logs.removeAll()
-    this.logs(logs)
+    this.logs(flattenedLogs)
   }
 }
 

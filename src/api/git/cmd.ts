@@ -74,7 +74,6 @@ async function createFiles(privateKey: string) {
   // Set the correct permissions (script is executable, keyfile is write/read only by owner)
   await chmodAsync(scriptFilename, '0755' as any)
   await chmodAsync(keyFilename, '0600' as any)
-  log.debug('Set permissions')
   return filenames
 };
 

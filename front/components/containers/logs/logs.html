@@ -3,7 +3,7 @@
 <!-- /ko -->
 
 <!-- ko if: logs().length > 0 -->
-<div class="col-10" data-bind="foreach: logs">
-  <pre data-bind="text: $data" style="white-space: pre-wrap; margin: 10px"></pre>
+<div data-bind="foreach: logs">
+  <pre data-bind="text: $data" style="white-space: pre-wrap; margin-bottom: 5px; display: block"></pre>
 </div>
 <!-- /ko -->

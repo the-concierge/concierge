@@ -40,6 +40,11 @@ class Menu {
       this.navigate()
     })
 
+    // Special case:
+    // If the initial page is /inspect, redirect to /containers
+    if (window.location.pathname === '/inspect') {
+      window.history.pushState({}, 'Concierge', '/containers')
+    }
     this.navigate()
   }
 

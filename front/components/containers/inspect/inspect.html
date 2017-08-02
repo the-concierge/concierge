@@ -1,21 +1,15 @@
-<ko-link class="btn btn-link" params="href: '/containers'">
-  < Back to Containers
-</ko-link>
-<div class="columns">
-  <div class="column col-1"></div>
-  <div class="column col-10">
-    <h4>Details: <span data-bind="text: container().name"></span></h4>
-    <ko-container-details></ko-container-details>
+<ko-link class="btn btn-link" params="href: '/containers'">&lt;Back to Containers</ko-link>
 
-    <div class="divider"></div>
+<h4>Details: <span data-bind="text: container().name"></span></h4>
+<ko-container-details></ko-container-details>
 
-    <h4>Performance Statistics</h4>
-    <ko-container-stats></ko-container-stats>
+<div class="divider"></div>
 
-    <div class="divider"></div>
+<h4>Performance Statistics</h4>
+<ko-container-stats></ko-container-stats>
 
-    <h4>Logs</h4>
-    <ko-container-logs></ko-container-logs>
-  </div>
-  <div class="column col-1"></div>
+<div class="divider"></div>
+
+<h4>Logs</h4>
+<ko-container-logs></ko-container-logs>
 </div>
