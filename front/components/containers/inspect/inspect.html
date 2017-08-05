@@ -1,6 +1,13 @@
 <ko-link class="btn btn-link" params="href: '/containers'">&lt; Back to Containers</ko-link>
 
-<h4>Details: <span data-bind="text: container().name"></span></h4>
+<h4>
+  Details: <span data-bind="text: container().name"></span>
+  <span style="float: right">
+    <button class="btn btn-md" data-bind="click: stopContainer, visible: showStopButton">Stop</button>
+    <button class="btn btn-md" data-bind="click: startContainer, visible: showStartButton">Start</button>
+    <button class="btn btn-md" data-bind="click: removeContainer">Remove</button>
+  </span>
+</h4>
 <ko-container-details></ko-container-details>
 
 <div class="divider"></div>
