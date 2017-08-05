@@ -13,10 +13,12 @@
     <div class="column col-10" data-bind="text: container().status"></div>
 
     <div class="column col-2"><b>Urls</b></div>
-    <div class="column col-10" data-bind="foreach: container().ports">
+    <div class="column col-10" data-bind="foreach: combinedUrls">
       <div>
-        <b data-bind="text: private"></b>
-        <a data-bind="attr: { href: url }, text: url" target="_blank"></a>
+        <b data-bind="text: port"></b>
+        <a data-bind="attr: { href: internal }, text: internal" target="_blank"></a>
+        &nbsp;|&nbsp;
+        <a data-bind="attr: { href: external }, text: external" target="_blank"></a>  
       </div>
     </div>
 

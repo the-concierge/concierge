@@ -3,6 +3,13 @@
   "version": "1.2.0",
   "description": "Concierge Service",
   "main": "src/index.js",
+  "keywords": [
+    "docker",
+    "orchestration",
+    "continuous",
+    "deployment",
+    "typescript"
+  ],
   "dependencies": {
     "@types/c3": "^0.4.44",
     "@types/dockerode": "^2.4.1",

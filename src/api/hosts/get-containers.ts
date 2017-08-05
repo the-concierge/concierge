@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express'
+import { ContainerInfo } from 'dockerode'
 import getClient from '../docker'
 import * as get from './db'
 
@@ -19,7 +20,20 @@ export const getAll: RequestHandler = async (req, res) => {
   res.json(containers)
 }
 
-async function getContainers(host: Concierge.Host) {
+interface ConciergeContainerInfo extends ContainerInfo {
+  concierge: {
+    hostId: number
+    host: {
+      id: number
+      hostname: string
+      vanityHostname: string
+      capacity: number
+      dockerPort: number
+    }
+  }
+}
+
+export async function getContainers(host: Concierge.Host) {
   const client = getClient(host)
   const hostDto = { ...host }
   delete hostDto.privateKey
@@ -35,5 +49,5 @@ async function getContainers(host: Concierge.Host) {
       host: hostDto
     }
   })
-  return containers
+  return containers as ConciergeContainerInfo[]
 }

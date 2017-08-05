@@ -11,6 +11,7 @@
     },
     "include": [
         "src/*.ts",
+        "src/proxy/**/*.ts",
         "src/api/**/*.ts",
         "front/**/*.ts",
         "src/data/*.ts",

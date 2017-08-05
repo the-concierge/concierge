@@ -1,5 +1,1 @@
-import httpServer from './http-server'
-
-export default async function startProxy() {
-  await httpServer.startServer()
-}
+export { startServer as startProxyServer, stopServer } from './http-server'

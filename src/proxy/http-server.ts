@@ -1,21 +1,22 @@
 import * as http from 'http'
 import * as log from '../logger'
-import db from '../data/connection'
-import { get as getConfig } from '../configurations/get'
-import getIP from './get-ip'
 import * as HTTPProxy from 'http-proxy'
+import { getConfig } from '../api/configuration/db'
+import findContainer from './find-container'
+import getIP from './get-ip'
 import closeAsync from './close'
 
 let webServer: http.Server
 let proxyServer: http.Server & { web: any, ws: any }
 let running: boolean = false
 
-async function startServer() {
+export async function startServer() {
   if (running === true) {
     return
   }
+
   log.info('Attempting to start HTTP proxy server...')
-  let config = await getConfig()
+  const config = await getConfig()
   const serverIp = await getIP()
   webServer = http.createServer(requestHandler)
   webServer.listen(config.httpPort, serverIp, () => {
@@ -25,8 +26,7 @@ async function startServer() {
       log.error('[PROXY] ' + error)
     })
 
-    log.info('Started HTTP proxy server on ' + serverIp + ':' + config.httpPort)
-
+    log.info(`Started HTTP proxy server on ${serverIp}:${config.httpPort}`)
   })
 
   webServer.on('upgrade', webSocketHandler)
@@ -38,7 +38,7 @@ async function startServer() {
   running = true
 }
 
-async function stopServer() {
+export async function stopServer() {
   if (running === false) {
     return
   }
@@ -52,59 +52,61 @@ async function stopServer() {
   running = false
 }
 
-export default {
-  startServer,
-  stopServer
-}
-
 export function restartServer() {
-  return new Promise<boolean>(resolve => {
+  return new Promise(resolve => {
     const closeHandler = () => {
       if (!proxyServer) {
         return
       }
+
       proxyServer.close(() => {
         log.info('Proxy server suspended')
-        resolve(true)
+        resolve()
       })
     }
     webServer.close(closeHandler)
   }).then(startServer)
 }
 
-async function webSocketHandler(request, socket, head) {
-  const info = getDomainInfo(request.headers.host)
-  const container = await getSubdomainContainer(info.subdomain)
-
-  if (container.isProxying === 0) {
-    // Contaier is not proxying, do not proxy
+async function webSocketHandler(request: http.ServerRequest, socket, head) {
+  // const info = getDomainInfo(request.headers.host)
+  const container = await findContainer(request.headers.host)
+  if (!container) {
+    errorResponse(socket, 'Container not found')
     return
   }
 
-  if (container.port === 0) {
-    // Container is not available, do not proxy
-    return
-  }
-  let target = getContainerUrl(container)
+  const info = getProxyInfo(request.headers.host)
+  const target = `${container.concierge.host}:${info.port}`
   proxyServer.ws(request, socket, head, { target })
 }
 
-function requestHandler(request, response) {
-  // ODO: Container information should be kept in memory to remove DB call overhead
-  let info = getDomainInfo(request.headers.host)
+async function requestHandler(request: http.ServerRequest, response: http.ServerResponse) {
+  const info = getProxyInfo(request.headers.host)
+  const config = await getConfig()
 
-  getSubdomainContainer(info.subdomain)
-    .then(container => {
-      if (container.port === 0) {
-        errorResponse(response, 'Container not available')
-        return
-      }
-      let targetUrl = getContainerUrl(container)
-      proxyServer.web(request, response, {
-        target: targetUrl
-      })
-    })
-    .catch(error => errorResponse(response, error))
+  if (config.proxyHostname.toLowerCase() !== info.hostname) {
+    errorResponse(response, 'Bad hostname')
+    return
+  }
+
+  const container = await findContainer(info.name)
+  if (!container) {
+    errorResponse(response, 'Container not available')
+    return
+  }
+
+  const port = container.Ports.find(port => port.PrivatePort === info.port)
+  if (!port) {
+    errorResponse(response, 'Port not found on container')
+    return
+  }
+
+  const destHostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
+  const targetUrl = `http://${destHostname}:${port.PublicPort}`
+  proxyServer.web(request, response, {
+    target: targetUrl
+  })
 }
 
 function errorResponse(response: any, error) {
@@ -114,49 +116,24 @@ function errorResponse(response: any, error) {
   response.end()
 }
 
-function getDomainInfo(host: string) {
-  if (!host) {
-    return { subdomain: '', domain: '' }
-  }
-  let fullDomain = host.replace('https://', '').replace('http://', '').split(':')[0] // Remove any port number
+function getProxyInfo(hostname: string) {
+  /**
+   * Expected hostname format:
+   * [container name].[port].[proxy hostname]
+   */
+  const split = hostname.split('.')
 
-  let split = fullDomain.split('.')
+  const name = (split[0] || '').toLowerCase()
+  const port = Number(split[1])
 
-  let subdomain = split[0].toLocaleLowerCase()
-  let domain = split.slice(1).join('.').toLocaleLowerCase()
+  const proxyHostname = (split
+    .slice(2)
+    .join('.')
+    .split(':')[0] || '').toLowerCase()
 
   return {
-    subdomain: subdomain,
-    domain: domain
+    name,
+    port,
+    hostname: proxyHostname
   }
-}
-
-function getSubdomainContainer(subdomain: string): Promise<Concierge.Container> {
-  return new Promise<Concierge.Container>((resolve, reject) => {
-    db('Containers')
-      .select()
-      .where({ subdomain: subdomain })
-      .then(containers => {
-        if (containers.length === 0) {
-          return reject('No matching service found')
-        }
-
-        if (containers[0].isProxying !== 1) {
-          return reject('Service is down for maintenance')
-        }
-
-        resolve(containers[0])
-      }).catch(reject)
-  })
-}
-
-function getContainerUrl(container: Concierge.Container) {
-  let url = [
-    'http://',
-    container.host,
-    ':',
-    container.port
-  ]
-
-  return url.join('')
 }

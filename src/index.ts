@@ -8,6 +8,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import initDatabase from './data/init'
 import startServer from './server'
+import { startProxyServer } from './proxy'
 import watchHosts from './api/stats/hosts'
 import watchContainers from './api/stats/containers'
 import { initialise as initConfig } from './configurations/get'
@@ -33,6 +34,9 @@ async function start() {
 
   // Start the web server
   await startServer()
+
+  // Start the proxy server
+  await startProxyServer()
 
   // Listen for Performance (memory and CPU) and Docker events on all Containers
   await watchContainers()
