@@ -1,7 +1,8 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import state, { ObservableContainer } from '../../state'
-import { defaultContainer, activeContainer } from '../common'
+import menu from '../../menu'
+import { activeContainer, activeContainerId } from '../common'
 import stats from '../stats'
 import '../logs'
 import '../details'
@@ -10,7 +11,6 @@ class Inspect {
   containerId = ko.observable('')
   containerFullId = ko.observable('')
 
-  modalActive = ko.observable(false)
   container = activeContainer
   showStartButton = ko.computed(() => this.container().state() === 'exited')
   showStopButton = ko.computed(() => this.container().state() === 'running')
@@ -20,11 +20,7 @@ class Inspect {
 
   constructor() {
     this.containerId.subscribe(id => {
-      const container = state
-        .containers()
-        .find(container => container.id() === id)
-
-      activeContainer(container || defaultContainer)
+      activeContainerId(id)
     })
   }
 
@@ -41,12 +37,9 @@ class Inspect {
     this.containerFullId(container.fullId())
 
     this.refreshStatistics()
-    this.modalActive(true)
   }
 
   refreshStatistics = () => stats.getStats()
-
-  hideModal = () => this.modalActive(false)
 
   loading = () => {
     this.containerWaiting(true)
@@ -74,10 +67,22 @@ class Inspect {
   startContainer = async () => this.modifyContainer('start')
   removeContainer = async () => this.modifyContainer('host', 'DELETE')
     .then(() => this.containerId(''))
-    .then(() => this.hideModal())
+    .then(() => menu.navigateTo('/containers'))
+    .then
 }
 
 const viewModel = new Inspect()
+
+menu.register(
+  {
+    path: '/containers/:id/inspect',
+    item: { component: 'ko-inspect-container', name: 'Inspect Container', hide: true },
+    run: (_, id) => {
+      viewModel.containerId(id)
+      stats.getStats()
+    }
+  }
+)
 
 ko.components.register('ko-inspect-container', {
   template: fs.readFileSync(`${__dirname}/inspect.html`).toString(),

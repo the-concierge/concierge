@@ -16,5 +16,6 @@
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 2,
-	"files.eol": "\n"
+	"files.eol": "\n",
+	"tslint.exclude": "**/node_modules/**"
 }

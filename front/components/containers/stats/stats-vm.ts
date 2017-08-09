@@ -1,7 +1,7 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import state from '../../state'
-import { activeContainer } from '../common'
+import { activeContainerId } from '../common'
 import { BoxData, common } from 'analysis'
 import * as c3 from 'c3'
 
@@ -76,7 +76,7 @@ class Performance {
   }
 
   getStats = async () => {
-    const containerId = activeContainer().fullId()
+    const containerId = activeContainerId()
     const result = await fetch(`/api/containers/${containerId}/stats`)
     if (result.status >= 400) {
       state.toast.error(`Failed to retrieve container stats: ${result.statusText}`)

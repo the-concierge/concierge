@@ -11,7 +11,7 @@ class Logs {
 
   constructor() {
     activeContainer.subscribe(container => {
-      if (!container.id()) {
+      if (!container.id() || container.id() === '...') {
         return
       }
 

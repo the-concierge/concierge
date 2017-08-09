@@ -1,5 +1,6 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
+import menu from '../menu'
 
 type Context = {
   element: Element,
@@ -13,17 +14,11 @@ export class Link {
   constructor(params: { href: string }, info: Context) {
     this.className(info.element.className || '')
     info.element.className = ''
-    this.reference(params.href)
+    const ref = ko.unwrap(params.href)
+    this.reference(ref)
   }
 
-  navigate = () => {
-    window.history.pushState({}, 'Concierge', this.reference())
-    try {
-      window.dispatchEvent(new Event('push-state'))
-    } catch (ex) {
-      window.dispatchEvent(new CustomEvent('push-state'))
-    }
-  }
+  navigate = () => menu.navigateTo(this.reference())
 }
 
 ko.components.register('ko-link', {

@@ -1,9 +1,10 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
-import state from '../state'
 import createApp from './create'
 import deployApp from './deploy'
 import appLogs from './logs'
+import state from '../state'
+import menu from '../menu'
 
 class Applications {
   applications = state.applications
@@ -31,3 +32,10 @@ ko.components.register('ko-applications', {
     createViewModel: () => applications
   }
 })
+
+menu.register(
+  {
+    path: '/applications',
+    item: { component: 'ko-applications', name: 'Applications' }
+  }
+)

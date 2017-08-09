@@ -1,7 +1,8 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
-import state from '../state'
 import Monitor from '../state/monitor'
+import state from '../state'
+import menu from '../menu'
 
 class Logs {
   monitors = state.monitors
@@ -24,3 +25,10 @@ ko.components.register('ko-logs', {
     createViewModel: () => viewModel
   }
 })
+
+menu.register(
+  {
+    path: '/logs',
+    item: { component: 'ko-logs', name: 'Logs' }
+  }
+)

@@ -2,7 +2,6 @@ import * as express from 'express'
 import * as bodyParser from 'body-parser'
 import * as compression from 'compression'
 import * as path from 'path'
-import menu from '../../front/components/menu'
 import v2Router from '../api'
 import * as http from 'http'
 import * as io from 'socket.io'
@@ -42,15 +41,10 @@ router.use('/api', v2Router)
 app.use(router)
 
 const staticPath = path.resolve(__dirname, '..', '..', 'front')
-for (const item of menu.items()) {
-  app.use(item.url[0], (_, res) => res.sendFile(path.resolve(staticPath, 'index.html')))
-}
-
 app.use(express.static(staticPath))
 
-// 404 handler
-app.use('/api', (_, res) => {
-  res.status(404)
+// 404 handler -- return index.html and use client-side routing
+app.use((_, res) => {
   res.sendFile(path.resolve(staticPath, 'index.html'))
   return
 })

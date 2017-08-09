@@ -23,7 +23,9 @@
   <tbody data-bind="foreach: containers">
     <tr>
       <td>
-        <a data-bind="text: name, click: $parent.inspectContainer" style="cursor: pointer"></a>
+        <ko-link class="btn btn-link" params="href: '/containers/' + id() + '/inspect'">
+          <span data-bind="text: name"></span>
+        </ko-link>
       </td>
       <td data-bind="text: id"></td>
       <td data-bind="text: image"></td>

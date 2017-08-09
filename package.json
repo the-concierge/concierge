@@ -25,6 +25,7 @@
     "knex": "^0.11.7",
     "knockout": "^3.4.1",
     "minimist": "^1.2.0",
+    "multiple-dispatch": "^0.3.0",
     "node-dockerfile": "^0.5.1",
     "observers": "^0.5.1",
     "promise-polyfill": "^6.0.2",

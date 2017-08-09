@@ -1,9 +1,10 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
-import state, { Image } from '../state'
 import runImage from './run'
 import pullImage from './pull'
 import { common } from 'analysis'
+import state, { Image } from '../state'
+import menu from '../menu'
 
 class Images {
   runImage = runImage.configureImage
@@ -55,3 +56,10 @@ ko.components.register('ko-images', {
     createViewModel: () => images
   }
 })
+
+menu.register(
+  {
+    path: '/images',
+    item: { component: 'ko-images', name: 'Images' }
+  }
+)

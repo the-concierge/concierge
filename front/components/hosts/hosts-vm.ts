@@ -3,6 +3,7 @@ import * as fs from 'fs'
 import createHost from './create'
 import editHost from './edit'
 import state from '../state'
+import menu from '../menu'
 
 class Hosts {
   hosts = state.hosts
@@ -18,3 +19,10 @@ ko.components.register('ko-hosts', {
     createViewModel: () => hosts
   }
 })
+
+menu.register(
+  {
+    path: '/hosts',
+    item: { component: 'ko-hosts', name: 'Hosts' }
+  }
+)

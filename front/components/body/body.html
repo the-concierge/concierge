@@ -5,7 +5,7 @@
         <span style="margin-right: 5px; margin-top: 15px"><h5><strong>Concierge</strong></h5></span>
         <ul class="tab" data-bind="foreach: displayItems">
           <li class="tab-item" data-bind="css: { active: $parent.item().name === name }">
-            <ko-link class="btn btn-link" params="href: url[0]">
+            <ko-link class="btn btn-link" params="href: path">
               <span data-bind="text: name"></span>
             </ko-link>
           </li>

@@ -1,6 +1,7 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import state from '../state'
+import menu from '../menu'
 
 class Configuration {
   config = state.configuration
@@ -106,3 +107,10 @@ ko.components.register('ko-configuration', {
     createViewModel: () => viewModel
   }
 })
+
+menu.register(
+  {
+    path: '/configuration',
+    item: { component: 'ko-configuration', name: 'Configuration' }
+  }
+)

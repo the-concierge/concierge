@@ -32,8 +32,6 @@ class Details {
         external
       }
     })
-
-    console.log(urls)
     return urls
   })
 }

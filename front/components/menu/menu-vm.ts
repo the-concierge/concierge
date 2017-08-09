@@ -1,15 +1,48 @@
 import * as ko from 'knockout'
+import mm from 'multiple-dispatch'
+
+export type MenuItem = {
+  name: string
+  component: string
+  hide?: boolean
+}
+
+export type Handler = {
+  run?: (resource: string, id: string, subResource: string) => void
+  item: MenuItem
+  path: string
+}
+
+const router = mm<Handler, any>({
+  name: 'router',
+  throw: false,
+  ignoreArity: true,
+  params: [
+    {
+      // E.g. /containers
+      name: 'resource'
+    },
+    {
+      // E.g. /containers/:id
+      name: 'resource id',
+
+      // If overriden, pass through if incoming is provided
+      // If not overriden, pass through if incoming is not provided
+      isa: (incoming, override) => override ? !!incoming : incoming === undefined
+    },
+    {
+      // E.g. /containers/:id/inspect
+      name: 'sub-resource',
+
+      // If it's overridden, expect strict equality
+      // If not overrideden, do not pass through
+      isa: (incoming, override) => override === undefined ? incoming === undefined : override === incoming
+    }
+  ]
+})
 
 class Menu {
-  items = ko.observableArray<{ name: string, component: string, url: string[], hide?: boolean }>([
-    { name: 'Containers', component: 'ko-containers', url: ['/containers', '/'] },
-    { name: 'Containers', component: 'ko-inspect-container', url: ['/inspect'], hide: true },
-    { name: 'Hosts', component: 'ko-hosts', url: ['/hosts'] },
-    { name: 'Images', component: 'ko-images', url: ['/images'] },
-    { name: 'Applications', component: 'ko-applications', url: ['/applications'] },
-    { name: 'Configuration', component: 'ko-configuration', url: ['/configuration'] },
-    { name: 'Logs', component: 'ko-logs', url: ['/logs'] }
-  ])
+  items = ko.observableArray<MenuItem & { path: string }>([])
 
   displayItems = ko.computed(() => {
     return this
@@ -17,15 +50,17 @@ class Menu {
       .filter(item => item.hide !== true)
   })
 
-  currentItem = ko.observable(this.items()[0])
-
   notFoundItem = {
     name: 'Not Found',
-    component: 'ko-not-found',
-    paths: [],
-    url: ['/not-found'],
-    display: false
+    component: 'ko-not-found'
   }
+
+  emptyItem = {
+    name: '',
+    component: 'ko-empty'
+  }
+
+  currentItem = ko.observable<MenuItem>(this.emptyItem)
 
   constructor() {
     if (typeof window === 'undefined') {
@@ -33,31 +68,45 @@ class Menu {
     }
 
     window.addEventListener('push-state', () => {
-      this.navigate()
+      this.navigateTo(window.location.pathname)
     })
 
     window.addEventListener('popstate', () => {
-      this.navigate()
+      this.navigateTo(window.location.pathname)
     })
 
-    // Special case:
-    // If the initial page is /inspect, redirect to /containers
-    if (window.location.pathname === '/inspect') {
-      window.history.pushState({}, 'Concierge', '/containers')
-    }
-    this.navigate()
+    // Route providers require this module
+    // Module loading happens synchronously, so we can navigate on initial load
+    // on the next tick to avoid 404ing because no routes exist yet
+    setTimeout(() => this.navigateTo(window.location.pathname))
   }
 
-  navigate = () => {
-    const path = window.location.pathname
-    const navItem = this.items().find(item => item.url.some(u => u === path))
+  register = (handler: Handler) => {
+    const [resource, id, subResource] = handler.path.split('/').slice(1)
 
-    if (navItem) {
-      this.currentItem(navItem)
+    const existingItem = this.items().find(item => item.name === handler.item.name)
+    if (!existingItem) {
+      this.items.push({ ...handler.item, path: handler.path })
+    }
+
+    router.override([resource, !!id, subResource], () => handler)
+  }
+
+  navigateTo = (path: string) => {
+    const [resource, id, subResource] = path.split('/').slice(1)
+    const handler = router.dispatch(resource, id, subResource)
+    window.history.pushState({}, 'Concierge', path)
+
+    if (!handler) {
+      this.currentItem(this.notFoundItem)
       return
     }
 
-    this.currentItem(this.notFoundItem)
+    if (typeof handler.run === 'function') {
+      handler.run(resource, id, subResource)
+    }
+
+    this.currentItem(handler.item)
   }
 }
 
