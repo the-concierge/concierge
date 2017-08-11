@@ -25,7 +25,7 @@ class Details {
     const ports = this.container().ports()
     const urls = ports.map((port, index) => {
       const internal = port.url
-      const external = `http://${name}.${port.private}.${config.proxyHostname}:${config.httpPort}`
+      const external = `http://${name}-${port.private}.${config.proxyHostname}:${config.httpPort}`
       return {
         port: port.private,
         internal,

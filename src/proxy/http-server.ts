@@ -119,15 +119,16 @@ function errorResponse(response: any, error) {
 function getProxyInfo(hostname: string) {
   /**
    * Expected hostname format:
-   * [container name].[port].[proxy hostname]
+   * [container name]-[port].[proxy hostname]
    */
   const split = hostname.split('.')
 
-  const name = (split[0] || '').toLowerCase()
-  const port = Number(split[1])
+  const idSplits = split[0].split('-')
+  const name = idSplits.slice(0, -1).join('-').toLowerCase()
+  const port = Number(idSplits.slice(-1)[0])
 
   const proxyHostname = (split
-    .slice(2)
+    .slice(1)
     .join('.')
     .split(':')[0] || '').toLowerCase()
 
