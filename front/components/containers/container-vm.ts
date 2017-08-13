@@ -57,3 +57,10 @@ menu.register(
     item: { component: 'ko-containers', name: 'Containers' }
   }
 )
+
+menu.register(
+  {
+    path: '/',
+    item: { component: 'ko-containers', name: 'Containers' }
+  }
+)
