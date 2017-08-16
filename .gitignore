@@ -36,3 +36,4 @@ repositories/
 *.pem
 registry/
 logs/*
+!yarn.lock
