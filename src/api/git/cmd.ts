@@ -137,7 +137,11 @@ function spawnAsync(command: string, options: childProcess.SpawnOptions, app: Co
     let buffer = ''
 
     const buf = (msg: any) => {
-      buffer += (msg || '').toString().replace(app.key, '**********')
+      if (app.key) {
+        buffer += (msg || '').toString().replace(app.key, '**********')
+        return
+      }
+      buffer += (msg || '').toString()
     }
 
     const split = command.split(' ')
