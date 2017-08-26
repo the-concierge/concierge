@@ -26,6 +26,7 @@ interface ConciergeContainerInfo extends ContainerInfo {
     host: {
       id: number
       hostname: string
+      proxyIp: string
       vanityHostname: string
       capacity: number
       dockerPort: number

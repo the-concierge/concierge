@@ -97,12 +97,12 @@ declare module Concierge {
   interface Host {
     id?: number
     hostname: string
+    proxyIp: string
     vanityHostname: string
     capacity: number
     dockerPort: number
     sshPort: number
     sshUsername: string
-    // volumesPath: string
     privateKey?: string
   }
 

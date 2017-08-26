@@ -18,5 +18,8 @@
         "typings/**/*.ts",
         "src/server/**/*.ts",
         "src/configurations/**/*.ts"
+    ],
+    "exclude": [
+        "src/data/migrations/**/*.ts"
     ]
 }

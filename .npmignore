@@ -11,3 +11,4 @@ logs/*
 Vagrantfile
 node.sh
 docker.sh
+src/

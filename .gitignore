@@ -37,3 +37,4 @@ repositories/
 registry/
 logs/*
 !yarn.lock
+build/

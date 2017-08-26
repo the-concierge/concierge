@@ -1,8 +1,8 @@
 {
   "name": "the-concierge",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "description": "Concierge Service",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "keywords": [
     "docker",
     "orchestration",
@@ -23,7 +23,6 @@
     "http-proxy": "^1.13.3",
     "knex": "^0.11.7",
     "minimist": "^1.2.0",
-    "rimraf": "^2.5.3",
     "socket.io": "^1.5.0",
     "sqlite3": "^3.1.4",
     "ssh2": "^0.4.9",
@@ -46,13 +45,14 @@
     "mocha": "^2.2.5",
     "multiple-dispatch": "^0.3.0",
     "promise-polyfill": "^6.0.2",
+    "rimraf": "^2.6.1",
     "tslint": "^4.4.2",
     "tslint-config-standard": "^4.0.0",
     "typescript": "^2.3.4",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
-    "clean": "node scripts/clean.js",
+    "clean": "rimraf build/ && node scripts/clean.js",
     "test": "mocha",
     "debug": "node --inspect start.js",
     "start": "node .",
@@ -69,6 +69,6 @@
   "license": "MIT",
   "contributors": [],
   "bin": {
-    "the-concierge": "./src/cli.js"
+    "the-concierge": "./build/cli.js"
   }
 }
