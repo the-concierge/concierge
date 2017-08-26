@@ -25,6 +25,7 @@ class CreateApp {
 
   showModal = () => {
     this.repository('')
+    this.dockerfile('')
     this.name('')
     this.username('')
     this.password('')
