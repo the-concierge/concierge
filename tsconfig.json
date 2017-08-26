@@ -14,12 +14,9 @@
         "src/proxy/**/*.ts",
         "src/api/**/*.ts",
         "front/**/*.ts",
-        "src/data/*.ts",
+        "src/data/**/*.ts",
         "typings/**/*.ts",
         "src/server/**/*.ts",
         "src/configurations/**/*.ts"
-    ],
-    "exclude": [
-        "src/data/migrations/**/*.ts"
     ]
 }
