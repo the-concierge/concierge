@@ -12,7 +12,6 @@ Previously at [paypac/node-concierge](https://github.com/paypac/node-concierge)
 - It pushes images to a Docker registry
 - Allows configurable creation of containers from images
 - Monitors memory and CPU usage of containers
-- ~~Runs a central web server to proxy requests to container~~ `TODO`
 
 ## How can I contribute?      
 See the [Contribution Guide](./CONTRIBUTING.md)
