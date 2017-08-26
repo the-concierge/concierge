@@ -12,8 +12,8 @@ const handler: RequestHandler = async (req, res) => {
   const privateKey = req.body.privateKey
   const sshUsername = req.body.sshUsername
 
-  const hasHostname = !!hostname.length
-  const hasUsername = !!sshUsername.length
+  const hasHostname = !!hostname
+  const hasUsername = !!sshUsername
   if (hasHostname && !hasUsername) {
     res
       .status(400)

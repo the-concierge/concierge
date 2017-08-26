@@ -12,7 +12,7 @@ class EditHost {
   capacity = ko.observable(5)
   privateKey = ko.observable('')
   password = ko.observable('')
-  username = ko.observable('')
+  sshUsername = ko.observable('')
   sshPort = ko.observable(22)
   dockerPort = ko.observable(2375)
 
@@ -28,11 +28,13 @@ class EditHost {
     this.modalActive(false)
   }
 
+  originalHost: Concierge.Host
+
   reset = () => {
     this.hostname('')
     this.proxyIp('')
     this.vanityHostname('')
-    this.username('')
+    this.sshUsername('')
     this.capacity(5)
     this.privateKey('')
     this.sshPort(22)
@@ -41,11 +43,12 @@ class EditHost {
   }
 
   editHost = (host: Concierge.Host) => {
+    this.originalHost = host
     this.hostId(host.id)
     this.hostname(host.hostname)
     this.proxyIp(host.proxyIp)
     this.vanityHostname(host.vanityHostname)
-    this.username(host.sshUsername)
+    this.sshUsername(host.sshUsername)
     this.password('')
     this.privateKey('')
     this.capacity(host.capacity)
@@ -59,7 +62,7 @@ class EditHost {
       hostname: this.hostname(),
       proxyIp: this.proxyIp(),
       vanityHostname: this.vanityHostname(),
-      sshUsername: this.username(),
+      sshUsername: this.sshUsername(),
       sshPort: this.sshPort(),
       capacity: this.capacity(),
       key: this.password() || this.privateKey(),
@@ -67,7 +70,14 @@ class EditHost {
     }
 
     for (const key of Object.keys(body)) {
-      if (!body[key] && !this[key]()) {
+      if (key === 'key' && !body.key) {
+        delete body.key
+        continue
+      }
+
+      // If the original is empty and the "modified" is empty, the empty field isn't being modified
+      // Therefore do not send the value (empty string) in the request body
+      if (!body[key] && !this.originalHost[key]) {
         delete body[key]
       }
     }
