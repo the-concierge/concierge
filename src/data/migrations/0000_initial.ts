@@ -1,3 +1,4 @@
+import * as os from 'os'
 import * as Knex from 'knex'
 import * as tables from '../'
 
@@ -15,6 +16,12 @@ export async function up(db: Knex) {
       tbl.integer('statsRetentionDays').defaultTo(1) // Truncate stats older than 1 day by default
       tbl.text('dockerRegistry').defaultTo('0.0.0.0:5000')
     })
+
+    const defaultName = os.hostname() || 'development'
+    await db('Configurations')
+      .insert({ name: defaultName })
+
+    log.info(`Concierge renamed to: ${defaultName}`)
   }
 
   const applicationsExists = await db.schema.hasTable(tables.APPLICATIONS)
