@@ -2,6 +2,7 @@
 node_modules/
 archive/
 .vscode/
+build/
 db/
 logs/
 docs/
