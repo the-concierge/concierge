@@ -27,12 +27,7 @@ export async function requestHandler(request: http.ServerRequest, response: http
   const config = await getConfig()
 
   if (config.proxyHostname.toLowerCase() !== info.hostname) {
-    if (typeof next === 'function') {
-      return next()
-    }
-
-    errorResponse(response, 'Bad hostname')
-    return
+    return next()
   }
 
   const container = await findContainer(info.name)
@@ -47,7 +42,7 @@ export async function requestHandler(request: http.ServerRequest, response: http
     return
   }
 
-  const destHostname = container.concierge.host.proxyIp || container.concierge.host.hostname
+  const destHostname = container.concierge.host.proxyIp || container.concierge.host.hostname || '127.0.0.1'
   const targetUrl = `http://${destHostname}:${port.PublicPort}`
   proxyServer.web(request, response, {
     target: targetUrl
