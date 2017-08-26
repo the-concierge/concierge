@@ -6,7 +6,7 @@ Settings for [Visual Studio Code](https://code.visualstudio.com/) are included i
 Clone the project and install the dependencies
 ```bash
 git clone https://github.com/the-concierge/concierge
-cd node-concierge
+cd concierge
 npm install
 code .
 ```
