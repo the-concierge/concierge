@@ -11,9 +11,7 @@ class Configuration {
     name: 'Name',
     conciergePort: 'Concierge HTTP Port',
     proxyHostname: 'Proxy Hostname',
-    proxyIp: 'Proxy IP',
     debug: 'Debug Level',
-    httpPort: 'Proxy Port',
     dockerRegistry: 'Docker Registry',
     statsBinSize: 'Stats Samples per Bin (1Hz)',
     statsRetentionDays: 'Stats Retention Time (days)'

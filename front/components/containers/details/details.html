@@ -18,7 +18,9 @@
         <b data-bind="text: port"></b>
         <a data-bind="attr: { href: internal }, text: internal" target="_blank"></a>
         &nbsp;|&nbsp;
-        <a data-bind="attr: { href: external }, text: external" target="_blank"></a>  
+        <a data-bind="attr: { href: external.withoutPort }, text: external.withoutPort" target="_blank"></a>
+        &nbsp;|&nbsp;
+        <a data-bind="attr: { href: external.withoutPort }, text: external.withPort" target="_blank"></a>
       </div>
     </div>
 

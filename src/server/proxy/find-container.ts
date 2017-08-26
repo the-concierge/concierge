@@ -1,5 +1,5 @@
-import * as db from '../api/hosts/db'
-import { getContainers } from '../api/hosts/get-containers'
+import * as db from '../../api/hosts/db'
+import { getContainers } from '../../api/hosts/get-containers'
 import { ContainerInfo } from 'dockerode'
 
 export default async function findContainer(name: string) {

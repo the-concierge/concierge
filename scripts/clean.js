@@ -9,4 +9,4 @@ del([
   'src/**/*.js.map',
   'test/**/*.js',
   'test/**/*.js.map',
-])D
+])

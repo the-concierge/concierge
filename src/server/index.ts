@@ -5,6 +5,7 @@ import * as path from 'path'
 import v2Router from '../api'
 import * as http from 'http'
 import * as io from 'socket.io'
+import * as proxy from './proxy'
 
 const app = express()
 
@@ -37,6 +38,8 @@ app.use(compression())
 app.use(bodyParser.json())
 
 router.use('/api', v2Router)
+
+app.use(proxy.requestHandler)
 
 app.use(router)
 

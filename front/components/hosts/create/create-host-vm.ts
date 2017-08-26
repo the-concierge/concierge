@@ -6,6 +6,7 @@ class CreateHost {
   modalActive = ko.observable(false)
 
   hostname = ko.observable('')
+  proxyIp = ko.observable('')
   vanityHostname = ko.observable('')
   capacity = ko.observable(5)
   privateKey = ko.observable('')
@@ -43,6 +44,7 @@ class CreateHost {
 
   createHost = async () => {
     const hostname = this.hostname()
+    const proxyIp = this.proxyIp() || ''
     const vanityHostname = this.vanityHostname() || hostname
     const capacity = this.capacity() || 5
     const sshUsername = this.username()
@@ -58,6 +60,7 @@ class CreateHost {
       method: 'POST',
       body: JSON.stringify({
         hostname,
+        proxyIp,
         vanityHostname,
         capacity,
         dockerPort,

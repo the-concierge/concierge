@@ -3,13 +3,14 @@ import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
   const id = req.params.id
-  const hostname = req.body.hostname || ''
-  const vanityHostname = req.body.vanityHostname || hostname || 'localhost'
+  const hostname = req.body.hostname
+  const proxyIp = req.body.proxyIp
+  const vanityHostname = req.body.vanityHostname
   const dockerPort = req.body.dockerPort || 2375
   const sshPort = req.body.sshPort || 22
   const capacity = req.body.capacity || 5
-  const privateKey = req.body.privateKey || ''
-  const sshUsername = req.body.sshUsername || ''
+  const privateKey = req.body.privateKey
+  const sshUsername = req.body.sshUsername
 
   const hasHostname = !!hostname.length
   const hasUsername = !!sshUsername.length
@@ -20,7 +21,7 @@ const handler: RequestHandler = async (req, res) => {
     return
   }
 
-  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname }
+  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname, proxyIp }
 
   try {
     const result: number[] = await db.hosts()

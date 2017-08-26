@@ -3,6 +3,7 @@
   <thead>
     <tr>
       <th>Hostname</th>
+      <th>Proxy IP</th>
       <th>Vanity Hostname</th>
       <th>Capacity</th>
       <th>SSH Port</th>
@@ -13,6 +14,7 @@
   <tbody data-bind="foreach: hosts">
     <tr>
       <td data-bind="text: hostname || 'none set'"></td>
+      <td data-bind="text: proxyIp"></td>
       <td data-bind="text: vanityHostname"></td>
       <td data-bind="text: capacity"></td>
       <td data-bind="text: sshPort"></td>

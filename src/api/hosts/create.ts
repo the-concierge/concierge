@@ -5,6 +5,7 @@ const handler: RequestHandler = async (req, res) => {
   const hostname = req.body.hostname || ''
   const vanityHostname = req.body.hostname || hostname || 'localhost'
   const dockerPort = req.body.dockerPort || 2375
+  const proxyIp = req.body.proxyIp || ''
   const sshPort = req.body.sshPort || 22
   const capacity = req.body.capacity || 5
   const privateKey = req.body.privateKey || ''
@@ -20,7 +21,7 @@ const handler: RequestHandler = async (req, res) => {
     return
   }
 
-  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname }
+  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname, proxyIp }
 
   try {
     const result: number[] = await db.hosts()

@@ -1,74 +1,15 @@
 import * as http from 'http'
-import * as log from '../logger'
 import * as HTTPProxy from 'http-proxy'
-import { getConfig } from '../api/configuration/db'
+import { getConfig } from '../../api/configuration/db'
 import findContainer from './find-container'
-import getIP from './get-ip'
-import closeAsync from './close'
 
-let webServer: http.Server
-let proxyServer: http.Server & { web: any, ws: any }
-let running: boolean = false
+const proxyServer: http.Server & { web: any, ws: any } = HTTPProxy.createProxyServer({})
 
-export async function startServer() {
-  if (running === true) {
-    return
-  }
+proxyServer.on('error', error => {
+  log.error('[PROXY] ' + error)
+})
 
-  log.info('Attempting to start HTTP proxy server...')
-  const config = await getConfig()
-  const serverIp = await getIP()
-  webServer = http.createServer(requestHandler)
-  webServer.listen(config.httpPort, serverIp, () => {
-    proxyServer = HTTPProxy.createProxyServer({})
-
-    proxyServer.on('error', error => {
-      log.error('[PROXY] ' + error)
-    })
-
-    log.info(`Started HTTP proxy server on ${serverIp}:${config.httpPort}`)
-  })
-
-  webServer.on('upgrade', webSocketHandler)
-
-  webServer.on('error', error => {
-    log.error('Failed to start HTTP proxy server: ' + error)
-  })
-
-  running = true
-}
-
-export async function stopServer() {
-  if (running === false) {
-    return
-  }
-
-  if (!webServer && !proxyServer) {
-    return
-  }
-
-  await closeAsync(webServer)
-  await closeAsync(proxyServer)
-  running = false
-}
-
-export function restartServer() {
-  return new Promise(resolve => {
-    const closeHandler = () => {
-      if (!proxyServer) {
-        return
-      }
-
-      proxyServer.close(() => {
-        log.info('Proxy server suspended')
-        resolve()
-      })
-    }
-    webServer.close(closeHandler)
-  }).then(startServer)
-}
-
-async function webSocketHandler(request: http.ServerRequest, socket, head) {
+export async function webSocketHandler(request: http.ServerRequest, socket, head) {
   // const info = getDomainInfo(request.headers.host)
   const container = await findContainer(request.headers.host)
   if (!container) {
@@ -81,11 +22,15 @@ async function webSocketHandler(request: http.ServerRequest, socket, head) {
   proxyServer.ws(request, socket, head, { target })
 }
 
-async function requestHandler(request: http.ServerRequest, response: http.ServerResponse) {
+export async function requestHandler(request: http.ServerRequest, response: http.ServerResponse, next: (nextArg?: any) => void) {
   const info = getProxyInfo(request.headers.host)
   const config = await getConfig()
 
   if (config.proxyHostname.toLowerCase() !== info.hostname) {
+    if (typeof next === 'function') {
+      return next()
+    }
+
     errorResponse(response, 'Bad hostname')
     return
   }
@@ -102,7 +47,7 @@ async function requestHandler(request: http.ServerRequest, response: http.Server
     return
   }
 
-  const destHostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
+  const destHostname = container.concierge.host.proxyIp || container.concierge.host.hostname
   const targetUrl = `http://${destHostname}:${port.PublicPort}`
   proxyServer.web(request, response, {
     target: targetUrl

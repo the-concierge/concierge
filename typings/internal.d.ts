@@ -53,8 +53,6 @@ declare module Concierge {
     name: string
     conciergePort: number
     proxyHostname?: string
-    proxyIp?: string
-    httpPort: number
     debug: number
     statsBinSize: number // Samples per bin at 1Hert per container
     statsRetentionDays: number // Truncate stats records older than N day(s)
