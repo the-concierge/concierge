@@ -7,6 +7,7 @@ class EditHost {
 
   hostId = ko.observable(0)
   hostname = ko.observable('')
+  proxyIp = ko.observable('')
   vanityHostname = ko.observable('')
   capacity = ko.observable(5)
   privateKey = ko.observable('')
@@ -29,6 +30,7 @@ class EditHost {
 
   reset = () => {
     this.hostname('')
+    this.proxyIp('')
     this.vanityHostname('')
     this.username('')
     this.capacity(5)
@@ -41,6 +43,7 @@ class EditHost {
   editHost = (host: Concierge.Host) => {
     this.hostId(host.id)
     this.hostname(host.hostname)
+    this.proxyIp(host.proxyIp)
     this.vanityHostname(host.vanityHostname)
     this.username(host.sshUsername)
     this.password('')
@@ -54,6 +57,7 @@ class EditHost {
   saveHost = async () => {
     const body = {
       hostname: this.hostname(),
+      proxyIp: this.proxyIp(),
       vanityHostname: this.vanityHostname(),
       sshUsername: this.username(),
       sshPort: this.sshPort(),
@@ -63,7 +67,7 @@ class EditHost {
     }
 
     for (const key of Object.keys(body)) {
-      if (!body[key]) {
+      if (!body[key] && !this[key]()) {
         delete body[key]
       }
     }
