@@ -9,6 +9,8 @@ export type Body = {
 export default function validate(body: Body) {
   const errors = Object.keys(body)
     .reduce((list, key) => {
+      if (key === 'id') { return list }
+
       const value = body[key]
       if (typeof value !== 'string') {
         list.push(`${key} is invalid`)
