@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import validate from './validate'
 import clone from '../git/clone'
+import * as fs from 'fs'
 import * as db from '../../data'
 
 type Body = {
@@ -15,7 +16,8 @@ type Body = {
 const handler: RequestHandler = async (req, res) => {
   const { repository, name, key, label, dockerfile, username } = req.body as Body
 
-  const body = { repository, name, key, label, dockerfile, username }
+  const id = await getNextId()
+  const body = { id, repository, name, key, label, dockerfile, username }
   const errors = validate(body)
 
   if (errors.length) {
@@ -25,18 +27,37 @@ const handler: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result: number[] = await db.applications()
+    await db.applications()
       .insert(body)
-    const id = result[0]
 
-    const app = { ...body, id }
+    const app = { ...body }
+    delete app.key
 
-    res.json(app)
+    res.json(body)
     clone(app)
   } catch (ex) {
     res.status(500)
     res.json({ message: ex.message || ex })
   }
+}
+
+function getNextId() {
+  const dirs = new Promise<number>((resolve, reject) => {
+    fs.readdir('repositories', (err, files) => {
+      if (err) {
+        return reject(err)
+      }
+
+      const ids = files
+        .map(file => Number(file))
+        .filter(id => !isNaN(id))
+
+      const max = Math.max(...ids)
+      resolve(max + 1)
+    })
+  })
+
+  return dirs
 }
 
 export default handler
