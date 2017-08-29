@@ -49,7 +49,8 @@ const handler: RequestHandler = async (req, res) => {
   }
 }
 
-function getNextId() {
+async function getNextId() {
+  const apps: Array<{ id: number }> = await db.applications().select('id')
   const dirs = new Promise<number>((resolve, reject) => {
     const repoPath = path.resolve(__dirname, '../../..', 'repositories')
     fs.readdir(repoPath, (err, files) => {
@@ -61,7 +62,7 @@ function getNextId() {
         .map(file => Number(file))
         .filter(id => !isNaN(id))
 
-      const max = Math.max(...ids)
+      const max = Math.max(...ids, ...apps.map(app => app.id))
 
       if (max < 1) {
         resolve(1)
