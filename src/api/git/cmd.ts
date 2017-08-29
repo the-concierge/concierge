@@ -1,10 +1,21 @@
 import * as childProcess from 'child_process'
 import { writeFile, chmod, unlink } from 'fs'
+import * as getCreds from '../credentials/db'
 
 /**
  * Execute abritrary Git commands in an Application's git repository
  */
 export default async function execCommand(application: Concierge.Application, workingDirectory: string, command: string) {
+
+  const creds = application.credentialsId
+    ? await getCreds.one(application.credentialsId)
+    : undefined
+
+  if (creds) {
+    application.key = creds.key
+    application.username = creds.username
+  }
+
   const isPrivate = !!application.key
 
   // If the repository is not private, we do not need to use a SSH private key

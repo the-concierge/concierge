@@ -9,7 +9,7 @@ export type Body = {
 export default function validate(body: Body) {
   const errors = Object.keys(body)
     .reduce((list, key) => {
-      if (key === 'id') { return list }
+      if (key === 'id' || key === 'credentialsId') { return list }
 
       const value = body[key]
       if (typeof value !== 'string') {

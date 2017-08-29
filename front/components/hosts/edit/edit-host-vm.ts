@@ -21,14 +21,14 @@ class EditHost {
   isPassword = ko.computed(() => this.displayAuth() === 'Password')
   isKey = ko.computed(() => this.displayAuth() === 'Key')
 
+  originalHost: Concierge.Host
+
   useKey = () => this.displayAuth('Key') || true
   usePassword = () => this.displayAuth('Password') || true
 
   hideModal = () => {
     this.modalActive(false)
   }
-
-  originalHost: Concierge.Host
 
   reset = () => {
     this.hostname('')

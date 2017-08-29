@@ -15,6 +15,7 @@
     <tr>
       <th>Name</th>
       <th>Label</th>
+      <th>Credentials</th>
       <th>Repository</th>
       <th>Dockerfile</th>
       <th>
@@ -26,18 +27,22 @@
     <tr>
       <td data-bind="text: name"></td>
       <td data-bind="text: label"></td>
+      <td data-bind="text: credentialsName"></td>
       <td data-bind="text: repository"></td>
       <td data-bind="text: dockerfile"></td>
       <td>
         <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Deploy</button>
-        <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
+        <button class="btn btn-md" data-bind="click: $parent.showEditModal">Edit</button>
         <button class="btn btn-md" data-bind="click: $parent.removeApplication">Remove</button>
+        <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
       </td>
     </tr>
   </tbody>
 </table>
 
 <ko-create-application></ko-create-application>
+
+<ko-edit-application></ko-edit-application>
 
 <ko-deploy-application></ko-deploy-application>
 

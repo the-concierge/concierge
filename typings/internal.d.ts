@@ -77,6 +77,19 @@ declare module Concierge {
 
     /** The Dockerfile to use in the repository when buidling the image */
     dockerfile: string
+
+    credentialsId?: number
+  }
+
+  interface ApplicationDTO extends Application {
+    credentialsName: string
+  }
+
+  interface Credentials {
+    id: number
+    name: string
+    username: string
+    key: string
   }
 
   interface NewContainer {

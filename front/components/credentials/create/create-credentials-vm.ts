@@ -2,24 +2,13 @@ import * as ko from 'knockout'
 import * as fs from 'fs'
 import state from '../../state'
 
-class CreateApp {
+class CreateCredentials {
   modalActive = ko.observable(false)
 
   name = ko.observable('')
-  repository = ko.observable('')
   username = ko.observable('')
   key = ko.observable('')
   password = ko.observable('')
-  label = ko.observable('')
-  dockerfile = ko.observable('')
-  credentials = ko.computed(() => {
-    return [
-      { id: 0, name: 'None', username: '', key: '' },
-      ...state.credentials()
-    ]
-  })
-
-  selectedCredentials = ko.observable(this.credentials()[0])
 
   constructor() {
     this.password.subscribe(pwd => {
@@ -32,14 +21,10 @@ class CreateApp {
   }
 
   showModal = () => {
-    this.repository('')
-    this.dockerfile('')
     this.name('')
     this.username('')
     this.password('')
     this.key('')
-    this.label('')
-    this.selectedCredentials(this.credentials()[0])
     this.modalActive(true)
   }
 
@@ -47,27 +32,18 @@ class CreateApp {
     this.modalActive(false)
   }
 
-  createApplication = async () => {
-    const repository = this.repository()
+  createCredentials = async () => {
     const name = this.name()
     const username = this.username()
     const password = this.password()
     const key = this.key()
-    const label = this.label()
-    const dockerfile = this.dockerfile()
-    const credentialsId = this.selectedCredentials().id
 
-    const result = await fetch(`/api/applications`, {
+    const result = await fetch(`/api/credentials`, {
       method: 'POST',
       body: JSON.stringify({
-        repository,
         name,
         username,
-        password,
-        credentialsId,
-        key,
-        label,
-        dockerfile
+        key: password || key || ''
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -75,20 +51,20 @@ class CreateApp {
     })
 
     if (result.status === 200) {
-      state.getApplications()
-      state.toast.success('Successfully created application')
+      state.getCredentials()
+      state.toast.success('Successfully created credentials')
       this.hideModal()
       return
     }
     const error = await result.json()
-    state.toast.error(`Failed to create application: ${error.message}`)
+    state.toast.error(`Failed to create credentials: ${error.message}`)
   }
 }
 
-const viewModel = new CreateApp()
+const viewModel = new CreateCredentials()
 
-ko.components.register('ko-create-application', {
-  template: fs.readFileSync(`${__dirname}/create-app.html`).toString(),
+ko.components.register('ko-create-credentials', {
+  template: fs.readFileSync(`${__dirname}/create-credentials.html`).toString(),
   viewModel: {
     createViewModel: () => viewModel
   }

@@ -14,10 +14,10 @@ class StateManager {
   images = ko.observableArray<Image>([])
   containers = ko.observableArray<ObservableContainer>([])
   hosts = ko.observableArray<Concierge.Host>([])
-  concierges = ko.observableArray<Concierge.Concierge>([])
   registries = ko.observableArray<Concierge.Registry>([])
-  applications = ko.observableArray<Concierge.Application>([])
+  applications = ko.observableArray<Concierge.ApplicationDTO>([])
   configuration = ko.observable<Partial<Concierge.Configuration>>({})
+  credentials = ko.observableArray<Concierge.Credentials>([])
   monitors = ko.observableArray<Monitor<string>>([])
 
   toasts = ko.observableArray<{ msg: string, cls: string, remove: () => void }>([])
@@ -34,6 +34,7 @@ class StateManager {
     this.getImages()
     this.getApplications()
     this.getConfiguration()
+    this.getCredentials()
 
     setInterval(() => {
       this.getContainers()
@@ -150,6 +151,15 @@ class StateManager {
       .then(applications => {
         this.applications.destroyAll()
         this.applications.push(...applications)
+      })
+  }
+
+  getCredentials = () => {
+    fetch('/api/credentials')
+      .then(res => res.json())
+      .then(creds => {
+        this.credentials.destroyAll()
+        this.credentials.push(...creds)
       })
   }
 

@@ -1,6 +1,7 @@
 import * as ko from 'knockout'
 import * as fs from 'fs'
 import createApp from './create'
+import editApp from './edit'
 import deployApp from './deploy'
 import appLogs from './logs'
 import state from '../state'
@@ -12,6 +13,7 @@ class Applications {
   showCreateModal = createApp.showModal
   showDeployModal = deployApp.showModal
   showLogsModal = appLogs.showModal
+  showEditModal = editApp.editApplication
 
   refresh = () => state.getApplications()
 

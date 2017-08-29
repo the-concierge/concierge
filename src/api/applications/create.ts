@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import validate from './validate'
 import clone from '../git/clone'
+import * as path from 'path'
 import * as fs from 'fs'
 import * as db from '../../data'
 
@@ -11,13 +12,20 @@ type Body = {
   username: string
   key: string
   dockerfile: string
+  credentialsId: number
 }
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, key, label, dockerfile, username } = req.body as Body
+  const { repository, name, key, label, dockerfile, username, credentialsId = 0 } = req.body as Body
 
   const id = await getNextId()
-  const body = { id, repository, name, key, label, dockerfile, username }
+  const body = { id, repository, name, key, label, dockerfile, username, credentialsId }
+
+  if (credentialsId > 0) {
+    body.username = ''
+    body.key = ''
+  }
+
   const errors = validate(body)
 
   if (errors.length) {
@@ -33,7 +41,7 @@ const handler: RequestHandler = async (req, res) => {
     const app = { ...body }
     delete app.key
 
-    res.json(body)
+    res.json(app)
     clone(app)
   } catch (ex) {
     res.status(500)
@@ -43,7 +51,8 @@ const handler: RequestHandler = async (req, res) => {
 
 function getNextId() {
   const dirs = new Promise<number>((resolve, reject) => {
-    fs.readdir('repositories', (err, files) => {
+    const repoPath = path.resolve(__dirname, '../../..', 'repositories')
+    fs.readdir(repoPath, (err, files) => {
       if (err) {
         return reject(err)
       }
@@ -53,6 +62,12 @@ function getNextId() {
         .filter(id => !isNaN(id))
 
       const max = Math.max(...ids)
+
+      if (max < 1) {
+        resolve(1)
+        return
+      }
+
       resolve(max + 1)
     })
   })

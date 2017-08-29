@@ -1,22 +1,22 @@
 import { RequestHandler } from 'express'
-import validate from './validate'
 import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, username, key, label, dockerfile, credentialsId } = req.body
+  const { name, username, key } = req.body
 
   const id = req.params.id
-  const body = { repository, name, username, key, label, dockerfile, credentialsId: Number(credentialsId) }
+  const body = { name, username, key }
 
-  if (credentialsId > 0) {
-    body.username = ''
-    body.key = ''
-  }
+  // Do not update properties that are not in the request body
+  if (username === undefined) { delete body.username }
+  if (key === undefined) { delete body.key }
+  if (name === undefined) { delete body.name }
 
   try {
-    await db.applications()
+    await db.credentials()
       .update(body)
       .where('id', id)
+    delete body.key
     res.json({ id, ...body })
   } catch (ex) {
     res

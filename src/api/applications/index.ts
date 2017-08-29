@@ -16,7 +16,7 @@ router.get('/:id', get.one)
 router.get('/', get.all)
 router.get('/:id/refs', refs)
 router.post('/', create)
-router.put('/:id', update)
+router.post('/:id', update)
 router.put('/:id/deploy', deploy)
 router.delete('/:id', remove)
 

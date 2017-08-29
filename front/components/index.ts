@@ -9,6 +9,7 @@ import './containers'
 import './hosts'
 import './images'
 import './applications'
+import './credentials'
 import './configuration'
 import './logs'
 
