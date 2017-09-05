@@ -9,6 +9,15 @@ proxyServer.on('error', error => {
   log.error('[PROXY] ' + error)
 })
 
+proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+  if (req.body) {
+    const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body)
+    proxyReq.setHeader('Content-Type', 'application/json')
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(body))
+    proxyReq.write(body)
+  }
+})
+
 export async function webSocketHandler(request: http.ServerRequest, socket, head) {
   // const info = getDomainInfo(request.headers.host)
   const container = await findContainer(request.headers.host)
@@ -22,7 +31,9 @@ export async function webSocketHandler(request: http.ServerRequest, socket, head
   proxyServer.ws(request, socket, head, { target })
 }
 
-export async function requestHandler(request: http.ServerRequest, response: http.ServerResponse, next: (nextArg?: any) => void) {
+type ServerRequest = http.ServerRequest & { body?: any }
+
+export async function requestHandler(request: ServerRequest, response: http.ServerResponse, next: (nextArg?: any) => void) {
   const info = getProxyInfo(request.headers.host)
   const config = await getConfig()
 
@@ -44,9 +55,18 @@ export async function requestHandler(request: http.ServerRequest, response: http
 
   const destHostname = container.concierge.host.proxyIp || container.concierge.host.hostname || '127.0.0.1'
   const targetUrl = `http://${destHostname}:${port.PublicPort}`
-  proxyServer.web(request, response, {
+
+  const options: any = {
     target: targetUrl
-  })
+  }
+
+  if (request.body) {
+    // Do something different
+    log.debug('Request body observed')
+    request.body = JSON.stringify(request.body)
+  }
+
+  proxyServer.web(request, response, options)
 }
 
 function errorResponse(response: any, error) {
