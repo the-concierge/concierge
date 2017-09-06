@@ -10,7 +10,7 @@ proxyServer.on('error', error => {
 })
 
 proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
-  if (req.body) {
+  if (req.body && req.headers['content-type'] === 'application/json') {
     const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body)
     proxyReq.setHeader('Content-Type', 'application/json')
     proxyReq.setHeader('Content-Length', Buffer.byteLength(body))
@@ -62,7 +62,6 @@ export async function requestHandler(request: ServerRequest, response: http.Serv
 
   if (request.body) {
     // Do something different
-    log.debug('Request body observed')
     request.body = JSON.stringify(request.body)
   }
 
