@@ -13,6 +13,5 @@ RUN mkdir -p archive \
 VOLUME /concierge/db /concierge/repositories /concierge/logs
 
 EXPOSE 3141
-EXPOSE 5926
 
 ENTRYPOINT node .
