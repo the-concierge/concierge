@@ -63,6 +63,10 @@ class Run {
     this.customVolumes.remove(env => env.path === customVolume.path)
   }
 
+  copyPort = (locals: { port: string, hostPort: KnockoutObservable<string> }) => {
+    locals.hostPort(locals.port)
+  }
+
   addCustomVariable = () => {
     const key = this.newCustomVariableName()
     if (!key) {
