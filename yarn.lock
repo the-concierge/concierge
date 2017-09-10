@@ -6,16 +6,6 @@
   version "3.5.8"
   resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.8.tgz#242a83379f06c90f96acf6d1aeab3af6faebdb98"
 
-"@types/c3@^0.4.44":
-  version "0.4.44"
-  resolved "https://registry.yarnpkg.com/@types/c3/-/c3-0.4.44.tgz#091b6ad3e9feef857b6ae8c2c0685e3f3ec40524"
-  dependencies:
-    "@types/d3" "^3"
-
-"@types/d3@^3":
-  version "3.5.38"
-  resolved "https://registry.yarnpkg.com/@types/d3/-/d3-3.5.38.tgz#76f8f2e9159ae562965b2fa0e6fbee1aa643a1bc"
-
 "@types/dockerode@^2.4.1":
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-2.4.5.tgz#13f2bfc8b491140fa39d0025d03979f4f84a4931"
@@ -34,6 +24,16 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
+
+"@types/geojson@*":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-1.0.3.tgz#fbcf7fa5eb6dd108d51385cc6987ec1f24214523"
+
+"@types/highcharts@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@types/highcharts/-/highcharts-5.0.5.tgz#1a84ed3fa5246a620616d4c9ae9dd0ced198f9c4"
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/history@^2.0.39":
   version "2.0.48"
@@ -550,12 +550,6 @@ bytes@2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-2.5.0.tgz#4c9423ea2d252c270c41b2bdefeff9bb6b62c06a"
 
-c3@^0.4.15:
-  version "0.4.17"
-  resolved "https://registry.yarnpkg.com/c3/-/c3-0.4.17.tgz#718b3e489fd70fe061a4ad7ffcdad36bd409ef68"
-  dependencies:
-    d3 "~3.5.0"
-
 cached-path-relative@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cached-path-relative/-/cached-path-relative-1.0.1.tgz#d09c4b52800aa4c078e2dd81a869aac90d2e54e7"
@@ -838,10 +832,6 @@ crypto-browserify@^3.0.0:
 crypto-random-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
-
-d3@~3.5.0:
-  version "3.5.17"
-  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
 
 dashdash@^1.12.0:
   version "1.14.1"
@@ -1565,6 +1555,10 @@ hawk@~3.1.3:
     cryptiles "2.x.x"
     hoek "2.x.x"
     sntp "1.x.x"
+
+highcharts@^5.0.14:
+  version "5.0.14"
+  resolved "https://registry.yarnpkg.com/highcharts/-/highcharts-5.0.14.tgz#0ef14cca9f1345408568b533dae1478950d96810"
 
 hmac-drbg@^1.0.0:
   version "1.0.1"

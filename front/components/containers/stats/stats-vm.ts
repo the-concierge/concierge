@@ -3,7 +3,9 @@ import * as fs from 'fs'
 import state from '../../state'
 import { activeContainerId } from '../common'
 import { BoxData, common } from 'analysis'
-import * as c3 from 'c3'
+import * as hs from 'highcharts'
+require('highcharts/highcharts-more')(hs)
+require('highcharts/modules/exporting')(hs)
 
 type RawStats = Array<{
   cpu: string
@@ -32,36 +34,54 @@ class Performance {
   date: Date[] = []
 
   updateChart = (elementId: string, chartName: string, boxes: BoxData[]) => {
-    const extracted = this.extractData(boxes)
-    c3.generate({
-      bindto: elementId,
-      data: {
-        columns: [
-          extracted.mean,
-          extracted.min,
-          extracted.max
-        ]
+    const mean = boxes.reduce((prev, curr) => prev + curr.mean, 0) / boxes.length
+
+    /**
+     * Series data format:
+     * [minimum, lower quartile, median, upper quartile, maximum]
+     */
+    const data: any = boxes.map(box => [
+      box.range.minimum,
+      box.lowerQuartile,
+      box.median,
+      box.upperQuartile,
+      box.range.maximum
+    ])
+
+    hs.chart(elementId, {
+      chart: { type: 'boxplot', zoomType: 'x' },
+      title: { text: chartName },
+      legend: { enabled: true },
+      xAxis: {
+        title: { text: 'Time' },
+        categories: boxes.map((_, index) => {
+          return index === 0 || index === boxes.length - 1
+            ? new Date(this.timestamp[index]).toLocaleString()
+            : ''
+        })
       },
-      axis: {
-        x: {
-          type: 'indexed',
-          label: 'Time HH:mm:ss',
-          tick: {
-            rotate: 90,
-            count: 50,
-            culling: {
-              max: 25
-            },
-            format: (index: number) => {
-              return new Date(extracted.x[Math.round(index)]).toTimeString().slice(0, 8)
+      yAxis: {
+        title: { text: `${chartName} Percentage` },
+        plotLines: [
+          {
+            value: mean,
+            color: 'red',
+            width: 1,
+            label: {
+              text: `Theorhetical mean: ${mean}`,
+              align: 'center',
+              style: { color: 'grey' }
             }
           }
-        },
-        y: {
-          label: `${chartName} - Percent`,
-          max: 100
+        ]
+      },
+      series: [{
+        name: `${chartName} Percentage`,
+        data,
+        tooltip: {
+          headerFormat: '{point.key}'
         }
-      }
+      }] as any
     })
   }
 
@@ -93,8 +113,8 @@ class Performance {
 
     this.timestamp = parsedStats.timestamp
     this.date = parsedStats.date
-    this.updateChart('#cpu-chart', 'CPU Usage', parsedStats.cpu)
-    this.updateChart('#memory-chart', 'Memory Usage', parsedStats.memory)
+    this.updateChart('cpu-chart', 'CPU Usage', parsedStats.cpu)
+    this.updateChart('memory-chart', 'Memory Usage', parsedStats.memory)
 
     return parsedStats
   }
