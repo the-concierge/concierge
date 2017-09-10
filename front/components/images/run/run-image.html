@@ -40,14 +40,12 @@
           <!-- ko foreach: ports -->
           <div class="form-horizontal">
             <div class="form-group">
-            <label class="form-switch">
-              <input type="checkbox" />
-              <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i>
-            </label>
+              <label class="form-switch">
+                <input type="checkbox" />
+                <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i>
+              </label>
               <div class="input-group">
-                <span class="input-group-addon">
-                  <span data-bind="text: port + '/' + type"></span>
-                </span>
+                <button class="btn btn-md input-group-btn" data-bind="text: (port + '/' + type), click: $parent.copyPort"></button>
                 <input type="text" class="form-input" data-bind="textInput: hostPort" placeholder="Host Port" />
               </div>
             </div>
