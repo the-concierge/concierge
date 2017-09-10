@@ -1,5 +1,3 @@
-import 'd3'
-import 'c3'
 import './promise'
 import './find'
 import './event-listener'
