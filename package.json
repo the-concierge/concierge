@@ -53,7 +53,7 @@
   },
   "scripts": {
     "clean": "rimraf build/ && node scripts/clean.js",
-    "test": "mocha",
+    "test": "yarn build",
     "debug": "node --inspect start.js",
     "start": "node .",
     "build:front": "tsc -p scripts/tsconfig.front.json && yarn bundle",
