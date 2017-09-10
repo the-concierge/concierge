@@ -15,7 +15,7 @@
 <h4>
   Performance Statistics
   <span style="float: right">
-    <button class="btn btn-md" data-bind="click: refreshStatistics">Refresh Charts</button>
+    <button class="btn btn-md" data-bind="click: refreshStatistics, disable: containerWaiting">Refresh Charts</button>
   </span>
 </h4>
 <ko-container-stats></ko-container-stats>

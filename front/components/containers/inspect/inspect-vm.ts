@@ -35,7 +35,7 @@ class Inspect {
     this.viewDetails()
     this.containerId(container.id())
     this.containerFullId(container.fullId())
-
+    this.resetButtons()
     this.refreshStatistics()
   }
 
@@ -63,12 +63,13 @@ class Inspect {
     return result
   }
 
-  stopContainer = async () => this.modifyContainer('stop')
-  startContainer = async () => this.modifyContainer('start')
-  removeContainer = async () => this.modifyContainer('host', 'DELETE')
-    .then(() => this.containerId(''))
-    .then(() => menu.navigateTo('/containers'))
-    .then
+  stopContainer = () => this.modifyContainer('stop')
+  startContainer = () => this.modifyContainer('start')
+  removeContainer = () => this.modifyContainer('host', 'DELETE')
+    .then(() => {
+      // Disable all container buttons, but remain in the view
+      this.containerWaiting(true)
+    })
 }
 
 const viewModel = new Inspect()
