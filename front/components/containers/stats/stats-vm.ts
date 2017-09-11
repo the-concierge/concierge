@@ -48,17 +48,16 @@ class Performance {
       box.range.maximum
     ])
 
+    const firstSample = new Date(this.timestamp[0] || Date.now()).toLocaleString()
+    const lastSample = new Date(this.timestamp.slice(-1)[0] || Date.now()).toLocaleString()
+
     hs.chart(elementId, {
       chart: { type: 'boxplot', zoomType: 'x' },
-      title: { text: chartName },
+      title: { text: `${chartName}: ${firstSample} - ${lastSample}` },
       legend: { enabled: true },
       xAxis: {
         title: { text: 'Time' },
-        categories: boxes.map((_, index) => {
-          return index === 0 || index === boxes.length - 1
-            ? new Date(this.timestamp[index]).toLocaleString()
-            : ''
-        })
+        categories: boxes.map((_, index) => new Date(this.timestamp[index]).toTimeString().slice(0, 8))
       },
       yAxis: {
         title: { text: `${chartName} Percentage` },
@@ -76,10 +75,10 @@ class Performance {
         ]
       },
       series: [{
-        name: `${chartName} Percentage`,
+        name: 'Percentage',
         data,
         tooltip: {
-          headerFormat: '{point.key}'
+          headerFormat: '<b>Time</b>: {point.key}<br/>'
         }
       }] as any
     })
