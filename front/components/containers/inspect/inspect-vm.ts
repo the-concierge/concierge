@@ -81,6 +81,7 @@ menu.register(
     run: (_, id) => {
       viewModel.containerId(id)
       stats.getStats()
+      viewModel.resetButtons()
     }
   }
 )
