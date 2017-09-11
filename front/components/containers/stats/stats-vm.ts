@@ -2,7 +2,7 @@ import * as ko from 'knockout'
 import * as fs from 'fs'
 import state from '../../state'
 import { activeContainerId } from '../common'
-import { BoxData, common } from 'analysis'
+import { BoxData } from 'analysis'
 import * as hs from 'highcharts'
 require('highcharts/highcharts-more')(hs)
 require('highcharts/modules/exporting')(hs)
@@ -31,7 +31,6 @@ class Performance {
   cpu: BoxData[] = []
   memory: BoxData[] = []
   timestamp: number[] = []
-  date: Date[] = []
 
   updateChart = (elementId: string, chartName: string, boxes: BoxData[]) => {
     const mean = boxes.reduce((prev, curr) => prev + curr.mean, 0) / boxes.length
@@ -40,7 +39,8 @@ class Performance {
      * Series data format:
      * [minimum, lower quartile, median, upper quartile, maximum]
      */
-    const data: any = boxes.map(box => [
+    const data: any = boxes.map((box, index) => [
+      this.timestamp[index],
       box.range.minimum,
       box.lowerQuartile,
       box.median,
@@ -56,8 +56,13 @@ class Performance {
       title: { text: `${chartName}: ${firstSample} - ${lastSample}` },
       legend: { enabled: true },
       xAxis: {
+        type: 'datetime',
         title: { text: 'Time' },
-        categories: boxes.map((_, index) => new Date(this.timestamp[index]).toTimeString().slice(0, 8))
+        labels: {
+          formatter: function (this: { value: number }) {
+            return new Date(this.value).toTimeString().slice(0, 8)
+          }
+        }
       },
       yAxis: {
         title: { text: `${chartName} Percentage` },
@@ -78,20 +83,10 @@ class Performance {
         name: 'Percentage',
         data,
         tooltip: {
-          headerFormat: '<b>Time</b>: {point.key}<br/>'
+          xDateFormat: '%H:%M:%S'
         }
       }] as any
     })
-  }
-
-  extractData = (boxes: BoxData[]) => {
-    return boxes.reduce<ExtractedData>((prev, curr, index) => {
-      prev.mean.push(common.round(curr.mean, 2))
-      prev.min.push(common.round(curr.range.minimum, 2))
-      prev.max.push(common.round(curr.range.maximum, 2))
-      prev.x.push(this.timestamp[index])
-      return prev
-    }, { mean: ['Mean'], min: ['Min'], max: ['Max'], x: [] })
   }
 
   getStats = async () => {
@@ -106,12 +101,10 @@ class Performance {
       prev.cpu.push(JSON.parse(stat.cpu))
       prev.memory.push(JSON.parse(stat.memory))
       prev.timestamp.push(stat.timestamp)
-      prev.date.push(new Date(stat.timestamp))
       return prev
-    }, { cpu: [], memory: [], timestamp: [], date: [] })
+    }, { cpu: [], memory: [], timestamp: [] })
 
     this.timestamp = parsedStats.timestamp
-    this.date = parsedStats.date
     this.updateChart('cpu-chart', 'CPU Usage', parsedStats.cpu)
     this.updateChart('memory-chart', 'Memory Usage', parsedStats.memory)
 
