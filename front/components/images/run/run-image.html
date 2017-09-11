@@ -41,8 +41,8 @@
           <div class="form-horizontal">
             <div class="form-group">
               <label class="form-switch">
-                <input type="checkbox" />
-                <i class="form-icon" data-bind="click: function() { expose(!expose()); return true }"></i>
+                <input type="checkbox" data-bind="checked: expose" />
+                <i class="form-icon" data-bind="click: function(_, event) { event.preventDefault(); expose(!expose()); return true; }"></i>
               </label>
               <div class="input-group">
                 <button class="btn btn-md input-group-btn" data-bind="text: (port + '/' + type), click: $parent.copyPort"></button>
