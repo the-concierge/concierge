@@ -29,8 +29,8 @@ const handler: RequestHandler = async (req, res) => {
      *
      * It will not await the entire build
      */
-    await build(app, sha, tag)
-    res.json({ message: `Building image '${tag}'...` })
+    const id = await build(app, sha, tag)
+    res.json({ message: `Building image '${tag}'...`, ...id })
   } catch (ex) {
     log.error(ex.message || ex)
     if (ex.stack) {

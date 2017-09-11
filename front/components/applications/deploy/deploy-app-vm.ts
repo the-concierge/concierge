@@ -74,12 +74,12 @@ class Deploy {
     const sha = ref.sha
     const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}&sha=${sha}`
 
-    state.monitor('build', `${id}/${tag}`)
     state.toast.primary(`Attempting to deploy application...`)
     this.hideModal()
 
     const result = await fetch(url, { method: 'PUT' })
     const msg = await result.json()
+    state.monitor('build', msg.id)
     const success = result.status < 400
 
     if (success) {

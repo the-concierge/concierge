@@ -18,6 +18,7 @@ export default async function buildImage(application: Concierge.Application, sha
   await createApplicationLogPath(application)
 
   const logFile = getLogFilename(application, tag)
+  const id = path.basename(logFile)
 
   const options: any = {
     t: tag,
@@ -36,7 +37,10 @@ export default async function buildImage(application: Concierge.Application, sha
 
     handleBuildStream(buildName, buildStream, logFile)
       .then(() => push(host, tag))
+
   })
+
+  return { id }
 }
 
 function getLogFilename(app: Concierge.Application, ref: string) {
@@ -72,7 +76,7 @@ async function getAvailableHost() {
  */
 function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, logFile: string) {
   const buildResponses: string[] = []
-
+  const id = path.basename(logFile)
   const promise = new Promise((resolve, reject) => {
     stream.on('data', (data: Buffer) => {
       const msg = data.toString()
@@ -84,7 +88,7 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
       }
 
       buildResponses.push(msg)
-      emitBuild(buildName, typeof text === 'string' ? text.trim() : text)
+      emitBuild(id, typeof text === 'string' ? text.trim() : text)
       appendAsync(logFile, msg + '\n')
     })
 
