@@ -72,29 +72,10 @@ class Run {
     }
   }
 
-  delay(ms: number) {
-    return new Promise<void>(function (resolve) {
-      setTimeout(resolve, ms);
-    });
-  }
-
-  async animateFocus(elements: HTMLElement[]) {
-    for (const e of elements) {
-      e.focus()
-      await this.delay(50)
-      e.blur()
+  copyAllPorts = () => {
+    for (const port of this.ports()) {
+      this.copyPort(port)
     }
-  }
-
-  copyAllPorts = (_, event) => {
-    const target = 'input[data-bind="textInput: hostPort"]'
-    const list = Array.from(document.querySelectorAll(target)) as HTMLElement[]
-    this.animateFocus(list)
-
-    this.ports()
-      .map(p => {
-        this.copyPort(p)
-      });
   }
 
   copyPort = (locals: { port: number, hostPort: KnockoutObservable<string> }): void => {

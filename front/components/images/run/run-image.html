@@ -37,19 +37,19 @@
           <div class="divider"></div>
           <strong>Expose Ports:</strong>
 
+          <!-- ko if: ports().length > 1 -->
           <div class="form-horizontal">
             <div class="form-group">
-              <!-- Toggle all expose ports -->
               <label class="form-switch">
                 <input type="checkbox" data-bind="checked: exposeAll" />
                 <i class="form-icon" data-bind="click: toggleAllPorts"></i>
               </label>
-              <!-- Copy all ports -->
               <div class="input-group">
-                <button class="btn btn-md input-group-btn" data-bind="text: 'paste', click: copyAllPorts"></button>
+                <button class="btn btn-md input-group-btn" data-bind="click: copyAllPorts">Copy Ports</button>
               </div>
             </div>
           </div>
+          <!-- /ko -->
 
           <!-- ko foreach: ports -->
           <div class="form-horizontal">
