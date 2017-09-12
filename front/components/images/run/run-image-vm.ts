@@ -17,6 +17,7 @@ class Run {
   name = ko.observable('')
   ports = ko.observableArray<{ port: number, type: string, expose: KnockoutObservable<boolean>, hostPort: KnockoutObservable<string> }>([])
   links = ko.observableArray<{ containerName: string, alias: KnockoutObservable<string> }>([])
+  exposeAll = ko.observable()
 
   envs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
   customEnvs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
@@ -63,8 +64,41 @@ class Run {
     this.customVolumes.remove(env => env.path === customVolume.path)
   }
 
-  copyPort = (locals: { port: string, hostPort: KnockoutObservable<string> }) => {
-    locals.hostPort(locals.port)
+  toggleAllPorts = (run, event: MouseEvent): void => {
+    const newValue = !this.exposeAll()
+    this.exposeAll(newValue)
+    for (const port of this.ports()) {
+      port.expose(newValue)
+    }
+  }
+
+  delay(ms: number) {
+    return new Promise<void>(function (resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  async animateFocus(elements: HTMLElement[]) {
+    for (const e of elements) {
+      e.focus()
+      await this.delay(50)
+      e.blur()
+    }
+  }
+
+  copyAllPorts = (_, event) => {
+    const target = 'input[data-bind="textInput: hostPort"]'
+    const list = Array.from(document.querySelectorAll(target)) as HTMLElement[]
+    this.animateFocus(list)
+
+    this.ports()
+      .map(p => {
+        this.copyPort(p)
+      });
+  }
+
+  copyPort = (locals: { port: number, hostPort: KnockoutObservable<string> }): void => {
+    locals.hostPort(locals.port.toString())
   }
 
   addCustomVariable = () => {
