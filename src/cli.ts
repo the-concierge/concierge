@@ -4,7 +4,7 @@ import * as log from './logger'
 import * as path from 'path'
 import chalk = require('chalk')
 
-const script = path.resolve('.', 'index.js')
+const script = path.resolve(__dirname, 'index.js')
 const pm2 = require('pm2')
 
 const args = minimist(process.argv.slice(1))
@@ -47,7 +47,7 @@ pm2.connect((err, foo) => {
     if (state === 'status') {
       const status = result[0]
       if (!status) {
-        return log.error(`Unable to determine status`)
+        return log.error(`Unable to determine status: Try running "the-concierge start"`)
       }
 
       const online = status.pm2_env.status === 'online'
@@ -66,7 +66,7 @@ ${chalk.cyan.bold(' Restarts')}: ${status.pm2_env.restart_time}`)
 
   switch (state) {
     case 'start':
-      pm2.start('./env.json', { name, script, instances: 1 }, errCallback)
+      pm2.start({ name, script, instances: 1, exec_mode: 'fork' }, errCallback)
       break
     case 'stop':
       pm2.stop(name, errCallback)
