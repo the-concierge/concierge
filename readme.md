@@ -52,7 +52,8 @@ After starting the concierge:
 **Install globally using NPM**
 ```sh
 > npm install the-concierge -g
-> the-concierge
+> the-concierge start
+> the-concierge status
 ```
 
 #### Method 2: Docker
