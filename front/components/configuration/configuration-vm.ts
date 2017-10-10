@@ -7,9 +7,8 @@ class Configuration {
   config = state.configuration
   original = ko.observable<Partial<Concierge.Configuration>>({})
   isEditing = ko.observable(false)
-  labels = {
+  labels: { [label: string]: string } = {
     name: 'Name',
-    conciergePort: 'Concierge HTTP Port',
     proxyHostname: 'Proxy Hostname',
     debug: 'Debug Level',
     dockerRegistry: 'Docker Registry',
@@ -18,26 +17,24 @@ class Configuration {
   }
 
   fields = ko.computed(() => {
-    const cfg = this.config()
+    const cfg = this.config() as { [key: string]: any }
+    delete cfg['conciergePort']
 
-    return Object.keys(cfg)
-      .map(key => {
-        const value = ko.observable(cfg[key])
+    return Object.keys(cfg).map(key => {
+      const value = ko.observable(cfg[key])
 
-        const cls = ko.computed(() => {
-          const originalValue = this.original()[key]
-          return value() === originalValue
-            ? ''
-            : 'is-success'
-        })
-
-        return {
-          key,
-          value,
-          cls,
-          label: this.labels[key] || key
-        }
+      const cls = ko.computed(() => {
+        const originalValue = (this.original() as any)[key]
+        return value() === originalValue ? '' : 'is-success'
       })
+
+      return {
+        key,
+        value,
+        cls,
+        label: this.labels[key] || key
+      }
+    })
   })
 
   constructor() {
@@ -86,7 +83,7 @@ class Configuration {
 
   cancelEditing = () => {
     this.isEditing(false)
-    const original = this.original()
+    const original = this.original() as { [key: string]: any }
     const fields = this.fields()
 
     for (const field of fields) {
@@ -106,9 +103,7 @@ ko.components.register('ko-configuration', {
   }
 })
 
-menu.register(
-  {
-    path: '/configuration',
-    item: { component: 'ko-configuration', name: 'Configuration' }
-  }
-)
+menu.register({
+  path: '/configuration',
+  item: { component: 'ko-configuration', name: 'Configuration' }
+})
