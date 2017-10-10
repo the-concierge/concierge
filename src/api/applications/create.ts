@@ -26,7 +26,7 @@ const handler: RequestHandler = async (req, res) => {
     body.key = ''
   }
 
-  const errors = validate(body)
+  const errors = validate(body as any)
 
   if (errors.length) {
     const message = errors.join(', ')
@@ -35,8 +35,7 @@ const handler: RequestHandler = async (req, res) => {
   }
 
   try {
-    await db.applications()
-      .insert(body)
+    await db.applications().insert(body)
 
     const app = { ...body }
     delete app.key
@@ -58,9 +57,7 @@ async function getNextId() {
         return reject(err)
       }
 
-      const ids = files
-        .map(file => Number(file))
-        .filter(id => !isNaN(id))
+      const ids = files.map(file => Number(file)).filter(id => !isNaN(id))
 
       const max = Math.max(...ids, ...apps.map(app => app.id))
 

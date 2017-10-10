@@ -27,17 +27,18 @@ if (dbPath) {
 if (!commands.some(cmd => cmd === state)) {
   log.error(
     `Unknown command '${state}'
-Allowed commands: ${commands.join(', ')}`)
+Allowed commands: ${commands.join(', ')}`
+  )
   process.exit(1)
 }
 
-pm2.connect((err, foo) => {
+pm2.connect((err: any) => {
   if (err) {
     log.error(`Failed to connect to PM2: ${err.message || err}`)
     process.exit(2)
   }
 
-  const errCallback = function (err: any, result?: any) {
+  const errCallback = function(err: any, result?: any) {
     pm2.disconnect()
     if (err) {
       log.error(`Failed to ${state} Concierge: ${err.message || err}`)
@@ -57,7 +58,8 @@ pm2.connect((err, foo) => {
 ${chalk.cyan.bold('      PID')}: ${status.pid}
 ${chalk.cyan.bold('   Status')}: ${(online ? chalk.green : chalk.red).bold(status.pm2_env.status)}
 ${chalk.cyan.bold('   Memory')}: ${Math.round(status.monit.memory / 1024 / 1024)}MB
-${chalk.cyan.bold(' Restarts')}: ${status.pm2_env.restart_time}`)
+${chalk.cyan.bold(' Restarts')}: ${status.pm2_env.restart_time}`
+      )
       return
     }
 

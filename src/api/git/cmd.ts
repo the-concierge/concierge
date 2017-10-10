@@ -5,8 +5,11 @@ import * as getCreds from '../credentials/db'
 /**
  * Execute abritrary Git commands in an Application's git repository
  */
-export default async function execCommand(application: Concierge.Application, workingDirectory: string, command: string) {
-
+export default async function execCommand(
+  application: Concierge.Application,
+  workingDirectory: string,
+  command: string
+) {
   const creds = application.credentialsId
     ? await getCreds.one(application.credentialsId)
     : undefined
@@ -30,7 +33,11 @@ export default async function execCommand(application: Concierge.Application, wo
     const filenames = await createFiles(application.key)
     const GIT_SSH = filenames.script
     try {
-      const result = await spawnAsync(command, { detached: true, cwd: workingDirectory, env: { GIT_SSH } }, application)
+      const result = await spawnAsync(
+        command,
+        { detached: true, cwd: workingDirectory, env: { GIT_SSH } },
+        application
+      )
       await teardown(filenames)
       return result
     } catch (ex) {
@@ -53,9 +60,7 @@ function infixCredentials(app: Concierge.Application) {
 
   // Assumes format: https://username@github.com/org/repo
   if (hasUsername) {
-    return repository
-      .split('@')
-      .join(`:${key}@`)
+    return repository.split('@').join(`:${key}@`)
   }
 
   // Assumes formats:
@@ -86,9 +91,9 @@ async function createFiles(privateKey: string) {
   await chmodAsync(scriptFilename, '0755' as any)
   await chmodAsync(keyFilename, '0600' as any)
   return filenames
-};
+}
 
-async function teardown(filenames: { key: string, script: string }) {
+async function teardown(filenames: { key: string; script: string }) {
   await unlinkAsync(filenames.key)
   await unlinkAsync(filenames.script)
   return true
@@ -143,7 +148,11 @@ function unlinkAsync(filename: string) {
   return promise
 }
 
-function spawnAsync(command: string, options: childProcess.SpawnOptions, app: Concierge.Application) {
+function spawnAsync(
+  command: string,
+  options: childProcess.SpawnOptions,
+  app: Concierge.Application
+) {
   const promise = new Promise<string>((resolve, reject) => {
     let buffer = ''
 
@@ -162,7 +171,7 @@ function spawnAsync(command: string, options: childProcess.SpawnOptions, app: Co
     const proc = childProcess.spawn(baseCommand, commandArgs, options)
 
     proc.on('message', msg => buf(msg))
-    proc.on('data', msg => buf(msg))
+    proc.on('data', (msg: Buffer) => buf(msg))
 
     proc.on('close', code => {
       if (code !== 0) {

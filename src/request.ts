@@ -15,22 +15,21 @@ function request(url: string, httpModule: any, options: any): Promise<string> {
 
   let promise = new Promise<string>((resolve, reject) => {
     let body = ''
-    let buffers = []
-    let httpRequest = httpModule.request(options, response => {
+    let buffers: Buffer[] = []
+    let httpRequest = (httpModule as typeof http).request(options, response => {
       response.on('end', () => {
         if (options.asString) {
           return resolve(body as any)
         }
         resolve(Buffer.concat(buffers) as any)
       })
-      response.on('data', data => {
+      response.on('data', (data: Buffer) => {
         if (options.asString) {
           body += data.toString()
           return
         }
         buffers.push(data)
       })
-
     })
 
     httpRequest.setTimeout(options.timeout || 1500)
@@ -92,7 +91,7 @@ export function putHttps(url: string, options?: any) {
   return request(url, https, options)
 }
 
-function urlToOptions(url: string): { hostname: string, path?: string, port?: number } {
+function urlToOptions(url: string): { hostname: string; path?: string; port?: number } {
   url = url.replace('http://', '')
   url = url.replace('https://', '')
 

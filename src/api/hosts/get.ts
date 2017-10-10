@@ -8,8 +8,8 @@ export const getOne: RequestHandler = async (req, res) => {
   res.json(host)
 }
 
-export const getAll: RequestHandler = async (req, res) => {
+export const getAll: RequestHandler = async (_, res) => {
   const hosts = await get.getAll()
-  hosts.forEach(host => host.privateKey = '********')
+  hosts.forEach(host => (host.privateKey = '********'))
   res.json(hosts)
 }

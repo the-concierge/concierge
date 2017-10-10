@@ -1,7 +1,8 @@
 import * as knex from 'knex'
 import * as path from 'path'
 
-const dbLocation = process.env.CONCIERGE_DB_PATH || path.resolve(__dirname, '..', '..', 'db', 'concierge.db')
+const dbLocation =
+  process.env.CONCIERGE_DB_PATH || path.resolve(__dirname, '..', '..', 'db', 'concierge.db')
 
 const connection = knex({
   client: 'sqlite3',
@@ -18,6 +19,6 @@ function getTransaction(): Promise<knex.Transaction> {
   return promise
 }
 
-connection['getTransaction'] = getTransaction
+;(connection as any)['getTransaction'] = getTransaction
 
 export default connection as knex & { getTransaction: typeof getTransaction }

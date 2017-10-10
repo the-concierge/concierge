@@ -3,13 +3,13 @@ import * as HTTPProxy from 'http-proxy'
 import { getConfig } from '../../api/configuration/db'
 import findContainer from './find-container'
 
-const proxyServer: http.Server & { web: any, ws: any } = HTTPProxy.createProxyServer({})
+const proxyServer: http.Server & { web: any; ws: any } = HTTPProxy.createProxyServer({})
 
 proxyServer.on('error', error => {
   log.error('[PROXY] ' + error)
 })
 
-proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
+proxyServer.on('proxyReq', (proxyReq: any, req: any) => {
   if (req.body && req.headers['content-type'] === 'application/json') {
     const body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body)
     proxyReq.setHeader('Content-Type', 'application/json')
@@ -18,7 +18,7 @@ proxyServer.on('proxyReq', (proxyReq, req, res, options) => {
   }
 })
 
-export async function webSocketHandler(request: http.ServerRequest, socket, head) {
+export async function webSocketHandler(request: http.ServerRequest, socket: any, head: any) {
   // const info = getDomainInfo(request.headers.host)
   const container = await findContainer(request.headers.host)
   if (!container) {
@@ -33,11 +33,15 @@ export async function webSocketHandler(request: http.ServerRequest, socket, head
 
 type ServerRequest = http.ServerRequest & { body?: any }
 
-export async function requestHandler(request: ServerRequest, response: http.ServerResponse, next: (nextArg?: any) => void) {
+export async function requestHandler(
+  request: ServerRequest,
+  response: http.ServerResponse,
+  next: (nextArg?: any) => void
+) {
   const info = getProxyInfo(request.headers.host)
   const config = await getConfig()
 
-  if (config.proxyHostname.toLowerCase() !== info.hostname) {
+  if ((config.proxyHostname || '').toLowerCase() !== info.hostname) {
     return next()
   }
 
@@ -53,7 +57,8 @@ export async function requestHandler(request: ServerRequest, response: http.Serv
     return
   }
 
-  const destHostname = container.concierge.host.proxyIp || container.concierge.host.hostname || '127.0.0.1'
+  const destHostname =
+    container.concierge.host.proxyIp || container.concierge.host.hostname || '127.0.0.1'
   const targetUrl = `http://${destHostname}:${port.PublicPort}`
 
   const options: any = {
@@ -68,7 +73,7 @@ export async function requestHandler(request: ServerRequest, response: http.Serv
   proxyServer.web(request, response, options)
 }
 
-function errorResponse(response: any, error) {
+function errorResponse(response: any, error: any) {
   response.statusCode = 503
   response.statusMessage = 'Service unavailable: ' + error
   response.write('Service unavailable: ' + error)
@@ -83,13 +88,17 @@ function getProxyInfo(hostname: string) {
   const split = hostname.split('.')
 
   const idSplits = split[0].split('-')
-  const name = idSplits.slice(0, -1).join('-').toLowerCase()
+  const name = idSplits
+    .slice(0, -1)
+    .join('-')
+    .toLowerCase()
   const port = Number(idSplits.slice(-1)[0])
 
   const proxyHostname = (split
     .slice(1)
     .join('.')
-    .split(':')[0] || '').toLowerCase()
+    .split(':')[0] || ''
+  ).toLowerCase()
 
   return {
     name,

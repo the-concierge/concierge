@@ -4,6 +4,9 @@
         "target": "es5",
         "sourceMap": true,
         "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
         "lib": [
             "es2015",
             "dom"

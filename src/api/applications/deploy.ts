@@ -11,13 +11,11 @@ type Body = {
 
 const handler: RequestHandler = async (req, res) => {
   const { id } = req.params as { id: number }
-  const { ref, tag, type, sha } = req.query as Body
+  const { tag, sha } = req.query as Body
   const app = await db.one(id)
 
   if (!app) {
-    res
-      .status(400)
-      .json({ message: `Application '${id}' does not exist` })
+    res.status(400).json({ message: `Application '${id}' does not exist` })
     return
   }
 
@@ -37,9 +35,7 @@ const handler: RequestHandler = async (req, res) => {
       log.debug(ex.stack)
     }
 
-    res
-      .status(500)
-      .json({ message: ex.message || ex })
+    res.status(500).json({ message: ex.message || ex })
   }
 }
 

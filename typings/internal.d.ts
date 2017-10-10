@@ -14,7 +14,13 @@ interface Logger {
 
 declare const log: Logger
 
-declare module "toastr" {
+declare namespace NodeJS {
+  interface Global {
+    log: Logger
+  }
+}
+
+declare module 'toastr' {
   var toastr: Toastr
   export = toastr
 }
@@ -27,7 +33,7 @@ interface Toastr {
   options: any
 }
 
-declare module Concierge {
+declare namespace Concierge {
   interface Concierge {
     id: number
     label: string
@@ -139,8 +145,8 @@ declare module Concierge {
     mode: number[]
     median: number
     range: {
-      minimum: number,
-      maximum: number,
+      minimum: number
+      maximum: number
       difference: number
     }
     lowerQuartile: number
@@ -199,7 +205,9 @@ declare module 'rimraf' {
 }
 
 declare module 'compression' {
-  namespace api { }
+  namespace api {
+
+  }
   function api(): any
   export = api
 }

@@ -1,8 +1,7 @@
-
 import * as log from './logger'
 
 // Make logger available globally
-global['log'] = log
+global.log = log
 
 import migrateDatabase from './data/migrate'
 import startServer from './server'
@@ -37,7 +36,7 @@ async function start() {
 
 start()
 
-process.on('unhandledRejection', err => {
+process.on('unhandledRejection', (err: any) => {
   log.error(err.message || err)
 
   if (err.stack) {

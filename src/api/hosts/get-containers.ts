@@ -9,7 +9,7 @@ export const getOne: RequestHandler = async (req, res) => {
   res.json(containers)
 }
 
-export const getAll: RequestHandler = async (req, res) => {
+export const getAll: RequestHandler = async (_, res) => {
   const hosts: Concierge.Host[] = await get.getAll()
   const containerLists = await Promise.all(hosts.map(getContainers))
   const containers = containerLists.reduce((list, curr) => {
@@ -44,7 +44,7 @@ export async function getContainers(host: Concierge.Host) {
     all: 1
   })
 
-  containers.forEach(container => {
+  containers.forEach((container: any) => {
     container['concierge'] = {
       hostId: host.id,
       host: hostDto

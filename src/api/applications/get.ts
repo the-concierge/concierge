@@ -7,7 +7,7 @@ export const one: RequestHandler = async (req, res) => {
   res.json(application)
 }
 
-export const all: RequestHandler = async (req, res) => {
+export const all: RequestHandler = async (_, res) => {
   const applications = await get.all()
 
   for (const app of applications) {

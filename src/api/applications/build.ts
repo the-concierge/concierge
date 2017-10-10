@@ -8,10 +8,13 @@ import push from './push'
 
 const logBasePath = path.resolve(__dirname, '..', '..', '..', 'logs')
 
-export default async function buildImage(application: Concierge.Application, sha: string, tag: string, hostId?: number) {
-  const host = hostId
-    ? await getHost.getOne(hostId)
-    : await getAvailableHost()
+export default async function buildImage(
+  application: Concierge.Application,
+  sha: string,
+  tag: string,
+  hostId?: number
+) {
+  const host = hostId ? await getHost.getOne(hostId) : await getAvailableHost()
 
   const client = docker(host)
   const stream = await pack(application, sha)
@@ -35,9 +38,7 @@ export default async function buildImage(application: Concierge.Application, sha
       return
     }
 
-    handleBuildStream(buildName, buildStream, logFile)
-      .then(() => push(host, tag))
-
+    handleBuildStream(buildName, buildStream, logFile).then(() => push(host, tag))
   })
 
   return { id }
@@ -46,11 +47,10 @@ export default async function buildImage(application: Concierge.Application, sha
 function getLogFilename(app: Concierge.Application, ref: string) {
   const now = new Date()
   const date = `${now.getFullYear()}${now.getMonth()}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
-  const filename = `${date}__${ref}.log`
-    .split('/')
-    .join('_')
+  const filename = `${date}__${ref}.log`.split('/').join('_')
 
-  const logPath = path.resolve(logBasePath, app.id.toString(), filename)
+  const logPath = path
+    .resolve(logBasePath, app.id.toString(), filename)
     .replace('refs/heads/', '')
     .replace('refs/tags/', '')
 
@@ -74,7 +74,7 @@ async function getAvailableHost() {
  * - Emit build events over web socket (application, ref, message)
  * - Have front-end monitor build events for application + ref
  */
-function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, logFile: string) {
+function handleBuildStream(_: string, stream: NodeJS.ReadableStream, logFile: string) {
   const buildResponses: string[] = []
   const id = path.basename(logFile)
   const promise = new Promise((resolve, reject) => {
@@ -105,7 +105,7 @@ function handleBuildStream(buildName: string, stream: NodeJS.ReadableStream, log
   return promise
 }
 
-function tryParse(text: string): { stream?: string, errorDetail?: string } & string {
+function tryParse(text: string): { stream?: string; errorDetail?: string } & string {
   try {
     const json = JSON.parse(text.trim())
     return json

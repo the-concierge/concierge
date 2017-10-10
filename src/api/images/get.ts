@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import * as get from './get-images'
 
-export const all: RequestHandler = async (req, res) => {
+export const all: RequestHandler = async (_, res) => {
   const images = await get.getAll()
   res.json(images)
 }

@@ -4,19 +4,24 @@ export type Body = {
   key: string
   label: string
   dockerfile: string
+  [key: string]: string
 }
 
 export default function validate(body: Body) {
-  const errors = Object.keys(body)
-    .reduce((list, key) => {
-      if (key === 'id' || key === 'credentialsId') { return list }
+  const errors = Object.keys(body).reduce(
+    (list, key) => {
+      if (key === 'id' || key === 'credentialsId') {
+        return list
+      }
 
       const value = body[key]
       if (typeof value !== 'string') {
         list.push(`${key} is invalid`)
       }
       return list
-    }, [])
+    },
+    [] as string[]
+  )
 
   const repo = body.repository || ''
   const name = body.name || ''

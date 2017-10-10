@@ -23,7 +23,7 @@ async function getImages(host: Concierge.Host) {
 
   for (const image of images) {
     const concierge = { hostId: host.id }
-    image['concierge'] = concierge
+    ;(image as any)['concierge'] = concierge
   }
 
   return images

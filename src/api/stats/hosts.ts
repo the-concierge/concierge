@@ -9,13 +9,13 @@ export default async function watchHosts() {
   const hosts = await getHosts.getAll()
 
   for (const host of hosts) {
-    const isWatching = hostState[host.id]
+    const hostId = host.id as number
+    const isWatching = hostState[hostId]
     if (isWatching) {
       continue
     }
 
     const client = docker(host)
-    const hostId = host.id
     const hostname = host.hostname || host.vanityHostname
     client.getEvents({}, (err, stream: NodeJS.ReadableStream) => {
       if (err) {
@@ -25,7 +25,7 @@ export default async function watchHosts() {
 
       log.info(`[${hostname}] Monitoring host`)
       hostState[hostId] = true
-      stream.on('data', event => handleHostEvent(host, event))
+      stream.on('data', (event: any) => handleHostEvent(host, event))
     })
   }
 }

@@ -7,7 +7,7 @@ export const one: RequestHandler = async (req, res) => {
   res.json(creds)
 }
 
-export const all: RequestHandler = async (req, res) => {
+export const all: RequestHandler = async (_, res) => {
   const creds = await get.all()
 
   for (const cred of creds) {

@@ -18,5 +18,17 @@
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"editor.tabSize": 2,
 	"files.eol": "\n",
-	"tslint.exclude": "**/node_modules/**"
+	"tslint.enable": false,
+	"prettier.jsonEnable": [],
+	"prettier.printWidth": 100,
+	"prettier.semi": false,
+	"prettier.tabWidth": 2,
+	"prettier.useTabs": false,
+	"prettier.singleQuote": true,
+	"prettier.trailingComma": "none",
+	"prettier.typescriptEnable": [
+			"typescript",
+			"typescriptreact"
+	],
+	"editor.formatOnSave": true
 }

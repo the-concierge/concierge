@@ -5,6 +5,9 @@
         "sourceMap": true,
         "outDir": "../build",
         "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "strict": true,
         "lib": [
             "es2015",
             "dom"

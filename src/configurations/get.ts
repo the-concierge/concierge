@@ -1,5 +1,6 @@
 import db from '../data/connection'
 import Config = Concierge.Configuration
+import { port } from './port'
 
 /**
  * Ideally, it'd be nice to depcrate the Configuration cache
@@ -9,8 +10,14 @@ import Config = Concierge.Configuration
  * Lesson learned: Return a QueryBuilder<T> object from all DB APIs where T is the type of the object expected from the database
  * Only the top-most modules should execute queries. E.g. route handlers
  */
-let configCache: Config = null
-export default () => configCache
+let configCache: Config | null = null
+export default async function getCache() {
+  if (!configCache) {
+    await initialise()
+  }
+
+  return configCache as Config
+}
 
 export async function initialise() {
   configCache = await get()
@@ -22,9 +29,11 @@ export async function get(): Promise<Concierge.Configuration> {
     .select()
     .first()
 
+  config.conciergePort = port
   return config
 }
 
-export const setCache = (config: Config) => {
-  configCache = config as any
+export const setCache = (config: Partial<Config>) => {
+  config.conciergePort = port
+  configCache = { ...configCache, ...(config as any) }
 }

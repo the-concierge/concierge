@@ -49,7 +49,9 @@ After starting the concierge:
 ### Installation
 
 #### Method 1: Global NPM package
-**Install globally using NPM**
+**Install globally using NPM**  
+When used a command line utility, the Concierge uses PM2 and is run as a daemon.  
+
 ```sh
 > npm install the-concierge -g
 > the-concierge start

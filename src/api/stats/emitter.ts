@@ -19,19 +19,19 @@ export function build(name: string, event: any) {
   emitter.emit('build', name, event)
 }
 
-emitter.addListener('container', (subdomain, event) => {
+emitter.addListener('container', (subdomain: string, event: any) => {
   socket.emit('event', newEvent(subdomain, 'Container', event))
 })
 
-emitter.addListener('host', (hostname, event) => {
+emitter.addListener('host', (hostname: string, event: any) => {
   socket.emit('event', newEvent(hostname, 'Host', event))
 })
 
-emitter.addListener('build', (name, event) => {
+emitter.addListener('build', (name: string, event: any) => {
   socket.emit('build', newEvent(name, 'Build', event))
 })
 
-emitter.addListener('container-stats', (subdomain, stats) => {
+emitter.addListener('container-stats', (subdomain: string, stats: any) => {
   socket.emit('stats', newEvent(subdomain, 'Container', stats))
 })
 
