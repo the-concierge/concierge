@@ -9,6 +9,7 @@ export type MenuItem = {
 
 export type Handler = {
   run?: (resource: string, id: string, subResource: string) => void
+  position: number
   item: MenuItem
   path: string
 }
@@ -28,7 +29,7 @@ const router = mm<Handler, any>({
 
       // If overriden, pass through if incoming is provided
       // If not overriden, pass through if incoming is not provided
-      isa: (incoming, override) => override ? !!incoming : incoming === undefined
+      isa: (incoming, override) => (override ? !!incoming : incoming === undefined)
     },
     {
       // E.g. /containers/:id/inspect
@@ -36,18 +37,21 @@ const router = mm<Handler, any>({
 
       // If it's overridden, expect strict equality
       // If not overrideden, do not pass through
-      isa: (incoming, override) => override === undefined ? incoming === undefined : override === incoming
+      isa: (incoming, override) =>
+        override === undefined ? incoming === undefined : override === incoming
     }
   ]
 })
 
 class Menu {
-  items = ko.observableArray<MenuItem & { path: string }>([])
+  items = ko.observableArray<MenuItem & { path: string; position: number }>([])
 
   displayItems = ko.computed(() => {
-    return this
-      .items()
+    return this.items()
       .filter(item => item.hide !== true)
+      .sort((left, right) => {
+        return left.position === right.position ? 0 : left.position > right.position ? 1 : -1
+      })
   })
 
   notFoundItem = {
@@ -86,7 +90,7 @@ class Menu {
 
     const existingItem = this.items().find(item => item.name === handler.item.name)
     if (!existingItem) {
-      this.items.push({ ...handler.item, path: handler.path })
+      this.items.push({ ...handler.item, path: handler.path, position: handler.position })
     }
 
     router.override([resource, !!id, subResource], () => handler)

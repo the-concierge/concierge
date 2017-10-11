@@ -10,26 +10,27 @@
   </div>
 </div>
 
-<table class="table table-striped table-hover">
+<table class="table" style="table-layout: fixed">
   <thead>
     <tr>
       <th>Name</th>
       <th>Label</th>
-      <th>Credentials</th>
       <th>Repository</th>
       <th>Dockerfile</th>
-      <th>
-
-      </th>
+      <th></th>
     </tr>
   </thead>
   <tbody data-bind="foreach: applications">
-    <tr>
-      <td data-bind="text: name"></td>
-      <td data-bind="text: label"></td>
-      <td data-bind="text: credentialsName"></td>
-      <td data-bind="text: repository"></td>
-      <td data-bind="text: dockerfile"></td>
+    <tr class="active">
+      <td data-bind="click: function() { displayImages(!displayImages()) }" style="cursor: pointer">
+        <span data-bind="visible: displayImages() === false">▶</span>
+        <span data-bind="visible: displayImages() === true">▼</span>
+        <span data-bind="text: name"></span>
+        <span data-bind="visible: images().length > 0 && displayImages() === false, text: images().length + ' hidden'" style="color: #999; float: right"></span>
+      </td>
+      <td data-bind="text: label, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
+      <td data-bind="text: repository, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
+      <td data-bind="text: dockerfile, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
       <td>
         <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Deploy</button>
         <button class="btn btn-md" data-bind="click: $parent.showEditModal">Edit</button>
@@ -37,6 +38,43 @@
         <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
       </td>
     </tr>
+
+    <tr data-bind="visible: displayImages">
+      <td colspan="4">
+
+        <table class="table" style="table-layout: fixed">
+          <tr>
+            <td style="padding: 3px">
+              <b>Image name</b>
+            </td>
+            <td style="padding: 3px">
+              <b>Id</b>
+            </td>
+            <td style="padding: 3px">
+              <b>Size</b>
+            </td>
+            <td style="padding: 3px">
+              <b>Created</b>
+            </td>
+            <td style="padding: 3px"></td>
+          </tr>
+          <!-- ko foreach: images -->
+          <tr data-bind="visible: $parent.displayImages">
+            <td data-bind="text: name" style="padding: 3px"></td>
+            <td data-bind="text: Id.replace('sha256:', '').slice(0, 10)" style="padding: 3px"></td>
+            <td data-bind="text: $parents[1].toMb(Size)" style="padding: 3px"></td>
+            <td data-bind="text: $parents[1].toDate(Created)" style="padding: 3px"></td>
+            <td style="padding: 3px">
+              <button class="btn btn-sm" data-bind="click: function() { $parents[1].runImage($data) }">Run</button>
+              <button class="btn btn-sm" data-bind="click: $parents[1].removeImage">Remove</button>
+            </td>
+          </tr>
+          <!-- /ko -->
+        </table>
+
+      </td>
+    </tr>
+
   </tbody>
 </table>
 
@@ -47,3 +85,5 @@
 <ko-deploy-application></ko-deploy-application>
 
 <ko-application-logs></ko-application-logs>
+
+<ko-run-image></ko-run-image>

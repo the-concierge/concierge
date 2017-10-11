@@ -16,11 +16,14 @@ class Images {
   filteredImages = ko.computed(() => {
     const filter = this.imageFilter()
     const images = this.images()
-    if (!filter) {
-      return images
-    }
+    const applications = state.applications()
 
-    return images.filter(image => image.name.indexOf(filter) > -1)
+    return images
+      .filter(image => (filter ? image.name.indexOf(filter) > -1 : true))
+      .filter(image => {
+        const isAppImage = applications.some(app => image.name.indexOf(app.label) === 0)
+        return !isAppImage
+      })
   })
 
   toMb = (size: number) => `${common.round(size / 1024 / 1024, 2)}MB`
@@ -49,6 +52,7 @@ class Images {
 }
 
 const images = new Images()
+export default images
 
 ko.components.register('ko-images', {
   template: fs.readFileSync(`${__dirname}/images.html`).toString(),
@@ -57,9 +61,8 @@ ko.components.register('ko-images', {
   }
 })
 
-menu.register(
-  {
-    path: '/images',
-    item: { component: 'ko-images', name: 'Images' }
-  }
-)
+menu.register({
+  path: '/images',
+  item: { component: 'ko-images', name: 'Images' },
+  position: 30
+})

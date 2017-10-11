@@ -14,24 +14,23 @@ class EditApp {
   dockerfile = ko.observable('')
   originalApp: Concierge.Application
   credentials = ko.computed(() => {
-    return [
-      { id: 0, name: 'None', username: '', key: '' },
-      ...state.credentials()
-    ]
+    return [{ id: 0, name: 'None', username: '', key: '' }, ...state.credentials()]
   })
 
   selectedCredentials = ko.observable(this.credentials()[0])
 
   constructor() {
     this.password.subscribe(pwd => {
-      if (pwd.length > 0 && this.key().length > 0) { this.key('') }
+      if (pwd.length > 0 && this.key().length > 0) {
+        this.key('')
+      }
     })
 
     this.key.subscribe(key => {
-      if (key.length > 0 && this.password().length > 0) { this.password('') }
+      if (key.length > 0 && this.password().length > 0) {
+        this.password('')
+      }
     })
-
-    this.selectedCredentials.subscribe(cred => console.log(cred))
   }
 
   editApplication = (app: Concierge.Application) => {

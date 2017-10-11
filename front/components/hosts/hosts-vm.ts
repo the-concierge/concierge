@@ -20,9 +20,8 @@ ko.components.register('ko-hosts', {
   }
 })
 
-menu.register(
-  {
-    path: '/hosts',
-    item: { component: 'ko-hosts', name: 'Hosts' }
-  }
-)
+menu.register({
+  path: '/hosts',
+  item: { component: 'ko-hosts', name: 'Hosts' },
+  position: 40
+})

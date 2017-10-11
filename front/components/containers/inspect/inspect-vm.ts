@@ -65,8 +65,8 @@ class Inspect {
 
   stopContainer = () => this.modifyContainer('stop')
   startContainer = () => this.modifyContainer('start')
-  removeContainer = () => this.modifyContainer('host', 'DELETE')
-    .then(() => {
+  removeContainer = () =>
+    this.modifyContainer('host', 'DELETE').then(() => {
       // Disable all container buttons, but remain in the view
       this.containerWaiting(true)
     })
@@ -74,17 +74,16 @@ class Inspect {
 
 const viewModel = new Inspect()
 
-menu.register(
-  {
-    path: '/containers/:id/inspect',
-    item: { component: 'ko-inspect-container', name: 'Inspect Container', hide: true },
-    run: (_, id) => {
-      viewModel.containerId(id)
-      stats.getStats()
-      viewModel.resetButtons()
-    }
+menu.register({
+  path: '/containers/:id/inspect',
+  item: { component: 'ko-inspect-container', name: 'Inspect Container', hide: true },
+  position: 1000,
+  run: (_, id) => {
+    viewModel.containerId(id)
+    stats.getStats()
+    viewModel.resetButtons()
   }
-)
+})
 
 ko.components.register('ko-inspect-container', {
   template: fs.readFileSync(`${__dirname}/inspect.html`).toString(),

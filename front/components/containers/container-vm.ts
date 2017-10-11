@@ -12,10 +12,7 @@ class Containers {
       .hosts()
       .map(host => ({ id: host.id, hostname: host.vanityHostname || host.hostname }))
 
-    return [
-      { id: 0, hostname: 'Show containers for all hosts' },
-      ...hosts
-    ]
+    return [{ id: 0, hostname: 'Show containers for all hosts' }, ...hosts]
   })
 
   selectedHost = ko.observable(this.hosts()[0])
@@ -51,16 +48,14 @@ ko.components.register('ko-containers', {
   }
 })
 
-menu.register(
-  {
-    path: '/containers',
-    item: { component: 'ko-containers', name: 'Containers' }
-  }
-)
+menu.register({
+  path: '/containers',
+  item: { component: 'ko-containers', name: 'Containers' },
+  position: 10
+})
 
-menu.register(
-  {
-    path: '/',
-    item: { component: 'ko-containers', name: 'Containers' }
-  }
-)
+menu.register({
+  path: '/',
+  item: { component: 'ko-containers', name: 'Containers' },
+  position: 1000
+})

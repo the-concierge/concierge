@@ -26,9 +26,8 @@ ko.components.register('ko-logs', {
   }
 })
 
-menu.register(
-  {
-    path: '/logs',
-    item: { component: 'ko-logs', name: 'Logs' }
-  }
-)
+menu.register({
+  path: '/logs',
+  item: { component: 'ko-logs', name: 'Logs' },
+  position: 70
+})

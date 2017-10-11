@@ -105,5 +105,6 @@ ko.components.register('ko-configuration', {
 
 menu.register({
   path: '/configuration',
-  item: { component: 'ko-configuration', name: 'Configuration' }
+  item: { component: 'ko-configuration', name: 'Configuration' },
+  position: 60
 })

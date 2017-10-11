@@ -31,9 +31,8 @@ ko.components.register('ko-credentials', {
   }
 })
 
-menu.register(
-  {
-    path: '/credentials',
-    item: { component: 'ko-credentials', name: 'Credentials' }
-  }
-)
+menu.register({
+  path: '/credentials',
+  item: { component: 'ko-credentials', name: 'Credentials' },
+  position: 50
+})
