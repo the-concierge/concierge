@@ -9,7 +9,7 @@ const handler: RequestHandler = async (req, res) => {
   const logFilename = path.resolve(logFileBase, id.toString(), filename)
 
   res.setHeader('Content-Disposition', `attachment; filename=${filename}`)
-  res.setHeader('Content-Type', 'binary/octet-stream')
+  res.setHeader('Content-Type', 'application/text')
 
   fs.createReadStream(logFilename).pipe(res)
 }

@@ -38,14 +38,17 @@ export default async function push(host: Concierge.Host, imageName: string): Pro
 
   log.info(`Pushing to registry: ${repo}:${tag}`)
 
-  const stream = await imageToPush.push()
+  const stream = await imageToPush.push({
+    authconfig: {
+      auth: ''
+    }
+  })
 
   stream.on('error', (err: any) => {
     log.error(`Failed to push to registry: ${err.message || err}`)
   })
 
   stream.on('end', () => log.info(`Pushed to registry: ${repo}:${tag}`))
-  stream.on('data', (data: Buffer) => log.debug(`[${repo}:${tag}] ${data.toString()}`))
 }
 
 function getRepoTag(registry: string, originalTag: string): { repo: string; tag: string } | void {

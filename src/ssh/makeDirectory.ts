@@ -9,10 +9,7 @@ import * as log from '../logger'
 export default async function makeDirectory(host: Concierge.Host, newDirectory: string) {
   newDirectory = newDirectory || ''
 
-  const newPath = posix.join(
-    await getVolumePath(host),
-    newDirectory
-  )
+  const newPath = posix.join(await getVolumePath(host), newDirectory)
 
   const client = await getSshClient(host)
   return await mkdir(client, newPath)
@@ -20,7 +17,6 @@ export default async function makeDirectory(host: Concierge.Host, newDirectory: 
 
 function mkdir(client, newPath: string) {
   const promise = new Promise<boolean>((resolve, reject) => {
-
     function mkdirHandler(error) {
       client.end()
       if (error) {
@@ -29,7 +25,6 @@ function mkdir(client, newPath: string) {
       resolve(true)
     }
 
-    log.debug('MKDIR: ' + newPath)
     client.exec('mkdir ' + newPath, mkdirHandler)
   })
 

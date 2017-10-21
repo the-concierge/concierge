@@ -14,18 +14,30 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Dockerfile <cite>The Dockerfile to use inside the repository</cite></label>
+            <label class="form-label">Dockerfile
+              <cite>The Dockerfile to use inside the repository</cite>
+            </label>
             <input class="form-input" type="text" data-bind="textInput: dockerfile" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Label <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite></label>
+            <label class="form-label">Label
+              <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
+            </label>
             <input class="form-input" type="text" data-bind="textInput: label" />
           </div>
 
           <div class="form-group">
             <label class="form-label">Repository</label>
             <input class="form-input" type="text" data-bind="textInput: repository" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-switch">
+              <input type="checkbox" data-bind="checked: autoBuild" />
+              <i class="form-icon" data-bind="click: function(_, event) { event.preventDefault(); autoBuild(!autoBuild()); return true; }"></i>
+              Automatically build branches and tags
+            </label>
           </div>
 
           <!-- ko if: credentials().length > 1 -->
@@ -37,7 +49,9 @@
 
           <!-- ko if: selectedCredentials().id === 0 -->
           <div class="form-group">
-            <label class="form-label">Username <cite>Optional: This can be provided in the Git repository</cite></label>
+            <label class="form-label">Username
+              <cite>Optional: This can be provided in the Git repository</cite>
+            </label>
             <input class="form-input" type="text" data-bind="textInput: username" placeholder="Optional" />
           </div>
 

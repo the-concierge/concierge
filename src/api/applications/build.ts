@@ -30,18 +30,27 @@ export default async function buildImage(
     dockerfile: application.dockerfile || 'Dockerfile'
   }
 
-  client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
-    const buildName = `${application.id}/${tag}`
-    if (err) {
-      appendAsync(logFile, err.message || err)
-      emitBuild(buildName, `Failed to start build: ${err.message || err}`)
-      return
-    }
+  const promise = new Promise<{ responses: string[]; imageId?: string }>((resolve, reject) => {
+    client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
+      const buildName = `${application.id}/${tag}`
+      if (err) {
+        reject(err)
+        appendAsync(logFile, err.message || err)
+        emitBuild(buildName, `Failed to start build: ${err.message || err}`)
+        return
+      }
 
-    handleBuildStream(buildName, buildStream, logFile).then(() => push(host, tag))
+      handleBuildStream(buildStream, logFile)
+        .then(responses => {
+          const imageId = getImageId(responses)
+          resolve({ responses, imageId })
+          push(host, tag)
+        })
+        .catch(err => reject(err))
+    })
   })
 
-  return { id }
+  return { id, build: promise }
 }
 
 function getLogFilename(app: Concierge.Application, ref: string) {
@@ -74,15 +83,17 @@ async function getAvailableHost() {
  * - Emit build events over web socket (application, ref, message)
  * - Have front-end monitor build events for application + ref
  */
-function handleBuildStream(_: string, stream: NodeJS.ReadableStream, logFile: string) {
+function handleBuildStream(stream: NodeJS.ReadableStream, logFile: string) {
   const buildResponses: string[] = []
   const id = path.basename(logFile)
-  const promise = new Promise((resolve, reject) => {
+
+  const promise = new Promise<string[]>((resolve, reject) => {
     stream.on('data', (data: Buffer) => {
       const msg = data.toString()
       const output = tryParse(msg)
 
-      const text = output.stream || output.errorDetail || output
+      const text: string | undefined =
+        typeof output === 'string' ? output : output.stream || output.errorDetail
       if (!text) {
         return
       }
@@ -93,7 +104,10 @@ function handleBuildStream(_: string, stream: NodeJS.ReadableStream, logFile: st
     })
 
     stream.on('end', () => {
-      const hasErrors = buildResponses.some(res => res.hasOwnProperty('errorDetail'))
+      const hasErrors = buildResponses.some(res => {
+        const json = tryParse(res)
+        return json.hasOwnProperty('errorDetail')
+      })
       if (hasErrors) {
         return reject(buildResponses)
       }
@@ -105,7 +119,9 @@ function handleBuildStream(_: string, stream: NodeJS.ReadableStream, logFile: st
   return promise
 }
 
-function tryParse(text: string): { stream?: string; errorDetail?: string } & string {
+function tryParse(
+  text: string
+): { stream?: string; errorDetail?: string; aux?: { ID: string } } | string {
   try {
     const json = JSON.parse(text.trim())
     return json
@@ -142,4 +158,20 @@ function mkdirAsync(folder: string) {
       resolve()
     })
   })
+}
+
+function getImageId(buildResponses: string[]): string | undefined {
+  for (const response of buildResponses) {
+    const json = tryParse(response)
+    if (typeof json === 'string') {
+      continue
+    }
+
+    if (!json.aux) {
+      return
+    }
+
+    return json.aux.ID
+  }
+  return
 }

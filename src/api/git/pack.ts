@@ -9,11 +9,16 @@ const sentinal: { [appId: number]: boolean } = {}
  * - refs/heads/branch-name
  * - refs/tags/tag-name
  */
-export default async function refToStream(application: Concierge.Application, sha: string): Promise<NodeJS.ReadableStream> {
+export default async function refToStream(
+  application: Concierge.Application,
+  sha: string
+): Promise<NodeJS.ReadableStream> {
   const id = Number(application.id)
   const isBusy = !!sentinal[id]
   if (isBusy) {
-    throw new Error(`Unable to pack: Application folder is busy`)
+    const err: any = new Error(`Unable to pack: Application folder is busy`)
+    err.code = 'E_REPOBUSY'
+    throw err
   }
 
   sentinal[id] = true
@@ -30,7 +35,6 @@ export default async function refToStream(application: Concierge.Application, sh
   const stream = tar.pack(workDir)
 
   const resetSentinal = () => {
-    log.debug(`Reset pack sentinal for '${id}'`)
     sentinal[id] = false
   }
   stream.on('close', resetSentinal)

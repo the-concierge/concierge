@@ -19,6 +19,13 @@ export function debug(message: string): void {
   formatOutput(message, 'debug', 'gray')
 }
 
+global.log = {
+  info,
+  warn,
+  error,
+  debug
+}
+
 function formatOutput(message: string, messageType: string, color: string): void {
   // tslint:disable-next-line:no-console
   const chalkFn = (chalk as any)[color] as Chalk.ChalkChain

@@ -70,8 +70,9 @@
     "lint": "prettier --single-quote=true --no-bracket-spacing=true --tab-width=2 --trailing-comma=none --use-tabs=false --print-width=100 --no-semi --write \"./src/**/*.ts\" \"./front/**/*.ts\"",
     "test": "yarn build",
     "// Registry helpers": "",
-    "create-cert": "openssl req -newkey rsa:2048 -nodes -keyout certificates/registry.key -x509 -days 999 -out certificates/registry.crt -subj \"/CN=localhost\"",
-    "create-registry": "npm run create-cert && docker-compose -f scripts/registry.compose.yml up -d"
+    "create-cert": "openssl req -newkey rsa:2048 -nodes -keyout certificates/registry.key -x509 -days 999 -out certificates/registry.crt -subj \"/CN=docker.local.dev\"",
+    "create-certicate": "openssl req -new -x509 -text -key certificates/registry.key -out ca.crt -subj \"/CN=docker.local.dev\"",
+    "create-registry": "npm run create-cert && npm run create-certicate && docker-compose -f docker-compose.yaml up -d"
   },
   "author": "Carl Winkler",
   "license": "MIT",

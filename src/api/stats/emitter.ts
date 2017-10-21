@@ -19,6 +19,10 @@ export function build(name: string, event: any) {
   emitter.emit('build', name, event)
 }
 
+export function buildMonitoring(event: any) {
+  emitter.emit('build-monitoring', event)
+}
+
 emitter.addListener('container', (subdomain: string, event: any) => {
   socket.emit('event', newEvent(subdomain, 'Container', event))
 })
@@ -33,6 +37,10 @@ emitter.addListener('build', (name: string, event: any) => {
 
 emitter.addListener('container-stats', (subdomain: string, stats: any) => {
   socket.emit('stats', newEvent(subdomain, 'Container', stats))
+})
+
+emitter.addListener('build-monitoring', (event: any) => {
+  socket.emit('build-monitoring', event)
 })
 
 function newEvent(name: string, type: string, event: string) {

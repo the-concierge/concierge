@@ -8,8 +8,13 @@ import * as getCreds from '../credentials/db'
 export default async function execCommand(
   application: Concierge.Application,
   workingDirectory: string,
-  command: string
+  command: string,
+  args?: string[]
 ) {
+  if (args && command.split(' ').length > 1) {
+    throw new Error('[GITCMD] Cannot provide arguments and command with parameters')
+  }
+
   const creds = application.credentialsId
     ? await getCreds.one(application.credentialsId)
     : undefined
@@ -23,7 +28,7 @@ export default async function execCommand(
 
   // If the repository is not private, we do not need to use a SSH private key
   if (!isPrivate) {
-    const result = await spawnAsync(command, { cwd: workingDirectory }, application)
+    const result = await spawnAsync(command, { cwd: workingDirectory }, application, args)
     return result
   }
 
@@ -36,7 +41,8 @@ export default async function execCommand(
       const result = await spawnAsync(
         command,
         { detached: true, cwd: workingDirectory, env: { GIT_SSH } },
-        application
+        application,
+        args
       )
       await teardown(filenames)
       return result
@@ -48,7 +54,7 @@ export default async function execCommand(
 
   const infixedRepo = infixCredentials(application)
   const amendedCommand = command.replace(application.repository, infixedRepo)
-  const result = await spawnAsync(amendedCommand, { cwd: workingDirectory }, application)
+  const result = await spawnAsync(amendedCommand, { cwd: workingDirectory }, application, args)
   return result
 }
 
@@ -151,7 +157,8 @@ function unlinkAsync(filename: string) {
 function spawnAsync(
   command: string,
   options: childProcess.SpawnOptions,
-  app: Concierge.Application
+  app: Concierge.Application,
+  args?: string[]
 ) {
   const promise = new Promise<string>((resolve, reject) => {
     let buffer = ''
@@ -166,7 +173,7 @@ function spawnAsync(
 
     const split = command.split(' ')
     const baseCommand = split[0]
-    const commandArgs = split.slice(1)
+    const commandArgs = args || split.slice(1)
 
     const proc = childProcess.spawn(baseCommand, commandArgs, options)
 

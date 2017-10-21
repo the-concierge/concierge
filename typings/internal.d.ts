@@ -85,6 +85,20 @@ declare namespace Concierge {
     dockerfile: string
 
     credentialsId?: number
+
+    /** Whether or not the Application remotes are monitored and automatically built */
+    autoBuild?: boolean
+  }
+
+  interface ApplicationRemote {
+    id: number
+    applicationId: number
+    remote: string
+    sha: string
+    imageId?: string
+    state: number
+    seen?: string
+    age?: string
   }
 
   interface ApplicationDTO extends Application {

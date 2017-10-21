@@ -10,7 +10,7 @@ export type Body = {
 export default function validate(body: Body) {
   const errors = Object.keys(body).reduce(
     (list, key) => {
-      if (key === 'id' || key === 'credentialsId') {
+      if (key === 'id' || key === 'credentialsId' || key === 'autoBuild') {
         return list
       }
 

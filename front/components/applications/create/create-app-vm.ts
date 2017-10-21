@@ -12,22 +12,24 @@ class CreateApp {
   password = ko.observable('')
   label = ko.observable('')
   dockerfile = ko.observable('')
+  autoBuild = ko.observable(false)
   credentials = ko.computed(() => {
-    return [
-      { id: 0, name: 'None', username: '', key: '' },
-      ...state.credentials()
-    ]
+    return [{ id: 0, name: 'None', username: '', key: '' }, ...state.credentials()]
   })
 
   selectedCredentials = ko.observable(this.credentials()[0])
 
   constructor() {
     this.password.subscribe(pwd => {
-      if (pwd.length > 0 && this.key().length > 0) { this.key('') }
+      if (pwd.length > 0 && this.key().length > 0) {
+        this.key('')
+      }
     })
 
     this.key.subscribe(key => {
-      if (key.length > 0 && this.password().length > 0) { this.password('') }
+      if (key.length > 0 && this.password().length > 0) {
+        this.password('')
+      }
     })
   }
 
@@ -41,6 +43,7 @@ class CreateApp {
     this.label('')
     this.selectedCredentials(this.credentials()[0])
     this.modalActive(true)
+    this.autoBuild(false)
   }
 
   hideModal = () => {
@@ -56,6 +59,7 @@ class CreateApp {
     const label = this.label()
     const dockerfile = this.dockerfile()
     const credentialsId = this.selectedCredentials().id
+    const autoBuild = this.autoBuild()
 
     const result = await fetch(`/api/applications`, {
       method: 'POST',
@@ -67,7 +71,8 @@ class CreateApp {
         credentialsId,
         key,
         label,
-        dockerfile
+        dockerfile,
+        autoBuild
       }),
       headers: {
         'Content-Type': 'application/json'
