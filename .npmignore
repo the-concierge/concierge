@@ -1,10 +1,11 @@
-registry/
 .git/
 .vagrant/
 .vscode/
 archive/
 certificates/*
-db/*.db
+db
+!db/.gitkeep
+registry/
 test/
 typings/
 logs/*
