@@ -23,7 +23,7 @@ class Details {
     const config = state.configuration()
 
     const ports = this.container().ports()
-    const urls = ports.map((port, index) => {
+    const urls = ports.map(port => {
       const internal = port.url
       const withPort = `http://${name}-${port.private}.${config.proxyHostname}:${config.conciergePort}`
       const withoutPort = `http://${name}-${port.private}.${config.proxyHostname}`

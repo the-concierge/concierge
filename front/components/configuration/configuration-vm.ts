@@ -18,23 +18,24 @@ class Configuration {
 
   fields = ko.computed(() => {
     const cfg = this.config() as { [key: string]: any }
-    delete cfg['conciergePort']
 
-    return Object.keys(cfg).map(key => {
-      const value = ko.observable(cfg[key])
+    return Object.keys(cfg)
+      .filter(key => this.labels[key] !== undefined)
+      .map(key => {
+        const value = ko.observable(cfg[key])
 
-      const cls = ko.computed(() => {
-        const originalValue = (this.original() as any)[key]
-        return value() === originalValue ? '' : 'is-success'
+        const cls = ko.computed(() => {
+          const originalValue = (this.original() as any)[key]
+          return value() === originalValue ? '' : 'is-success'
+        })
+
+        return {
+          key,
+          value,
+          cls,
+          label: this.labels[key]
+        }
       })
-
-      return {
-        key,
-        value,
-        cls,
-        label: this.labels[key] || key
-      }
-    })
   })
 
   constructor() {
