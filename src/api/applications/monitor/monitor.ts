@@ -99,6 +99,7 @@ export class RemoteMonitor {
 
         log.debug(`[${this.app.name}] Branch '${remoteRef}' deleted from origin`)
         const dbRemote = await db.getRemote(this.app.id, remoteRef)
+        remote.state = State.Inactive
         await updateRemoteState(this.app, remoteRef, State.Inactive)
         buildStatus(this.app.id, { ...dbRemote, state: State.Inactive })
       }
