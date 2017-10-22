@@ -51,6 +51,7 @@
               <b>SHA</b>
             </td>
             <td style="padding: 3px">
+              <b>Image ID</b>
             </td>
             <td style="padding: 3px">
               <b>Status</b>
@@ -62,8 +63,10 @@
           <tr data-bind="visible: $parent.displayImages">
             <td data-bind="text: remote" style="padding: 3px"></td>
             <td data-bind="text: sha.slice(0, 10)" style="padding: 3px"></td>
-            <td></td>
-            <td data-bind="text: $parents[1].toStatus(state)" style="padding: 3px"></td>
+            <td data-bind="text: (imageId || '').replace('sha256:', '').slice(0, 10)" style="padding: 3px"></td>
+            <td style="padding: 3px">
+              <span class="label label-rounded" data-bind="text: $parents[1].toStatus(state), css: $parents[1].toStatusClass(state)"></span>
+            </td>
             <td style="padding: 3px">
               <button class="btn btn-sm" data-bind="">Deploy</button>
             </td>

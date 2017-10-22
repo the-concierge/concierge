@@ -1,10 +1,10 @@
 import * as ko from 'knockout'
-import { Image, Container, ObservableContainer } from './types'
+import { Image, Container, ObservableContainer, State } from './types'
 import updateContainer from './update'
 import socket from './socket'
 import Monitor from './monitor'
 
-export { Image, Container, ObservableContainer }
+export { Image, Container, ObservableContainer, State }
 
 class StateManager {
   images = ko.observableArray<Image>([])

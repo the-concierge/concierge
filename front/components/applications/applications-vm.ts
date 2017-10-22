@@ -4,13 +4,12 @@ import createApp from './create'
 import editApp from './edit'
 import deployApp from './deploy'
 import appLogs from './logs'
-import state, { Image } from '../state'
+import state, { Image, State } from '../state'
 import menu from '../menu'
 import images from '../images/images-vm'
 
 // TODO: Better solution for isomorphic code
 // Retrieve from API?
-import { State } from '../../../src/api/applications/types'
 
 interface ApplicationVM extends Concierge.ApplicationDTO {
   displayImages: KnockoutObservable<boolean>
@@ -61,7 +60,35 @@ class Applications {
   runImage = images.runImage
   removeImage = images.removeImage
 
-  toStatus = (state: number) => State[state]
+  toStatus = (state: State) => {
+    switch (state) {
+      case State.Building:
+        return 'building'
+      case State.Failed:
+        return 'failed'
+      case State.Inactive:
+        return 'inactive'
+      case State.Successful:
+        return 'success'
+      default:
+        return 'waiting'
+    }
+  }
+
+  toStatusClass = (state: State) => {
+    switch (state) {
+      case State.Building:
+        return 'label-warning'
+      case State.Failed:
+        return 'label-error'
+      case State.Inactive:
+        return 'label-secondary'
+      case State.Successful:
+        return 'label-success'
+      default:
+        return 'label-primary'
+    }
+  }
 
   removeApplication = async (app: Concierge.Application) => {
     await fetch(`/api/applications/${app.id}`, { method: 'DELETE' })

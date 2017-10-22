@@ -1,5 +1,7 @@
 import { ContainerInfo, ImageInfo } from 'dockerode'
 
+export { State } from '../../../src/api/applications/types'
+
 type HostId = {
   concierge: {
     hostId: number
