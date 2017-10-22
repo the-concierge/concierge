@@ -1,24 +1,29 @@
 import * as db from '../db'
-import { Branch, State } from '../types'
+import { State } from '../types'
 
-export async function upsertRemote(
-  app: Concierge.Application,
-  remote: Branch,
-  state: State,
-  imageId?: string
-) {
-  const existing = await db.getRemote(app.id, remote.ref)
+type UpsertRemote = Pick<
+  Concierge.ApplicationRemote,
+  'remote' | 'state' | 'state' | 'sha' | 'seen' | 'age'
+>
+
+export async function insertRemote(app: Concierge.Application, props: UpsertRemote) {
+  const existing = await db.getRemote(app.id, props.remote)
   if (existing) {
-    await db.updateRemote(app.id, remote.ref, state, remote.sha)
-    return
+    const error = 'Attempting to insert remote that already exists'
+    log.error(error)
+    throw new Error(error)
   }
 
   await db.insertRemote({
     applicationId: app.id,
-    remote: remote.ref,
-    seen: remote.seen,
-    sha: remote.sha,
-    imageId,
-    state
+    remote: props.remote,
+    seen: props.seen,
+    sha: props.sha,
+    state: props.state,
+    age: props.age
   } as Concierge.ApplicationRemote)
+}
+
+export async function updateRemoteState(app: Concierge.Application, remote: string, state: State) {
+  await db.updateRemote(app.id, remote, { state })
 }

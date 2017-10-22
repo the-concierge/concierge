@@ -8,6 +8,10 @@ export async function one(id: number) {
     .leftJoin(db.CREDENTIALS, `${db.CREDENTIALS}.id`, `${db.APPLICATIONS}.credentialsId`)
     .first()) as Concierge.ApplicationDTO
 
+  if (!application) {
+    return
+  }
+
   application.credentialsName = application.credentialsName || 'N/A'
   return application
 }
@@ -27,7 +31,12 @@ export async function all() {
 }
 
 export async function remove(id: number) {
-  return db
+  await db
+    .applicationRemotes()
+    .delete()
+    .where('applicationId', id)
+
+  await db
     .applications()
     .delete()
     .where('id', id)
@@ -45,25 +54,15 @@ export async function getRemotes(applicationId: number) {
 export async function updateRemote(
   applicationId: number,
   ref: string,
-  state: number,
-  sha: string,
-  imageId?: string
+  props: Partial<Concierge.ApplicationRemote>
 ) {
-  const update = imageId ? { state, imageId, sha } : { state, sha }
   return db
     .applicationRemotes()
-    .update(update)
+    .update(props)
     .where('applicationId', applicationId)
     .andWhere('remote', ref)
 }
 
-export async function updateRemoteBySha(applicationId: number, sha: string, state: number) {
-  return db
-    .applicationRemotes()
-    .update({ state })
-    .where('applicationId', applicationId)
-    .andWhere('sha', sha)
-}
 export async function insertRemote(remote: Concierge.ApplicationRemote) {
   return db.applicationRemotes().insert(remote)
 }
@@ -76,4 +75,9 @@ export async function getRemote(applicationId: number, ref: string) {
     .andWhere('remote', ref)
     .first()
   return remote
+}
+
+export async function getAllRemotes() {
+  const remotes: Concierge.ApplicationRemote[] = await db.applicationRemotes().select()
+  return remotes
 }

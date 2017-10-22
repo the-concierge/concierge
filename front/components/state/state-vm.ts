@@ -4,11 +4,7 @@ import updateContainer from './update'
 import socket from './socket'
 import Monitor from './monitor'
 
-export {
-  Image,
-  Container,
-  ObservableContainer
-}
+export { Image, Container, ObservableContainer }
 
 class StateManager {
   images = ko.observableArray<Image>([])
@@ -16,11 +12,12 @@ class StateManager {
   hosts = ko.observableArray<Concierge.Host>([])
   registries = ko.observableArray<Concierge.Registry>([])
   applications = ko.observableArray<Concierge.ApplicationDTO>([])
+  applicationRemotes = ko.observableArray<Concierge.ApplicationRemote>([])
   configuration = ko.observable<Partial<Concierge.Configuration>>({})
   credentials = ko.observableArray<Concierge.Credentials>([])
   monitors = ko.observableArray<Monitor<string>>([])
 
-  toasts = ko.observableArray<{ msg: string, cls: string, remove: () => void }>([])
+  toasts = ko.observableArray<{ msg: string; cls: string; remove: () => void }>([])
   toast = {
     primary: (msg: string) => this.showToast('toast-primary', msg),
     error: (msg: string) => this.showToast('toast-error', msg),
@@ -33,6 +30,7 @@ class StateManager {
     this.getHosts()
     this.getImages()
     this.getApplications()
+    this.getApplicationRemotes()
     this.getConfiguration()
     this.getCredentials()
 
@@ -50,6 +48,28 @@ class StateManager {
       updateContainer(container, event)
     })
 
+    socket.on('build-status', (event: ConciergeEvent<BuildStatusEvent>) => {
+      const remotes = this.applicationRemotes()
+      const branch = event.event
+      const existing = remotes.find(
+        remote => remote.applicationId === branch.applicationId && remote.remote === branch.remote
+      )
+
+      if (existing) {
+        this.applicationRemotes.replace(existing, {
+          ...existing,
+          imageId: branch.imageId || existing.imageId,
+          sha: branch.sha,
+          state: branch.state
+        })
+        return
+      }
+
+      this.applicationRemotes.push({
+        id: 0,
+        ...branch
+      })
+    })
   }
 
   showToast = (cls: string, msg: string, duration: number = 5000) => {
@@ -68,8 +88,7 @@ class StateManager {
   }
 
   getContainers = async () => {
-    const containers: Container[] = await fetch('/api/hosts/containers')
-      .then(res => res.json())
+    const containers: Container[] = await fetch('/api/hosts/containers').then(res => res.json())
 
     const seenContainers: string[] = []
     const stateContainers = this.containers()
@@ -148,9 +167,37 @@ class StateManager {
   getApplications = () => {
     fetch('/api/applications')
       .then(res => res.json())
-      .then(applications => {
-        this.applications.destroyAll()
-        this.applications.push(...applications)
+      .then(apps => {
+        for (const app of apps) {
+          const existing = this.applications().find(ex => app.id === ex.id)
+          if (!existing) {
+            this.applications.push(app)
+            continue
+          }
+
+          this.applications.replace(existing, app)
+        }
+      })
+  }
+
+  getApplicationRemotes = () => {
+    const url = '/api/applications/branches?active'
+
+    fetch(url)
+      .then(res => res.json())
+      .then((remotes: Concierge.ApplicationRemote[]) => {
+        const existingRemotes = this.applicationRemotes()
+        const find = (id: number) => existingRemotes.find(rem => rem.id === id)
+
+        for (const remote of remotes) {
+          const existing = find(remote.id)
+          if (!existing) {
+            this.applicationRemotes.push(remote)
+            continue
+          }
+
+          this.applicationRemotes.replace(existing, remote)
+        }
       })
   }
 
@@ -203,13 +250,11 @@ function toObservableContainer(container: Container) {
   return newContainer
 }
 
-declare const _container: Container
-type Ports = typeof _container.Ports
-
 function portsToUrls(container: Container) {
   const ports = container.Ports
   const hostname = container.concierge.host.vanityHostname || container.concierge.host.hostname
-  return ports.filter(port => port.Type === 'tcp')
+  return ports
+    .filter(port => port.Type === 'tcp')
     .filter(port => port.hasOwnProperty('PublicPort'))
     .map(port => ({ url: `http://${hostname}:${port.PublicPort}`, private: port.PrivatePort }))
 }

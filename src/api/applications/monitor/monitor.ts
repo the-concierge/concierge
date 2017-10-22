@@ -2,7 +2,8 @@ import getTags from '../../git/tags'
 import * as db from '../db'
 import { State, Branch } from '../types'
 import queue from './queue'
-import { upsertRemote } from './util'
+import { insertRemote, updateRemoteState } from './util'
+import { buildStatus } from '../../stats/emitter'
 
 type MonitoredBranch = Branch & { state: State }
 
@@ -16,6 +17,8 @@ export class RemoteMonitor {
     if (this.initialised) {
       return
     }
+
+    log.debug(`Tracking application '${this.app.name}'`)
 
     const dbRemotes = await db.getRemotes(this.app.id)
     for (const remote of dbRemotes) {
@@ -55,24 +58,53 @@ export class RemoteMonitor {
       if (isBuildable(this.app, newRemote)) {
         queue.add(this.app, newRemote)
       }
-
-      await upsertRemote(this.app, newRemote, newRemote.state)
+      await this.insertNewRemote(newRemote)
     }
+
     this.initialised = true
     this.poll()
+  }
+
+  insertNewRemote = async (remote: MonitoredBranch) => {
+    await insertRemote(this.app, {
+      remote: remote.ref,
+      sha: remote.sha,
+      age: remote.age ? remote.age.toISOString() : undefined,
+      seen: new Date().toISOString(),
+      state: remote.state
+    })
   }
 
   poll = async () => {
     try {
       const app = await db.one(this.app.id)
-      if (!app.autoBuild) {
+      if (!app) {
         return
       }
 
       const remotes = (await getTags(app)) as Branch[]
 
+      // We want to mark branches that have been deleted from origin as Inactive
+      // to hide them from the view
+      for (const remoteRef of Object.keys(this.remotes)) {
+        const remote = this.remotes[remoteRef]
+        if (remote.state === State.Inactive) {
+          continue
+        }
+
+        const isNoLongerRemote = remotes.every(remote => remote.ref !== remoteRef)
+        if (!isNoLongerRemote) {
+          continue
+        }
+
+        log.debug(`[${this.app.name}] Branch '${remoteRef}' deleted from origin`)
+        const dbRemote = await db.getRemote(this.app.id, remoteRef)
+        await updateRemoteState(this.app, remoteRef, State.Inactive)
+        buildStatus(this.app.id, { ...dbRemote, state: State.Inactive })
+      }
+
       for (const remote of remotes) {
-        if (!isBuildableBranch(this.app, remote)) {
+        if (!isBuildableBranch(remote)) {
           continue
         }
 
@@ -87,7 +119,8 @@ export class RemoteMonitor {
 
           this.remotes[remote.ref] = newRemote
           log.info(`Seen ${app.name}/${newRemote.ref}`)
-          await upsertRemote(this.app, newRemote, State.Waiting)
+          const state = isBuildableBranch(newRemote) ? State.Waiting : State.Inactive
+          await this.insertNewRemote({ ...newRemote, state })
 
           // We will only build branches that are considered active
           if (!isBuildable(this.app, newRemote)) {
@@ -107,7 +140,7 @@ export class RemoteMonitor {
           existing.state = State.Waiting
           existing.seen = new Date()
           queue.add(app, existing)
-          await upsertRemote(this.app, existing, State.Waiting)
+          await db.updateRemote(this.app.id, existing.ref, { state: State.Waiting })
         }
       }
     } finally {
@@ -146,11 +179,7 @@ function isBuildable(
   return days <= 7
 }
 
-function isBuildableBranch(app: Concierge.Application, remote: Branch) {
-  if (!app.autoBuild) {
-    return false
-  }
-
+function isBuildableBranch(remote: Branch) {
   if (!remote.age) {
     return false
   }

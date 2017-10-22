@@ -31,32 +31,42 @@ export default async function watchHosts() {
 }
 
 function handleHostEvent(host: Concierge.Host, rawEvent: string) {
-  const event = parseEvent(rawEvent)
-  if (!event) {
+  const events = parseEvent(rawEvent)
+  if (!events) {
     return
   }
 
-  const id = (event.id || 'Host').slice(0, 10)
-  const status = (event.status || 'unknown').toLowerCase()
-  log.info(`[${host.hostname}:${id}] Emitted '${event.Type}:${event.Action}'`)
+  for (const event of events) {
+    const id = (event.id || 'Host').slice(0, 10)
+    const status = (event.status || 'unknown').toLowerCase()
+    log.info(`[${host.hostname}:${id}] Emitted '${event.Type}:${event.Action}'`)
 
-  emitter.host(host.hostname, event)
+    emitter.host(host.hostname, events)
 
-  const isStartEvent = status.toLowerCase() === 'start'
-  const isContainer = id !== 'Host'
-  if (isContainer && isStartEvent) {
-    watchContainer(host, event.id)
+    const isStartEvent = status.toLowerCase() === 'start'
+    const isContainer = id !== 'Host'
+    if (isContainer && isStartEvent) {
+      watchContainer(host, event.id)
+    }
   }
 }
 
 function parseEvent(rawEvent: string) {
   try {
     const event: DockerEvent = JSON.parse(rawEvent)
-    return event
+    return [event]
   } catch (ex) {
-    log.warn(`Failed to parse Host Event`)
-    log.debug(rawEvent)
-    return undefined
+    try {
+      const events: DockerEvent[] = rawEvent
+        .trim()
+        .split('\n')
+        .map(raw => JSON.parse(raw))
+      return events
+    } catch (ex) {
+      log.warn(`Failed to parse Host Event`)
+      log.debug(rawEvent)
+      return undefined
+    }
   }
 }
 

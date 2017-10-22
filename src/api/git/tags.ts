@@ -27,7 +27,7 @@ export default async function getRemoteTags(application: Concierge.Application) 
       const sha = split[0].trim()
       const ref = rawRef.replace('heads/', '').replace('tags/', '')
       const type = rawRef.startsWith('heads/') ? 'branch' : 'tag'
-      const age = type === 'branch' ? getAge(ref) : undefined
+      const age = getAge(ref)
       return { type, ref, sha, age } as Branch & { type: typeof type }
     })
     .filter(ref => !!ref.ref)

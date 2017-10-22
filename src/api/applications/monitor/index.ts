@@ -2,7 +2,7 @@ import * as db from '../db'
 import { RemoteMonitor } from './monitor'
 
 export default async function monitorAll() {
-  await applicationMonitor.init()
+  await monitor.init()
 }
 
 class MonitorAll {
@@ -31,12 +31,18 @@ class MonitorAll {
           continue
         }
 
-        this.monitors.push(new RemoteMonitor(app, true))
+        const monitoredApp = new RemoteMonitor(app, true)
+        await monitoredApp.initialise()
+        this.monitors.push(monitoredApp)
       }
-    } finally {
-      setTimeout(() => this.poll(), 5000)
+    } catch {
+      /** Intentional NOOP */
     }
   }
 }
 
-const applicationMonitor = new MonitorAll()
+const monitor = new MonitorAll()
+
+export function poll() {
+  return monitor.poll()
+}

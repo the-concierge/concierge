@@ -7,9 +7,12 @@ import remove from './remove'
 import deploy from './deploy'
 import getAppLogs from './logs'
 import getAppLog from './log'
+import getBranches from './branches'
 
 const router = Router()
 
+router.get('/branches', getBranches)
+router.get('/:id/branches', getBranches)
 router.get('/:id/logs', getAppLogs)
 router.get('/:id/logs/:filename', getAppLog)
 router.get('/:id', get.one)

@@ -240,6 +240,16 @@ interface ConciergeEvent<T> {
   type: string
 }
 
+interface BuildStatusEvent {
+  applicationId: number
+  age?: string
+  remote: string
+  sha: string
+  seen?: string
+  imageId?: string
+  state: number
+}
+
 /**
  * TODO: Contribute back to @types/dockerode
  */

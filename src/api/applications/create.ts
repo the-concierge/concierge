@@ -4,6 +4,7 @@ import clone from '../git/clone'
 import * as path from 'path'
 import * as fs from 'fs'
 import * as db from '../../data'
+import { poll } from './monitor'
 
 type Body = {
   name: string
@@ -51,7 +52,10 @@ const handler: RequestHandler = async (req, res) => {
     delete app.key
 
     res.json(app)
-    clone(app)
+
+    // Once the application is ready and cloned, we will begin to track it
+    await clone(app)
+    poll()
   } catch (ex) {
     res.status(500)
     res.json({ message: ex.message || ex })

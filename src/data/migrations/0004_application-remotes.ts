@@ -4,7 +4,7 @@ import { APPLICATION_REMOTES, APPLICATIONS } from '../'
 export async function up(db: Knex) {
   await db.schema.createTable(APPLICATION_REMOTES, tbl => {
     tbl.increments('id').primary()
-    tbl.text('applicationId').notNullable()
+    tbl.integer('applicationId').notNullable()
     tbl.text('remote').notNullable()
     tbl.text('sha ').notNullable()
     tbl.integer('state').notNullable()

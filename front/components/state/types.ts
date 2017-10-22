@@ -1,6 +1,17 @@
 import { ContainerInfo, ImageInfo } from 'dockerode'
 
-type HostId = { concierge: { hostId: number, host: { id: number, hostname: string, capacity: number, dockerPort: number, vanityHostname: string } } }
+type HostId = {
+  concierge: {
+    hostId: number
+    host: {
+      id: number
+      hostname: string
+      capacity: number
+      dockerPort: number
+      vanityHostname: string
+    }
+  }
+}
 
 export type Stats = {
   memory: string
@@ -10,6 +21,7 @@ export type Stats = {
 }
 
 export type Container = ContainerInfo & HostId & { stats: Stats }
+
 export type Image = ImageInfo & HostId & { name: string }
 
 declare const _hostId: HostId
@@ -22,11 +34,11 @@ export interface ObservableContainer {
   status: KnockoutObservable<string>
   state: KnockoutObservable<string>
   stats: {
-    mbIn: KnockoutObservable<string>,
+    mbIn: KnockoutObservable<string>
     mbOut: KnockoutObservable<string>
     cpu: KnockoutObservable<string>
     memory: KnockoutObservable<string>
   }
-  ports: KnockoutObservableArray<{ url: string, private: number }>
+  ports: KnockoutObservableArray<{ url: string; private: number }>
   host: typeof _hostId.concierge.host
 }

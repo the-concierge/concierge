@@ -4,23 +4,51 @@ import createApp from './create'
 import editApp from './edit'
 import deployApp from './deploy'
 import appLogs from './logs'
-import state from '../state'
+import state, { Image } from '../state'
 import menu from '../menu'
 import images from '../images/images-vm'
 
+// TODO: Better solution for isomorphic code
+// Retrieve from API?
+import { State } from '../../../src/api/applications/types'
+
+interface ApplicationVM extends Concierge.ApplicationDTO {
+  displayImages: KnockoutObservable<boolean>
+  images: KnockoutComputed<Image[]>
+  remotes: KnockoutComputed<Concierge.ApplicationRemote[]>
+}
+
 class Applications {
-  applications = ko.computed(() => {
-    const apps = state.applications()
-    const images = state.images()
+  applications = ko.observableArray<ApplicationVM>([])
 
-    return apps.map(app => {
-      const appImages = ko.computed(() =>
-        images.filter(image => image.name.indexOf(app.label) === 0)
-      )
+  constructor() {
+    state.applications.subscribe(newApps => {
+      const apps = this.applications()
+      for (const newApp of newApps) {
+        const existing = apps.find(app => app.id === newApp.id)
+        if (existing) {
+          continue
+        }
 
-      return { ...app, images: appImages, displayImages: ko.observable(false) }
+        const appImages = ko.computed(() =>
+          state.images().filter(image => image.name.indexOf(newApp.label) === 0)
+        )
+
+        const appRemotes = ko.computed(() =>
+          state
+            .applicationRemotes()
+            .filter(remote => remote.applicationId === newApp.id && remote.state !== 4)
+        )
+
+        this.applications.push({
+          ...newApp,
+          displayImages: ko.observable(false),
+          images: appImages,
+          remotes: appRemotes
+        })
+      }
     })
-  })
+  }
 
   showCreateModal = createApp.showModal
   showDeployModal = deployApp.showModal
@@ -32,6 +60,8 @@ class Applications {
   toDate = images.toDate
   runImage = images.runImage
   removeImage = images.removeImage
+
+  toStatus = (state: number) => State[state]
 
   removeApplication = async (app: Concierge.Application) => {
     await fetch(`/api/applications/${app.id}`, { method: 'DELETE' })

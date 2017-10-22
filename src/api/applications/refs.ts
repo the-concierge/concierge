@@ -5,8 +5,11 @@ import * as get from './db'
 const handler: RequestHandler = async (req, res) => {
   const id = req.params.id
   const app = await get.one(id)
+  if (!app) {
+    return res.status(404).json({ message: 'Not found' })
+  }
   const tags = await getTags(app)
-  res.json(tags)
+  return res.json(tags)
 }
 
 export default handler

@@ -30,7 +30,7 @@ export default async function buildImage(
     dockerfile: application.dockerfile || 'Dockerfile'
   }
 
-  const promise = new Promise<{ responses: string[]; imageId?: string }>((resolve, reject) => {
+  const promise = new Promise<{ responses: BuildEvent[]; imageId?: string }>((resolve, reject) => {
     client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
       const buildName = `${application.id}/${tag}`
       if (err) {
@@ -84,29 +84,30 @@ async function getAvailableHost() {
  * - Have front-end monitor build events for application + ref
  */
 function handleBuildStream(stream: NodeJS.ReadableStream, logFile: string) {
-  const buildResponses: string[] = []
+  const buildResponses: BuildEvent[] = []
   const id = path.basename(logFile)
 
-  const promise = new Promise<string[]>((resolve, reject) => {
+  const promise = new Promise<BuildEvent[]>((resolve, reject) => {
     stream.on('data', (data: Buffer) => {
       const msg = data.toString()
       const output = tryParse(msg)
 
-      const text: string | undefined =
-        typeof output === 'string' ? output : output.stream || output.errorDetail
-      if (!text) {
+      if (!Array.isArray(output)) {
         return
       }
 
-      buildResponses.push(msg)
-      emitBuild(id, typeof text === 'string' ? text.trim() : text)
-      appendAsync(logFile, msg + '\n')
+      buildResponses.push(...output)
+
+      for (const event of output) {
+        emitBuild(id, event.stream || event.errorDetail)
+      }
+
+      appendAsync(logFile, msg.trim() + '\n')
     })
 
     stream.on('end', () => {
       const hasErrors = buildResponses.some(res => {
-        const json = tryParse(res)
-        return json.hasOwnProperty('errorDetail')
+        return res.hasOwnProperty('errorDetail')
       })
       if (hasErrors) {
         return reject(buildResponses)
@@ -119,14 +120,21 @@ function handleBuildStream(stream: NodeJS.ReadableStream, logFile: string) {
   return promise
 }
 
-function tryParse(
-  text: string
-): { stream?: string; errorDetail?: string; aux?: { ID: string } } | string {
+type BuildEvent = { stream: string; aux?: { ID: string }; errorDetail: string }
+
+type ParseResult = BuildEvent[] | string
+
+function tryParse(text: string): ParseResult {
   try {
     const json = JSON.parse(text.trim())
-    return json
+    return [json]
   } catch (_) {
-    return text
+    try {
+      const split = text.trim().split('\n')
+      return split.map(splitText => JSON.parse(splitText))
+    } catch (__) {
+      return text
+    }
   }
 }
 
@@ -160,18 +168,13 @@ function mkdirAsync(folder: string) {
   })
 }
 
-function getImageId(buildResponses: string[]): string | undefined {
+function getImageId(buildResponses: BuildEvent[]): string | undefined {
   for (const response of buildResponses) {
-    const json = tryParse(response)
-    if (typeof json === 'string') {
+    if (!response.aux) {
       continue
     }
 
-    if (!json.aux) {
-      return
-    }
-
-    return json.aux.ID
+    return response.aux.ID
   }
   return
 }

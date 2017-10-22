@@ -45,6 +45,33 @@
         <table class="table" style="table-layout: fixed">
           <tr>
             <td style="padding: 3px">
+              <b>Branch</b>
+            </td>
+            <td style="padding: 3px">
+              <b>SHA</b>
+            </td>
+            <td style="padding: 3px">
+            </td>
+            <td style="padding: 3px">
+              <b>Status</b>
+            </td>
+            <td style="padding: 3px"></td>
+          </tr>
+
+          <!-- ko foreach: remotes -->
+          <tr data-bind="visible: $parent.displayImages">
+            <td data-bind="text: remote" style="padding: 3px"></td>
+            <td data-bind="text: sha.slice(0, 10)" style="padding: 3px"></td>
+            <td></td>
+            <td data-bind="text: $parents[1].toStatus(state)" style="padding: 3px"></td>
+            <td style="padding: 3px">
+              <button class="btn btn-sm" data-bind="">Deploy</button>
+            </td>
+          </tr>
+          <!-- /ko -->
+
+          <tr>
+            <td style="padding: 3px">
               <b>Image name</b>
             </td>
             <td style="padding: 3px">
@@ -58,6 +85,7 @@
             </td>
             <td style="padding: 3px"></td>
           </tr>
+
           <!-- ko foreach: images -->
           <tr data-bind="visible: $parent.displayImages">
             <td data-bind="text: name" style="padding: 3px"></td>
