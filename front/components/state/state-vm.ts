@@ -56,9 +56,11 @@ class StateManager {
       )
 
       if (existing) {
+        const imageId = branch.imageId || existing.imageId
         this.applicationRemotes.replace(existing, {
           ...existing,
-          imageId: branch.imageId || existing.imageId,
+          image: this.getRemoteImage(imageId),
+          imageId,
           sha: branch.sha,
           state: branch.state
         })
@@ -143,10 +145,14 @@ class StateManager {
       .then(res => res.json())
       .then(images => {
         for (const image of images) {
+          // Remove deleted images
+          this.images.remove(item => images.every((existing: Image) => existing.Id !== item.Id))
+
           const name = getTag(image.RepoTags || [])
           if (!name) {
             continue
           }
+
           image.name = name
           const existing = this.images().find(existing => existing.name === name)
           if (existing) {

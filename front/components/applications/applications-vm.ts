@@ -37,11 +37,16 @@ class Applications {
           state
             .applicationRemotes()
             .filter(remote => remote.applicationId === newApp.id && remote.state !== 4)
+            .filter(
+              remote =>
+                remote.state !== State.Successful ||
+                (remote.state === State.Successful && remote.image() !== undefined)
+            )
         )
 
         this.applications.push({
           ...newApp,
-          displayImages: ko.observable(false),
+          displayImages: ko.observable(true),
           images: appImages,
           remotes: appRemotes
         })

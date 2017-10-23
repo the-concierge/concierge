@@ -70,7 +70,7 @@
             <td style="padding: 3px">
               <button class="btn btn-sm" data-bind="enable: state === 2, click: function() { $parents[1].rebuildBranch($parent, $data) }">Re-Build</button>
               <button class="btn btn-sm" data-bind="enable: $data.imageId.length > 0, click: function() { $parents[1].runImage($data.image) }">Run</button>
-              <button class="btn btn-sm" data-bind="click: $parents[1].removeImage">Remove Image</button>
+              <button class="btn btn-sm" data-bind="click: function() { $parents[1].removeImage($data.image) }">Remove Image</button>
             </td>
           </tr>
           <!-- /ko -->

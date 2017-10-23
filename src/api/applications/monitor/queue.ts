@@ -81,7 +81,12 @@ class BuildQueue {
 
       const buildJob = await build(app, item.sha, buildTag)
       this.emit(item, State.Building)
-      await db.updateRemote(app.id, item.ref, { state: State.Building, sha: item.sha })
+
+      const props: any = { state: State.Building, sha: item.sha }
+      if (item.age) {
+        props.age = item.age.toISOString()
+      }
+      await db.updateRemote(app.id, item.ref, props)
 
       const result = await buildJob.build
       this.emit(item, State.Successful, result.imageId)
