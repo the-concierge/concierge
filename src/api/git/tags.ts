@@ -46,19 +46,21 @@ async function getRemoteAges(app: Concierge.Application) {
   const args = [
     'for-each-ref',
     '--sort=-committerdate',
-    '--format=%(committerdate:iso-strict) %(refname)',
+    '--format={"age":"%(committerdate:iso)", "ref":"%(refname)", "author":"%(authorname)" }',
     'refs/remotes'
   ]
 
   const data = await cmd(app, cwd, command, args)
-  const lines = data
+
+  type Ref = { age: string; ref: string; author: string }
+  const refs = data
     .split('\n')
     .filter(line => !!line.trim() && line.indexOf('refs/remotes/origin/HEAD') === -1)
+    .map(line => JSON.parse(`${line}`) as Ref)
+    .map(ref => ({ ...ref, age: new Date(ref.age) }))
 
-  return lines.map(line => {
-    const split = line.split(' ')
-    const age = new Date(split[0])
-    const ref = split[1].replace('refs/remotes/origin/', '')
-    return { age, ref }
-  })
+  return refs
 }
+
+// git for-each-ref --sort=-committerdate --format="\"{\\\"date\\\":\\\"%(committerdate:iso)\\\", \\\"ref\\\":\\\"%(refname)\\\", \\\"author\\\":\\\"%(authorname)\\\" }\"" refs/remotes
+// git for-each-ref --sort=-committerdate --format="%(committerdate:iso) %refname %authorname" refs\remotes

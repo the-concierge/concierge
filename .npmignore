@@ -5,10 +5,10 @@ archive/
 certificates/*
 db
 !db/.gitkeep
+logs/*
 registry/
 test/
 typings/
-logs/*
 Vagrantfile
 node.sh
 docker.sh
