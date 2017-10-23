@@ -13,56 +13,61 @@ export class RemoteMonitor {
 
   constructor(public app: Concierge.Application, private isNew: boolean) {}
 
-  initialise = async () => {
+  initialise = async (retryOffset: number = 5) => {
     if (this.initialised) {
       return
     }
 
-    log.debug(`Tracking application '${this.app.name}'`)
-
-    const dbRemotes = await db.getRemotes(this.app.id)
-    for (const remote of dbRemotes) {
-      this.remotes[remote.remote] = {
-        ref: remote.remote,
-        seen: remote.seen ? new Date(remote.seen) : undefined,
-        sha: remote.sha,
-        age: remote.age ? new Date(remote.age) : undefined,
-        state: remote.state
+    try {
+      log.debug(`[${this.app.name}] Initialing application tracking`)
+      const dbRemotes = await db.getRemotes(this.app.id)
+      for (const remote of dbRemotes) {
+        this.remotes[remote.remote] = {
+          ref: remote.remote,
+          seen: remote.seen ? new Date(remote.seen) : undefined,
+          sha: remote.sha,
+          age: remote.age ? new Date(remote.age) : undefined,
+          state: remote.state
+        }
       }
+
+      const remotes = await getTags(this.app, true)
+      for (const remote of remotes) {
+        if (remote.type !== 'branch') {
+          continue
+        }
+
+        const existingRemote = this.remotes[remote.ref]
+        if (existingRemote) {
+          continue
+        }
+
+        const newRemote = {
+          ref: remote.ref,
+          sha: remote.sha,
+          // When an application first retrieves the remotes, we don't want to build them
+          // An undefined 'seen' is considered inactive and won't be built
+          seen: new Date(),
+          age: remote.age,
+          state: this.isNew ? State.Inactive : State.Waiting
+        } as MonitoredBranch
+
+        log.debug(`[${this.app.name}] Tracking new branch '${remote.ref}'`)
+        this.remotes[remote.ref] = newRemote
+
+        if (isBuildable(this.app, newRemote)) {
+          queue.add(this.app, newRemote)
+        }
+        await this.insertNewRemote(newRemote)
+      }
+
+      this.initialised = true
+      log.debug(`[${this.app.name}] Tracking application`)
+      this.poll()
+    } catch (ex) {
+      log.error(`[${this.app.name}] Failed to initialise tracking. Retrying`)
+      setTimeout(() => this.initialise(retryOffset + 5), retryOffset * 1000)
     }
-
-    const remotes = await getTags(this.app)
-    for (const remote of remotes) {
-      if (remote.type !== 'branch') {
-        continue
-      }
-
-      const existingRemote = this.remotes[remote.ref]
-      if (existingRemote) {
-        continue
-      }
-
-      const newRemote = {
-        ref: remote.ref,
-        sha: remote.sha,
-        // When an application first retrieves the remotes, we don't want to build them
-        // An undefined 'seen' is considered inactive and won't be built
-        seen: new Date(),
-        age: remote.age,
-        state: this.isNew ? State.Inactive : State.Waiting
-      } as MonitoredBranch
-
-      log.debug(`[${this.app.name}] Tracking new branch '${remote.ref}'`)
-      this.remotes[remote.ref] = newRemote
-
-      if (isBuildable(this.app, newRemote)) {
-        queue.add(this.app, newRemote)
-      }
-      await this.insertNewRemote(newRemote)
-    }
-
-    this.initialised = true
-    this.poll()
   }
 
   insertNewRemote = async (remote: MonitoredBranch) => {
@@ -82,7 +87,7 @@ export class RemoteMonitor {
         return
       }
 
-      const remotes = (await getTags(app)) as Branch[]
+      const remotes = (await getTags(app, true)) as Branch[]
 
       // We want to mark branches that have been deleted from origin as Inactive
       // to hide them from the view

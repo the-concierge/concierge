@@ -2,9 +2,13 @@ import cmd from './cmd'
 import appPath from './path'
 import { Branch } from '../applications/types'
 
-export default async function getRemoteTags(application: Concierge.Application) {
+export default async function getRemoteTags(
+  application: Concierge.Application,
+  branchesOnly: boolean = false
+) {
   const workDir = appPath(application)
-  const command = `git ls-remote --tags --heads`
+  const args = branchesOnly ? `--heads` : `--tags --heads`
+  const command = `git ls-remote ${args}`
   const result = await cmd(application, workDir, command)
 
   const ages = await getRemoteAges(application)
@@ -56,8 +60,12 @@ async function getRemoteAges(app: Concierge.Application) {
   const refs = data
     .split('\n')
     .filter(line => !!line.trim() && line.indexOf('refs/remotes/origin/HEAD') === -1)
-    .map(line => JSON.parse(`${line}`) as Ref)
-    .map(ref => ({ ...ref, age: new Date(ref.age) }))
+    .map(line => JSON.parse(line) as Ref)
+    .map(ref => ({
+      ...ref,
+      age: new Date(ref.age),
+      ref: ref.ref.replace('refs/remotes/origin/', '')
+    }))
 
   return refs
 }
