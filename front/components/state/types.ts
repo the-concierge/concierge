@@ -22,6 +22,10 @@ export type Stats = {
   mbOut: string
 }
 
+export interface ApplicationRemoteDTO extends Concierge.ApplicationRemote {
+  image: KnockoutComputed<Image | undefined>
+}
+
 export type Container = ContainerInfo & HostId & { stats: Stats }
 
 export type Image = ImageInfo & HostId & { name: string }

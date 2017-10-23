@@ -11,14 +11,12 @@ class Deploy {
   selectedBranch = ko.observable({ type: 'branch', ref: '', sha: '' })
   selectedTag = ko.observable({ type: 'tag', ref: '', sha: '' })
   selectedRef = ko.computed(() => {
-    return this.refType() === 'branch'
-      ? this.selectedBranch()
-      : this.selectedTag()
+    return this.refType() === 'branch' ? this.selectedBranch() : this.selectedTag()
   })
 
   modalLoading = ko.observable(false)
   deployingApplication = ko.observable<Partial<Concierge.Application>>({ id: 0, name: '' })
-  deployableRefs = ko.observableArray<{ type: string, ref: string, sha: string }>([])
+  deployableRefs = ko.observableArray<{ type: string; ref: string; sha: string }>([])
   deployableBranches = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'branch'))
   deployableTags = ko.computed(() => this.deployableRefs().filter(ref => ref.type === 'tag'))
 
@@ -30,18 +28,26 @@ class Deploy {
 
     const ref = (this.selectedRef() || { ref: '' }).ref
     if (ref.length > 0) {
-      return ref.toLowerCase()
-        .replace(/\s+/g, '-')           // Replace spaces with -
-        .replace(/[^\w\-\.]+/g, '')       // Remove all non-word chars except dashes and dots
-        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-        .replace(/^-+/, '')             // Trim - from start of text
-        .replace(/-+$/, '')            // Trim - from end of text
+      return ref
     }
 
     return 'latest'
   })
 
-  finalImageTag = ko.computed(() => `${this.deployingApplication().label}:${this.computedImageTag()}`)
+  toSlug = (text: string) =>
+    text
+      .toLowerCase()
+      .replace(/\s+/g, '-') // Replace spaces with -
+      .replace(/[^\w\-\.]+/g, '') // Remove all non-word chars except dashes and dots
+      .replace(/\-\-+/g, '-') // Replace multiple - with single -
+      .replace(/^-+/, '') // Trim - from start of text
+      .replace(/-+$/, '') // Trim - from end of text
+
+  toImageTag = (appLabel: string, ref: string) => `${appLabel}:${this.toSlug(ref || 'latest')}`
+
+  finalImageTag = ko.computed(() =>
+    this.toImageTag(this.deployingApplication().label || '', this.computedImageTag())
+  )
 
   hideModal = () => {
     this.modalActive(false)
@@ -58,10 +64,14 @@ class Deploy {
 
     this.deployableRefs(refs)
     const firstBranch = this.deployableTags()[0]
-    if (firstBranch) { this.selectedBranch(firstBranch) }
+    if (firstBranch) {
+      this.selectedBranch(firstBranch)
+    }
 
     const firstTag = this.deployableTags()[0]
-    if (firstTag) { this.selectedTag(firstTag) }
+    if (firstTag) {
+      this.selectedTag(firstTag)
+    }
 
     this.modalLoading(false)
   }
@@ -74,12 +84,11 @@ class Deploy {
     const sha = ref.sha
     const url = `/api/applications/${id}/deploy?ref=${ref.ref}&tag=${tag}&type=${ref.type}&sha=${sha}`
 
-    state.toast.primary(`Attempting to deploy application...`)
+    state.toast.primary(`Attempting to queue application build...`)
     this.hideModal()
 
     const result = await fetch(url, { method: 'PUT' })
     const msg = await result.json()
-    state.monitor('build', msg.id)
     const success = result.status < 400
 
     if (success) {
@@ -87,7 +96,7 @@ class Deploy {
       return
     }
 
-    state.toast.error(`Failed to start deployment: ${msg.message}`)
+    state.toast.error(`Failed to queue build: ${msg.message}`)
   }
 }
 

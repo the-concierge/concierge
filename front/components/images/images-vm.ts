@@ -16,13 +16,15 @@ class Images {
   filteredImages = ko.computed(() => {
     const filter = this.imageFilter()
     const images = this.images()
-    const applications = state.applications()
+    const remotes = state.applicationRemotes()
 
     return images
       .filter(image => (filter ? image.name.indexOf(filter) > -1 : true))
       .filter(image => {
-        const isAppImage = applications.some(app => image.name.indexOf(app.label) === 0)
-        return !isAppImage
+        const isRemoteImage = remotes.some(
+          remote => !!remote.imageId && image.Id.indexOf(remote.imageId) === 0
+        )
+        return !isRemoteImage
       })
   })
 
@@ -32,7 +34,8 @@ class Images {
   clearFilter = () => this.imageFilter('')
   refresh = () => state.getImages()
 
-  removeImage = async (image: Image) => {
+  removeImage = async (removeImage: Image | KnockoutComputed<Image>) => {
+    const image: Image = ko.unwrap(removeImage)
     const tag = image.name
     const result = await fetch(`/api/images?tag=${tag}`, {
       method: 'DELETE'

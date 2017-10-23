@@ -54,6 +54,19 @@ class Applications {
   showLogsModal = appLogs.showModal
   showEditModal = editApp.editApplication
 
+  rebuildBranch = async (app: ApplicationVM, remote: Concierge.ApplicationRemote) => {
+    const tag = deployApp.toImageTag(app.label, remote.remote)
+    const url = `/api/applications/${app.id}/deploy?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
+    const result = await fetch(url, { method: 'PUT' })
+    const json = await result.json()
+    if (result.status <= 400) {
+      state.toast.success(json.message)
+      return
+    }
+
+    state.toast.error(`Failed to queue build: ${json.message}`)
+  }
+
   refresh = () => state.getApplications()
   toMb = images.toMb
   toDate = images.toDate

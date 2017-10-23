@@ -1,6 +1,6 @@
 import * as db from './db'
 import { RequestHandler } from 'express'
-import build from './build'
+import queue from './monitor/queue'
 
 type Body = {
   ref: string
@@ -11,7 +11,7 @@ type Body = {
 
 const handler: RequestHandler = async (req, res) => {
   const { id } = req.params as { id: number }
-  const { tag, sha } = req.query as Body
+  const { tag, sha, ref } = req.query as Body
   const app = await db.one(id)
 
   if (!app) {
@@ -27,8 +27,14 @@ const handler: RequestHandler = async (req, res) => {
      *
      * It will not await the entire build
      */
-    const id = await build(app, sha, tag)
-    res.json({ message: `Building image '${tag}'...`, ...id })
+    queue.add(app, {
+      age: new Date(),
+      ref,
+      sha,
+      seen: new Date()
+    })
+
+    res.json({ message: `Added image '${tag}' to build queue` })
   } catch (ex) {
     log.error(ex.message || ex)
     if (ex.stack) {

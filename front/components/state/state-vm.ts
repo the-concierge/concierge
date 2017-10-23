@@ -1,5 +1,5 @@
 import * as ko from 'knockout'
-import { Image, Container, ObservableContainer, State } from './types'
+import { Image, Container, ObservableContainer, State, ApplicationRemoteDTO } from './types'
 import updateContainer from './update'
 import socket from './socket'
 import Monitor from './monitor'
@@ -12,7 +12,7 @@ class StateManager {
   hosts = ko.observableArray<Concierge.Host>([])
   registries = ko.observableArray<Concierge.Registry>([])
   applications = ko.observableArray<Concierge.ApplicationDTO>([])
-  applicationRemotes = ko.observableArray<Concierge.ApplicationRemote>([])
+  applicationRemotes = ko.observableArray<ApplicationRemoteDTO>([])
   configuration = ko.observable<Partial<Concierge.Configuration>>({})
   credentials = ko.observableArray<Concierge.Credentials>([])
   monitors = ko.observableArray<Monitor<string>>([])
@@ -67,7 +67,9 @@ class StateManager {
 
       this.applicationRemotes.push({
         id: 0,
-        ...branch
+        ...branch,
+        imageId: branch.imageId || '',
+        image: this.getRemoteImage(branch.imageId)
       })
     })
   }
@@ -190,13 +192,23 @@ class StateManager {
         const find = (id: number) => existingRemotes.find(rem => rem.id === id)
 
         for (const remote of remotes) {
+          remote.imageId = remote.imageId || ''
           const existing = find(remote.id)
           if (!existing) {
-            this.applicationRemotes.push(remote)
+            const newRemote: ApplicationRemoteDTO = {
+              ...remote,
+              imageId: remote.imageId || '',
+              image: this.getRemoteImage(remote.imageId)
+            }
+            this.applicationRemotes.push(newRemote)
             continue
           }
 
-          this.applicationRemotes.replace(existing, remote)
+          this.applicationRemotes.replace(existing, {
+            ...remote,
+            imageId: remote.imageId || '',
+            image: this.getRemoteImage(remote.imageId)
+          })
         }
       })
   }
@@ -214,6 +226,12 @@ class StateManager {
     fetch('/api/configuration')
       .then(res => res.json())
       .then(cfg => this.configuration(cfg))
+  }
+
+  getRemoteImage = (imageId?: string) => {
+    return ko.computed(
+      () => (imageId ? this.images().find(image => image.Id === imageId) : undefined)
+    )
   }
 }
 

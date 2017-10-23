@@ -28,13 +28,13 @@
   </thead>
   <tbody data-bind="foreach: filteredImages">
     <tr>
-      <td data-bind="text: name"></td>
-      <td data-bind="text: Id.replace('sha256:', '').slice(0, 10)"></td>
-      <td data-bind="text: $parent.toMb(Size)"></td>
-      <td data-bind="text: $parent.toDate(Created)"></td>
-      <td>
-        <button class="btn btn-md" data-bind="click: function() { $parent.runImage($data) }">Run</button>
-        <button class="btn btn-md" data-bind="click: $parent.removeImage">Remove</button>
+      <td style="padding: 3px" data-bind="text: name"></td>
+      <td style="padding: 3px" data-bind="text: Id.replace('sha256:', '').slice(0, 10)"></td>
+      <td style="padding: 3px" data-bind="text: $parent.toMb(Size)"></td>
+      <td style="padding: 3px" data-bind="text: $parent.toDate(Created)"></td>
+      <td style="padding: 3px">
+        <button class="btn btn-sm" data-bind="click: function() { $parent.runImage($data) }">Run</button>
+        <button class="btn btn-sm" data-bind="click: $parent.removeImage">Remove</button>
       </td>
     </tr>
   </tbody>

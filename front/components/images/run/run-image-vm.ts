@@ -8,6 +8,8 @@ type ContainerLink = {
   alias: KnockoutObservable<string>
 }
 
+type LinkableContainer = { name: string; image: string; label: string }
+
 class Run {
   modalActive = ko.observable(false)
 
@@ -15,15 +17,20 @@ class Run {
   newCustomVolume = ko.observable('')
 
   name = ko.observable('')
-  ports = ko.observableArray<{ port: number, type: string, expose: KnockoutObservable<boolean>, hostPort: KnockoutObservable<string> }>([])
-  links = ko.observableArray<{ containerName: string, alias: KnockoutObservable<string> }>([])
+  ports = ko.observableArray<{
+    port: number
+    type: string
+    expose: KnockoutObservable<boolean>
+    hostPort: KnockoutObservable<string>
+  }>([])
+  links = ko.observableArray<{ containerName: string; alias: KnockoutObservable<string> }>([])
   exposeAll = ko.observable()
 
-  envs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
-  customEnvs = ko.observableArray<{ key: string, value: KnockoutObservable<string> }>([])
+  envs = ko.observableArray<{ key: string; value: KnockoutObservable<string> }>([])
+  customEnvs = ko.observableArray<{ key: string; value: KnockoutObservable<string> }>([])
 
-  volumes = ko.observableArray<{ path: string, hostPath: KnockoutObservable<string> }>([])
-  customVolumes = ko.observableArray<{ path: string, hostPath: KnockoutObservable<string> }>([])
+  volumes = ko.observableArray<{ path: string; hostPath: KnockoutObservable<string> }>([])
+  customVolumes = ko.observableArray<{ path: string; hostPath: KnockoutObservable<string> }>([])
 
   creatingContainer = ko.observable(false)
   modalImage = ko.observable<Partial<Image>>({
@@ -32,9 +39,7 @@ class Run {
 
   canRunContainer = ko.computed(() => {
     const isCreatingContainer = this.creatingContainer()
-    const allLinksAliases = this
-      .links()
-      .every(link => link.alias() !== '')
+    const allLinksAliases = this.links().every(link => link.alias() !== '')
 
     return allLinksAliases && !isCreatingContainer
   })
@@ -45,7 +50,7 @@ class Run {
     label: ''
   })
 
-  linkableContainers = ko.observableArray([])
+  linkableContainers = ko.observableArray<LinkableContainer>([])
 
   hideModal = () => this.modalActive(false)
   showModal = () => this.modalActive(true)
@@ -64,7 +69,7 @@ class Run {
     this.customVolumes.remove(env => env.path === customVolume.path)
   }
 
-  toggleAllPorts = (run, event: MouseEvent): void => {
+  toggleAllPorts = (): void => {
     const newValue = !this.exposeAll()
     this.exposeAll(newValue)
     for (const port of this.ports()) {
@@ -78,7 +83,7 @@ class Run {
     }
   }
 
-  copyPort = (locals: { port: number, hostPort: KnockoutObservable<string> }): void => {
+  copyPort = (locals: { port: number; hostPort: KnockoutObservable<string> }): void => {
     locals.hostPort(locals.port.toString())
   }
 
@@ -125,7 +130,7 @@ class Run {
         name: container.name(),
         image: container.image(),
         label: `[${container.image().slice(0, 20)}] ${container.name()}`
-      }))
+      })) as LinkableContainer[]
   }
 
   refreshLinkableContainers = () => {
@@ -133,7 +138,9 @@ class Run {
     this.linkableContainers.push(...this.getLinkableContainers())
   }
 
-  configureImage = async (image: Image) => {
+  configureImage = async (buildImage: Image | KnockoutComputed<Image>) => {
+    const image: Image = ko.unwrap(buildImage)
+
     this.modalImage(image)
     this.modalActive(true)
 
@@ -148,8 +155,9 @@ class Run {
     this.customVolumes.removeAll()
     this.customEnvs.removeAll()
 
-    const info: ImageInspectInfo = await fetch(`/api/images/${image.Id}/inspect/${image.concierge.hostId}`)
-      .then(res => res.json())
+    const info: ImageInspectInfo = await fetch(
+      `/api/images/${image.Id}/inspect/${image.concierge.hostId}`
+    ).then(res => res.json())
 
     const ports = getPorts(info)
     const envs = getEnvs(info)
@@ -173,13 +181,12 @@ class Run {
         value: value()
       }))
 
-    const ports = this.ports()
-      .map(({ port, expose, type, hostPort }) => ({
-        port,
-        type,
-        hostPort: hostPort(),
-        expose: expose()
-      }))
+    const ports = this.ports().map(({ port, expose, type, hostPort }) => ({
+      port,
+      type,
+      hostPort: hostPort(),
+      expose: expose()
+    }))
 
     const volumes = this.volumes()
       .concat(this.customVolumes())
@@ -244,18 +251,22 @@ function getPorts(info: ImageInspectInfo) {
       const split = port.split('/')
       return { port: split[0], type: split[1] }
     })
-    .map(port => ({ port: Number(port.port), type: port.type, expose: ko.observable(false), hostPort: ko.observable('') }))
+    .map(port => ({
+      port: Number(port.port),
+      type: port.type,
+      expose: ko.observable(false),
+      hostPort: ko.observable('')
+    }))
 
   return ports
 }
 
 function getEnvs(info: ImageInspectInfo) {
-  const envs = info.Config.Env
-    .map(env => {
-      const split = env.split('=')
-      const pair = { key: split[0], value: ko.observable(split.slice(1).join('=')) }
-      return pair
-    })
+  const envs = info.Config.Env.map(env => {
+    const split = env.split('=')
+    const pair = { key: split[0], value: ko.observable(split.slice(1).join('=')) }
+    return pair
+  })
 
   return envs
 }
@@ -265,8 +276,10 @@ function getVolumes(info: ImageInspectInfo) {
     return []
   }
 
-  const volumes = Object.keys(info.Config.Volumes)
-    .map(path => ({ path, hostPath: ko.observable('') }))
+  const volumes = Object.keys(info.Config.Volumes).map(path => ({
+    path,
+    hostPath: ko.observable('')
+  }))
 
   return volumes
 }

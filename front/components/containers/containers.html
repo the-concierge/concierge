@@ -22,17 +22,17 @@
   </thead>
   <tbody data-bind="foreach: containers">
     <tr>
-      <td>
+      <td style="padding: 3px">
         <ko-link class="btn btn-link" params="href: '/containers/' + id() + '/inspect'">
           <span data-bind="text: name"></span>
         </ko-link>
       </td>
-      <td data-bind="text: id"></td>
-      <td data-bind="text: image"></td>
-      <td data-bind="text: state"></td>
-      <td data-bind="text: status"></td>
-      <td data-bind="text: stats.cpu"></td>
-      <td data-bind="text: stats.memory"></td>
+      <td style="padding: 3px" data-bind="text: id"></td>
+      <td style="padding: 3px" data-bind="text: image"></td>
+      <td style="padding: 3px" data-bind="text: state"></td>
+      <td style="padding: 3px" data-bind="text: status"></td>
+      <td style="padding: 3px" data-bind="text: stats.cpu"></td>
+      <td style="padding: 3px" data-bind="text: stats.memory"></td>
     </tr>
   </tbody>
 </table>

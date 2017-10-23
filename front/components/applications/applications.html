@@ -32,7 +32,7 @@
       <td data-bind="text: repository, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
       <td data-bind="text: dockerfile, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
       <td>
-        <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Deploy</button>
+        <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Build</button>
         <button class="btn btn-md" data-bind="click: $parent.showEditModal">Edit</button>
         <button class="btn btn-md" data-bind="click: $parent.removeApplication">Remove</button>
         <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
@@ -68,36 +68,9 @@
               <span class="label label-rounded" data-bind="text: $parents[1].toStatus(state), css: $parents[1].toStatusClass(state)"></span>
             </td>
             <td style="padding: 3px">
-              <button class="btn btn-sm" data-bind="">Deploy</button>
-            </td>
-          </tr>
-          <!-- /ko -->
-
-          <tr>
-            <td style="padding: 3px">
-              <b>Image name</b>
-            </td>
-            <td style="padding: 3px">
-              <b>Id</b>
-            </td>
-            <td style="padding: 3px">
-              <b>Size</b>
-            </td>
-            <td style="padding: 3px">
-              <b>Created</b>
-            </td>
-            <td style="padding: 3px"></td>
-          </tr>
-
-          <!-- ko foreach: images -->
-          <tr data-bind="visible: $parent.displayImages">
-            <td data-bind="text: name" style="padding: 3px"></td>
-            <td data-bind="text: Id.replace('sha256:', '').slice(0, 10)" style="padding: 3px"></td>
-            <td data-bind="text: $parents[1].toMb(Size)" style="padding: 3px"></td>
-            <td data-bind="text: $parents[1].toDate(Created)" style="padding: 3px"></td>
-            <td style="padding: 3px">
-              <button class="btn btn-sm" data-bind="click: function() { $parents[1].runImage($data) }">Run</button>
-              <button class="btn btn-sm" data-bind="click: $parents[1].removeImage">Remove</button>
+              <button class="btn btn-sm" data-bind="enable: state === 2, click: function() { $parents[1].rebuildBranch($parent, $data) }">Re-Build</button>
+              <button class="btn btn-sm" data-bind="enable: $data.imageId.length > 0, click: function() { $parents[1].runImage($data.image) }">Run</button>
+              <button class="btn btn-sm" data-bind="click: $parents[1].removeImage">Remove Image</button>
             </td>
           </tr>
           <!-- /ko -->
