@@ -98,7 +98,7 @@ declare namespace Concierge {
     imageId?: string
     state: number
     seen?: string
-    age?: string
+    age: string
   }
 
   interface ApplicationDTO extends Application {
@@ -242,7 +242,7 @@ interface ConciergeEvent<T> {
 
 interface BuildStatusEvent {
   applicationId: number
-  age?: string
+  age: string
   remote: string
   sha: string
   seen?: string

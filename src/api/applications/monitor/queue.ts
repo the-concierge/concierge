@@ -4,7 +4,9 @@ import build from '../build'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
 
-type QueueItem = Branch & { app: Concierge.Application }
+export type StrictBranch = Branch & { age: Date }
+
+type QueueItem = StrictBranch & { app: Concierge.Application }
 
 class BuildQueue {
   queue: QueueItem[] = []
@@ -21,22 +23,44 @@ class BuildQueue {
     this.poll()
   }
 
-  add(app: Concierge.Application, remote: Branch) {
-    const existing = this.queue.find(item => item.app.id === app.id && item.ref === remote.ref)
+  async add(app: Concierge.Application, remote: StrictBranch) {
+    const existingItem = this.queue.find(item => item.app.id === app.id && item.ref === remote.ref)
+    const existingBuild = this.builds.find(
+      item => item.app.id === app.id && item.ref === remote.ref
+    )
+
+    // If we are already building this SHA, we do not need to add it to the build queue
+    if (existingBuild) {
+      return
+    }
 
     // The SHA for the remote may have updated while we were waiting to start
     // Do not build the original SHA and leave its position in the queue
-    if (existing) {
-      existing.sha = remote.sha
+    if (existingItem) {
+      existingItem.sha = remote.sha
       log.debug(`[${app.name}] Updated waiting job '${remote.ref}'`)
-      this.emit(existing, State.Waiting)
+      this.updateRemote(existingItem, State.Waiting)
       return
     }
 
     log.debug(`[${app.name}] Add job to build queue '${remote.ref}'`)
     const item = { ...remote, app }
     this.queue.push(item)
-    this.emit(item, State.Waiting)
+    this.updateRemote(item, State.Waiting)
+  }
+
+  async updateRemote(
+    item: QueueItem,
+    state: State,
+    props: Partial<Concierge.ApplicationRemote> = {}
+  ) {
+    this.emit(item, state, props.imageId)
+    await db.updateRemote(item.app.id, item.ref, {
+      state,
+      sha: item.sha,
+      age: item.age.toISOString(),
+      ...props
+    })
   }
 
   private poll = async () => {
@@ -64,7 +88,7 @@ class BuildQueue {
       state,
       imageId,
       remote: item.ref,
-      age: item.age ? item.age.toISOString() : undefined,
+      age: item.age.toISOString(),
       seen: item.seen ? item.seen.toISOString() : undefined,
       app: undefined,
       ref: undefined
@@ -86,15 +110,10 @@ class BuildQueue {
       if (item.age) {
         props.age = item.age.toISOString()
       }
-      await db.updateRemote(app.id, item.ref, props)
 
+      await this.updateRemote(item, State.Building)
       const result = await buildJob.build
-      this.emit(item, State.Successful, result.imageId)
-      await db.updateRemote(app.id, item.ref, {
-        state: State.Successful,
-        sha: item.sha,
-        imageId: result.imageId
-      })
+      await this.updateRemote(item, State.Successful, { imageId: result.imageId })
 
       this.builds = this.builds.filter(build => build !== item)
       return
@@ -105,14 +124,12 @@ class BuildQueue {
       if (ex.code === 'E_REPOBUSY') {
         // If the repository on disk is busy, try this repo again in the next poll
         this.queue.unshift(item)
-        this.emit(item, State.Waiting)
-        await db.updateRemote(app.id, item.ref, { state: State.Waiting, sha: item.sha })
+        await this.updateRemote(item, State.Waiting)
         return
       }
 
       // The build has failed -- we won't re-add it to the queue
-      this.emit(item, State.Failed)
-      await db.updateRemote(app.id, item.ref, { state: State.Failed, sha: item.sha })
+      await this.updateRemote(item, State.Failed)
     }
   }
 }

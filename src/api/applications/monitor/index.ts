@@ -13,9 +13,9 @@ class MonitorAll {
 
   init = async () => {
     const applications = await db.all()
-    this.monitors = applications.map(app => new RemoteMonitor(app, false))
+    this.monitors = applications.map(app => new RemoteMonitor(app))
 
-    const promises = this.monitors.map(monitor => monitor.initialise())
+    const promises = this.monitors.map(monitor => monitor.initialise(false))
     await Promise.all(promises)
     this.initialised = true
 
@@ -31,8 +31,8 @@ class MonitorAll {
           continue
         }
 
-        const monitoredApp = new RemoteMonitor(app, true)
-        await monitoredApp.initialise()
+        const monitoredApp = new RemoteMonitor(app)
+        await monitoredApp.initialise(true)
         this.monitors.push(monitoredApp)
       }
     } catch {
