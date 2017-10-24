@@ -175,7 +175,10 @@ class StateManager {
   getApplications = () => {
     fetch('/api/applications')
       .then(res => res.json())
-      .then(apps => {
+      .then((apps: Concierge.ApplicationDTO[]) => {
+        // Remove applications that have been deleted
+        this.applications.remove(ex => apps.every(app => app.id !== ex.id))
+
         for (const app of apps) {
           const existing = this.applications().find(ex => app.id === ex.id)
           if (!existing) {
