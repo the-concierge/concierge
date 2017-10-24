@@ -51,10 +51,10 @@ const handler: RequestHandler = async (req, res) => {
     const app = { ...body }
     delete app.key
 
+    await clone(app)
     res.json(app)
 
     // Once the application is ready and cloned, we will begin to track it
-    await clone(app)
     poll()
   } catch (ex) {
     res.status(500)
