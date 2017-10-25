@@ -28,6 +28,11 @@ export class RemoteMonitor {
       const dbRemotes = await db.getRemotes(this.app.id)
 
       for (const remote of dbRemotes) {
+        if (remote.state === State.Building) {
+          // This is an invalid state and is indicative of a failed build
+          await db.updateRemote(this.app.id, remote.remote, { state: State.Failed })
+        }
+
         this.remotes[remote.remote] = {
           ref: remote.remote,
           seen: remote.seen ? new Date(remote.seen) : undefined,
