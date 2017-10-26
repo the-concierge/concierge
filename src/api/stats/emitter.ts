@@ -19,7 +19,7 @@ export function build(name: string, event: any) {
   emitter.emit('build', name, event)
 }
 
-export function buildStatus(appId: number, event: any) {
+export function buildStatus(appId: number, event: BuildStatusEvent) {
   emitter.emit('build-status', appId, event)
 }
 

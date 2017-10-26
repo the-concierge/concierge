@@ -51,6 +51,18 @@ export async function getRemotes(applicationId: number) {
   return remotes
 }
 
+export async function removeRemote(applicationId: number, remote: string) {
+  const rowsDeleted = await db
+    .applicationRemotes()
+    .delete()
+    .where('applicationId', applicationId)
+    .andWhere('remote', remote)
+
+  if (rowsDeleted !== 1) {
+    throw new Error('Failed to remove ApplicationRemote: Row not found')
+  }
+}
+
 export async function updateRemote(
   applicationId: number,
   ref: string,

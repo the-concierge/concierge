@@ -2,10 +2,10 @@ import getTags from '../../git/tags'
 import * as db from '../db'
 import { State, Branch } from '../types'
 import queue, { StrictBranch } from './queue'
-import { insertRemote, updateRemoteState } from './util'
+import { insertRemote } from './util'
 import { buildStatus } from '../../stats/emitter'
 
-type Action = 'new' | 'change' | 'done' | 'inactive'
+type Action = 'new' | 'change' | 'done' | 'inactive' | 'deleted'
 
 export class RemoteMonitor {
   remotes: { [ref: string]: StrictBranch } = {}
@@ -41,18 +41,7 @@ export class RemoteMonitor {
         }
       }
 
-      const remotes = await getTags(this.app, true)
-      for (const remote of remotes) {
-        if (!remote.age) {
-          continue
-        }
-
-        if (remote.type !== 'branch') {
-          continue
-        }
-
-        await this.processBranch(remote as StrictBranch, isNewApplication)
-      }
+      await this.processBranches(isNewApplication)
 
       this.initialised = true
       this.debug(`Tracking application`)
@@ -63,16 +52,64 @@ export class RemoteMonitor {
     }
   }
 
-  processBranch = async (branch: StrictBranch, isNewApplication: boolean) => {
-    const action = this.getBranchAction(branch, isNewApplication)
+  processBranches = async (isNewApplication: boolean) => {
+    const app = await db.one(this.app.id)
+    if (!app) {
+      return
+    }
+
+    const remotes = (await getTags(this.app, true)) as StrictBranch[]
+    const visited = new Set<string>()
+    for (const ref in this.remotes) {
+      visited.add(ref)
+      const existing = this.remotes[ref]
+      const current = remotes.find(remote => remote.ref === ref)
+
+      const action = getBranchAction({ existing, current }, isNewApplication)
+      await this.processBranch(current || existing, action)
+    }
+
+    // Deal with deleted branches
+    for (const current of remotes) {
+      if (visited.has(current.ref)) {
+        continue
+      }
+
+      const existing = this.remotes[current.ref]
+      const action = getBranchAction({ existing, current }, isNewApplication)
+      if (action !== 'deleted') {
+        continue
+      }
+
+      await this.processBranch(existing, action)
+    }
+  }
+
+  processBranch = async (branch: StrictBranch, action: Action) => {
     switch (action) {
+      case 'deleted':
+        await db.removeRemote(this.app.id, branch.ref)
+        this.debug(`'${branch.ref}' deleted from origin`)
+        buildStatus(this.app.id, {
+          applicationId: this.app.id,
+          sha: branch.sha,
+          remote: branch.ref,
+          state: State.Deleted,
+          age: branch.age.toISOString(),
+          seen: new Date().toISOString()
+        })
+        delete this.remotes[branch.ref]
+        return
+
       case 'done':
       case 'inactive':
         return
+
       case 'new':
         this.debug(`Tracking new branch '${branch.ref}'`)
         await this.insertNewRemote(branch)
         break
+
       case 'change':
         this.debug(`Updated updated '${branch.ref}'`)
         break
@@ -95,70 +132,74 @@ export class RemoteMonitor {
     })
   }
 
-  handleDeletedBranches = async (remotes: Branch[]) => {
-    // We want to mark branches that have been deleted from origin as Deleted
-    // to allow the front-end to handle Deleted branches differently
-    for (const remoteRef of Object.keys(this.remotes)) {
-      const isNoLongerRemote = remotes.every(remote => remote.ref !== remoteRef)
-      if (!isNoLongerRemote) {
-        continue
-      }
-
-      log.debug(`[${this.app.name}] Branch '${remoteRef}' deleted from origin`)
-      const dbRemote = await db.getRemote(this.app.id, remoteRef)
-
-      await updateRemoteState(this.app, remoteRef, State.Deleted)
-      buildStatus(this.app.id, { ...dbRemote, state: State.Deleted })
-    }
-  }
-
-  poll = async () => {
+  private poll = async () => {
     try {
-      const app = await db.one(this.app.id)
-      if (!app) {
-        return
-      }
-
-      const remotes = (await getTags(app, true)) as StrictBranch[]
-      await this.handleDeletedBranches(remotes)
-
-      for (const remote of remotes) {
-        if (!isBuildableBranch(remote)) {
-          continue
-        }
-
-        await this.processBranch(remote, false)
-      }
+      await this.processBranches(false)
     } finally {
       // TODO: Configurable polling interval per Application
       setTimeout(() => this.poll(), 15000)
     }
   }
+}
 
-  getBranchAction = (branch: Branch, isNewApplication: boolean): Action => {
-    if (isNewApplication) {
-      return 'inactive'
-    }
+function getBranchAction(
+  state: { existing?: Branch; current?: Branch },
+  isNewApplication: boolean
+): Action {
+  const existing = state.existing
+  const current = state.current
 
-    const existing = this.remotes[branch.ref]
-    if (!existing) {
-      return 'new'
-    }
-
-    if (!branch.age) {
-      return 'inactive'
-    }
-
-    if (!isActive(new Date(branch.age))) {
-      return 'inactive'
-    }
-
-    if (branch.sha !== existing.sha) {
-      return 'change'
-    }
-
-    return 'done'
+  if (!current && !existing) {
+    throw new Error('Invalid branch action call: No existing or current branch provided')
   }
+
+  if (isNewApplication) {
+    return 'inactive'
+  }
+
+  const isNoLongerRemote = !!existing && !current
+  if (isNoLongerRemote) {
+    return 'deleted'
+  }
+
+  const isNewRemote = !existing && !!current
+  if (isNewRemote) {
+    return 'new'
+  }
+
+  // This should never occur
+  if (!current!.age) {
+    return 'inactive'
+  }
+
+  if (!isActive(new Date(current!.age!))) {
+    return 'inactive'
+  }
+
+  if (current!.sha !== existing!.sha) {
+    return 'change'
+  }
+
+  return 'done'
+}
+
+function isBuildable(app: Concierge.Application, remote: Branch & { type?: string }) {
+  if (!app.autoBuild) {
+    return false
+  }
+
+  if (remote.type && remote.type !== 'branch') {
+    return false
+  }
+
+  if (!remote.age) {
+    return false
+  }
+
+  const now = new Date()
+  const diff = now.valueOf() - remote.age.valueOf()
+  const days = diff / 1000 / 60 / 60 / 24
+  return days <= 7
 }
 
 function isActive(date: Date) {
@@ -168,23 +209,4 @@ function isActive(date: Date) {
   const limit = 7
   threshold.setDate(threshold.getDate() - limit)
   return date.valueOf() >= threshold.valueOf()
-}
-
-function isBuildable(app: Concierge.Application, remote: Branch) {
-  if (!app.autoBuild) {
-    return false
-  }
-
-  return isBuildableBranch(remote)
-}
-
-function isBuildableBranch(remote: Branch) {
-  if (!remote.age) {
-    return false
-  }
-
-  const now = new Date()
-  const diff = now.valueOf() - remote.age.valueOf()
-  const days = diff / 1000 / 60 / 60 / 24
-  return days <= 7
 }

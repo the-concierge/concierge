@@ -80,6 +80,8 @@ class Applications {
 
   toStatus = (state: State) => {
     switch (state) {
+      case State.Deleted:
+        return 'deleted'
       case State.Building:
         return 'building'
       case State.Failed:
@@ -95,6 +97,8 @@ class Applications {
 
   toStatusClass = (state: State) => {
     switch (state) {
+      case State.Deleted:
+        return ''
       case State.Building:
         return 'label-warning'
       case State.Failed:

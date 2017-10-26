@@ -49,7 +49,7 @@ class BuildQueue {
     this.updateRemote(item, State.Waiting)
   }
 
-  async updateRemote(
+  private async updateRemote(
     item: QueueItem,
     state: State,
     props: Partial<Concierge.ApplicationRemote> = {}
@@ -81,21 +81,19 @@ class BuildQueue {
     }
   }
 
-  emit = (item: QueueItem, state: State, imageId?: string) => {
+  private emit = (item: QueueItem, state: State, imageId?: string) => {
     buildStatus(item.app.id, {
-      ...item,
       applicationId: item.app.id,
+      sha: item.sha,
       state,
       imageId,
       remote: item.ref,
       age: item.age.toISOString(),
-      seen: item.seen ? item.seen.toISOString() : undefined,
-      app: undefined,
-      ref: undefined
+      seen: item.seen ? item.seen.toISOString() : undefined
     })
   }
 
-  build = async (item: QueueItem) => {
+  private build = async (item: QueueItem) => {
     const app = item.app
 
     try {
