@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "Concierge Service",
   "main": "build/index.js",
   "keywords": [
