@@ -60,22 +60,22 @@ export class RemoteMonitor {
 
     const remotes = (await getTags(this.app, true)) as StrictBranch[]
     const visited = new Set<string>()
-    for (const ref in this.remotes) {
-      visited.add(ref)
-      const existing = this.remotes[ref]
-      const current = remotes.find(remote => remote.ref === ref)
+    for (const current of remotes) {
+      visited.add(current.ref)
+      const existing = this.remotes[current.ref]
 
       const action = getBranchAction({ existing, current }, isNewApplication)
       await this.processBranch(current || existing, action)
     }
 
     // Deal with deleted branches
-    for (const current of remotes) {
-      if (visited.has(current.ref)) {
+    for (const ref in this.remotes) {
+      if (visited.has(ref)) {
         continue
       }
 
-      const existing = this.remotes[current.ref]
+      const existing = this.remotes[ref]
+      const current = remotes.find(remote => remote.ref === ref)
       const action = getBranchAction({ existing, current }, isNewApplication)
       if (action !== 'deleted') {
         continue

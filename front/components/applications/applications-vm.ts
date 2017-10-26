@@ -37,11 +37,7 @@ class Applications {
           state
             .applicationRemotes()
             .filter(remote => remote.applicationId === newApp.id && remote.state !== 4)
-            .filter(
-              remote =>
-                remote.state !== State.Successful ||
-                (remote.state === State.Successful && remote.image() !== undefined)
-            )
+            .filter(remote => remote.state !== State.Inactive)
         )
 
         this.applications.push({
