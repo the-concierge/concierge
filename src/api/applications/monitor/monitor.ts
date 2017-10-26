@@ -107,29 +107,19 @@ export class RemoteMonitor {
 
       case 'new':
         this.debug(`Tracking new branch '${branch.ref}'`)
-        await this.insertNewRemote(branch)
+        await insertNewRemote(this.app, branch)
         break
 
       case 'change':
-        this.debug(`Updated updated '${branch.ref}'`)
+        this.debug(`Updated branch '${branch.ref}'`)
+        await db.updateRemote(this.app.id, branch.ref, { age: branch.age.toISOString() })
         break
     }
 
     this.remotes[branch.ref] = branch
-
     if (isBuildable(this.app, branch)) {
       await queue.add(this.app, branch)
     }
-  }
-
-  insertNewRemote = async (remote: StrictBranch) => {
-    await insertRemote(this.app, {
-      remote: remote.ref,
-      sha: remote.sha,
-      age: remote.age.toISOString(),
-      seen: new Date().toISOString(),
-      state: State.NotDetermined
-    })
   }
 
   private poll = async () => {
@@ -142,8 +132,18 @@ export class RemoteMonitor {
   }
 }
 
+async function insertNewRemote(app: Concierge.Application, remote: StrictBranch) {
+  await insertRemote(app, {
+    remote: remote.ref,
+    sha: remote.sha,
+    age: remote.age.toISOString(),
+    seen: new Date().toISOString(),
+    state: State.NotDetermined
+  })
+}
+
 function getBranchAction(
-  state: { existing?: Branch; current?: Branch },
+  state: { existing?: StrictBranch; current?: StrictBranch },
   isNewApplication: boolean
 ): Action {
   const existing = state.existing
@@ -167,12 +167,7 @@ function getBranchAction(
     return 'new'
   }
 
-  // This should never occur
-  if (!current!.age) {
-    return 'inactive'
-  }
-
-  if (!isActive(new Date(current!.age!))) {
+  if (!isActive(new Date(current!.age))) {
     return 'inactive'
   }
 
@@ -196,10 +191,7 @@ function isBuildable(app: Concierge.Application, remote: Branch & { type?: strin
     return false
   }
 
-  const now = new Date()
-  const diff = now.valueOf() - remote.age.valueOf()
-  const days = diff / 1000 / 60 / 60 / 24
-  return days <= 7
+  return isActive(remote.age)
 }
 
 function isActive(date: Date) {
