@@ -5,10 +5,9 @@ import queue, { StrictBranch } from './queue'
 import { insertRemote } from './util'
 import { buildStatus } from '../../stats/emitter'
 
-type Action = 'new' | 'change' | 'done' | 'inactive' | 'deleted'
+type Action = 'new' | 'change' | 'done' | 'inactive' | 'deleted' | 'failed'
 
 export class RemoteMonitor {
-  remotes: { [ref: string]: StrictBranch } = {}
   initialised = false
 
   constructor(public app: Concierge.Application) {}
@@ -25,21 +24,6 @@ export class RemoteMonitor {
 
     try {
       log.debug(`[${this.app.name}] Initialing application tracking`)
-      const dbRemotes = await db.getRemotes(this.app.id)
-
-      for (const remote of dbRemotes) {
-        if (remote.state === State.Building) {
-          // This is an invalid state and is indicative of a failed build
-          await db.updateRemote(this.app.id, remote.remote, { state: State.Failed })
-        }
-
-        this.remotes[remote.remote] = {
-          ref: remote.remote,
-          seen: remote.seen ? new Date(remote.seen) : undefined,
-          sha: remote.sha,
-          age: new Date(remote.age)
-        }
-      }
 
       await this.processBranches(isNewApplication)
 
@@ -58,30 +42,33 @@ export class RemoteMonitor {
       return
     }
 
+    const tracked = await db.getRemotes(this.app.id)
     const remotes = (await getTags(this.app, true)) as StrictBranch[]
     const visited = new Set<string>()
     for (const current of remotes) {
       visited.add(current.ref)
-      const existing = this.remotes[current.ref]
+      const existing = tracked.find(track => track.remote === current.ref)
 
-      const action = getBranchAction({ existing, current }, isNewApplication)
+      const action = getBranchAction({ existing, current }, isNewApplication, this.initialised)
       await this.processBranch(current || existing, action)
     }
 
     // Deal with deleted branches
-    for (const ref in this.remotes) {
-      if (visited.has(ref)) {
+    for (const existing of tracked) {
+      if (visited.has(existing.remote)) {
         continue
       }
 
-      const existing = this.remotes[ref]
-      const current = remotes.find(remote => remote.ref === ref)
-      const action = getBranchAction({ existing, current }, isNewApplication)
+      const current = remotes.find(remote => remote.ref === existing.remote)
+      const action = getBranchAction({ existing, current }, isNewApplication, this.initialised)
       if (action !== 'deleted') {
         continue
       }
 
-      await this.processBranch(existing, action)
+      await this.processBranch(
+        { ref: existing.remote, age: new Date(existing.age), seen: new Date(), sha: existing.sha },
+        action
+      )
     }
   }
 
@@ -90,17 +77,14 @@ export class RemoteMonitor {
       case 'deleted':
         await db.removeRemote(this.app.id, branch.ref)
         this.debug(`'${branch.ref}' deleted from origin`)
-        buildStatus(this.app.id, {
-          applicationId: this.app.id,
-          sha: branch.sha,
-          remote: branch.ref,
-          state: State.Deleted,
-          age: branch.age.toISOString(),
-          seen: new Date().toISOString()
-        })
-        delete this.remotes[branch.ref]
+        updateBuildStatus(this.app, branch, State.Deleted)
         return
 
+      case 'failed':
+        await db.updateRemote(this.app.id, branch.ref, { state: State.Failed })
+        this.debug(`'${branch.ref}' existing 'in progress' build being marked as failed`)
+        updateBuildStatus(this.app, branch, State.Failed)
+        return
       case 'done':
       case 'inactive':
         return
@@ -116,7 +100,6 @@ export class RemoteMonitor {
         break
     }
 
-    this.remotes[branch.ref] = branch
     if (isBuildable(this.app, branch)) {
       await queue.add(this.app, branch)
     }
@@ -132,6 +115,17 @@ export class RemoteMonitor {
   }
 }
 
+function updateBuildStatus(app: Concierge.Application, branch: StrictBranch, state: State) {
+  buildStatus(app.id, {
+    applicationId: app.id,
+    sha: branch.sha,
+    remote: branch.ref,
+    state,
+    age: branch.age.toISOString(),
+    seen: new Date().toISOString()
+  })
+}
+
 async function insertNewRemote(app: Concierge.Application, remote: StrictBranch) {
   await insertRemote(app, {
     remote: remote.ref,
@@ -143,8 +137,9 @@ async function insertNewRemote(app: Concierge.Application, remote: StrictBranch)
 }
 
 function getBranchAction(
-  state: { existing?: StrictBranch; current?: StrictBranch },
-  isNewApplication: boolean
+  state: { existing?: Concierge.ApplicationRemote; current?: StrictBranch },
+  isNewApplication: boolean,
+  initialised: boolean
 ): Action {
   const existing = state.existing
   const current = state.current
@@ -165,6 +160,20 @@ function getBranchAction(
   const isNewRemote = !existing && !!current
   if (isNewRemote) {
     return 'new'
+  }
+
+  // Due due the previous XOR checks, both current and existing definitely exist past this point
+
+  // After a restart, we need to ensure 'waiting' builds are re-queued
+  // and 'in progress' builds are marked as failed
+  if (!initialised) {
+    if (existing!.state === State.Waiting) {
+      return 'change'
+    }
+
+    if (existing!.state === State.Building) {
+      return 'failed'
+    }
   }
 
   if (!isActive(new Date(current!.age))) {
