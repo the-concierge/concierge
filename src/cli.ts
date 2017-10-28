@@ -64,6 +64,9 @@ ${chalk.cyan.bold(' Restarts')}: ${status.pm2_env.restart_time}`
     }
 
     log.info(`Successfully executed '${state}'`)
+    if (state === 'start') {
+      log.info(`The Concierge is running on http://localhost:${port || 3141}`)
+    }
   }
 
   switch (state) {
