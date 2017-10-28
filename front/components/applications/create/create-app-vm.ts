@@ -43,7 +43,7 @@ class CreateApp {
     this.label('')
     this.selectedCredentials(this.credentials()[0])
     this.modalActive(true)
-    this.autoBuild(false)
+    this.autoBuild(true)
   }
 
   hideModal = () => {
