@@ -3,7 +3,7 @@
 .vscode/
 archive/
 certificates/*
-db
+db/*
 !db/.gitkeep
 logs/*
 registry/
