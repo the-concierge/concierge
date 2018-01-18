@@ -2,7 +2,7 @@
 > Docker based Continuous integration and a bit of orchestration with Node
 Previously at [paypac/node-concierge](https://github.com/paypac/node-concierge)
 
-Documentation is available to [the-concierge.github.io](https://the-concierge.github.io)
+Documentation is available at [the-concierge.github.io](https://the-concierge.github.io)
 
 <img src="https://github.com/the-concierge/concierge/blob/master/docs/containers.png?raw=true" alt="Concierge Example" width="75%">
 
