@@ -1,4 +1,4 @@
-# Concierge
+# Concierge [![Build Status](https://travis-ci.org/the-concierge/concierge.svg?branch=master)](https://travis-ci.org/the-concierge/concierge)
 > Docker based Continuous integration and a bit of orchestration with Node
 Previously at [paypac/node-concierge](https://github.com/paypac/node-concierge)
 
