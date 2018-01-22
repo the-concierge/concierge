@@ -62,7 +62,10 @@ export class RemoteMonitor {
       visited.add(current.ref)
       const existing = tracked.find(track => track.remote === current.ref)
 
-      const action = getBranchAction({ existing, current }, isNewApplication, this.initialised)
+      const action = getBranchAction(
+        { existing, current },
+        { isNewApplication, initialised: this.initialised, autoBuild: !!app.autoBuild }
+      )
       await this.processBranch(current || existing, action)
     }
 
@@ -73,7 +76,10 @@ export class RemoteMonitor {
       }
 
       const current = remotes.find(remote => remote.ref === existing.remote)
-      const action = getBranchAction({ existing, current }, isNewApplication, this.initialised)
+      const action = getBranchAction(
+        { existing, current },
+        { isNewApplication, initialised: this.initialised, autoBuild: !!app.autoBuild }
+      )
       if (action !== 'deleted') {
         continue
       }
@@ -150,13 +156,20 @@ async function insertNewRemote(app: Concierge.Application, remote: StrictBranch)
   })
 }
 
+interface BranchActionOpts {
+  isNewApplication: boolean
+  initialised: boolean
+  autoBuild: boolean
+}
+
 function getBranchAction(
   state: { existing?: Concierge.ApplicationRemote; current?: StrictBranch },
-  isNewApplication: boolean,
-  initialised: boolean
+  opts: BranchActionOpts
 ): Action {
   const existing = state.existing
   const current = state.current
+
+  const { autoBuild, isNewApplication, initialised } = opts
 
   if (!current && !existing) {
     throw new Error('Invalid branch action call: No existing or current branch provided')
@@ -171,7 +184,7 @@ function getBranchAction(
     return 'deleted'
   }
 
-  const isNewRemote = !existing && !!current
+  const isNewRemote = !existing && !!current && autoBuild
   if (isNewRemote) {
     return 'new'
   }
@@ -194,8 +207,9 @@ function getBranchAction(
     return 'inactive'
   }
 
-  if (current!.sha !== existing!.sha) {
-    return 'change'
+  const isChange = current!.sha !== existing!.sha
+  if (isChange) {
+    return autoBuild ? 'change' : 'inactive'
   }
 
   return 'done'
