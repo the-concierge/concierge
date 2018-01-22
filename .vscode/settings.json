@@ -1,40 +1,35 @@
-// Place your settings in this file to overwrite default and user settings.
 {
-	"files.exclude": {
-		"build/**/*.js": true,
-		"**/.git": true,
-		"**/.DS_Store": true,
-		"**/archive/*.db": true,
-		"**/archive/*.tar": true,
-		"**/repositories": true,
-		"**/*.js": {
-			"when": "$(basename).ts"
-		},
-		"**/*?.js": {
-			"when": "$(basename).tsx"
-		},
-		"node_modules": true
-	},
-	"search.exclude": {
-		"**/node_modules": true,
-		"**/bower_components": true,
-		"**/*.js.map": true,
-		"**/*.js": true
-	},
-	"typescript.tsdk": "node_modules/typescript/lib",
-	"editor.tabSize": 2,
-	"files.eol": "\n",
-	"tslint.enable": false,
-	"prettier.jsonEnable": [],
-	"prettier.printWidth": 100,
-	"prettier.semi": false,
-	"prettier.tabWidth": 2,
-	"prettier.useTabs": false,
-	"prettier.singleQuote": true,
-	"prettier.trailingComma": "none",
-	"prettier.typescriptEnable": [
-		"typescript",
-		"typescriptreact"
-	],
-	"editor.formatOnSave": true
+  // Place your settings in this file to overwrite default and user settings.
+  "files.exclude": {
+    "build/**/*.js": true,
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/archive/*.db": true,
+    "**/archive/*.tar": true,
+    "**/*.js": {
+      "when": "$(basename).ts"
+    },
+    "**/*?.js": {
+      "when": "$(basename).tsx"
+    },
+    "node_modules": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.js.map": true,
+    "**/*.js": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "tslint.enable": false,
+  "prettier.printWidth": 100,
+  "prettier.semi": false,
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "none",
+  "prettier.disableLanguages": ["json", "markdown"],
+  "editor.formatOnSave": true
 }
