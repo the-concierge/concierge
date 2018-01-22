@@ -23,7 +23,7 @@ export class RemoteMonitor {
     }
 
     try {
-      log.debug(`[${this.app.name}] Initialing application tracking`)
+      log.debug(`[${this.app.name}] Initialising application tracking`)
 
       await this.processBranches(isNewApplication)
 
