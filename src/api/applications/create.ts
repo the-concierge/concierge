@@ -5,6 +5,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import * as db from '../../data'
 import { poll } from './monitor'
+import { promisify } from 'util'
 
 type Body = {
   name: string
@@ -64,27 +65,33 @@ const handler: RequestHandler = async (req, res) => {
 
 async function getNextId() {
   const apps: Array<{ id: number }> = await db.applications().select('id')
-  const dirs = new Promise<number>((resolve, reject) => {
-    const repoPath = path.resolve(__dirname, '../../..', 'repositories')
-    fs.readdir(repoPath, (err, files) => {
-      if (err) {
-        return reject(err)
-      }
+  const dirs = await getRepoDirs()
+  const ids = dirs.map(dir => Number(dir)).filter(id => !isNaN(id))
+  const max = Math.max(...ids, ...apps.map(app => app.id))
 
-      const ids = files.map(file => Number(file)).filter(id => !isNaN(id))
+  if (max < 1) {
+    return 1
+  }
 
-      const max = Math.max(...ids, ...apps.map(app => app.id))
-
-      if (max < 1) {
-        resolve(1)
-        return
-      }
-
-      resolve(max + 1)
-    })
-  })
-
-  return dirs
+  return max + 1
 }
+
+async function getRepoDirs() {
+  const repoPath = path.resolve(__dirname, '../../..', 'repositories')
+  try {
+    const dirs = await readdir(repoPath)
+    return dirs
+  } catch (ex) {
+    if (ex.code !== 'ENOENT') {
+      throw ex
+    }
+    await mkdir(repoPath)
+    const dirs = await readdir(repoPath)
+    return dirs
+  }
+}
+
+const readdir = promisify(fs.readdir)
+const mkdir = promisify(fs.mkdir)
 
 export default handler
