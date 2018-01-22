@@ -25,6 +25,7 @@ export async function all() {
 
   for (const app of applications) {
     app.credentialsName = app.credentialsName || 'N/A'
+    app.autoBuild = !!app.autoBuild
   }
 
   return applications

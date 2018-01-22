@@ -26,6 +26,12 @@ class Applications {
       for (const newApp of newApps) {
         const existing = apps.find(app => app.id === newApp.id)
         if (existing) {
+          this.applications.replace(existing, {
+            ...newApp,
+            displayImages: existing.displayImages,
+            images: existing.images,
+            remotes: existing.remotes
+          })
           continue
         }
 
