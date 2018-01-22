@@ -12,6 +12,7 @@ class EditApp {
   password = ko.observable('')
   label = ko.observable('')
   dockerfile = ko.observable('')
+  autoBuild = ko.observable(false)
   originalApp: Concierge.Application
   credentials = ko.computed(() => {
     return [{ id: 0, name: 'None', username: '', key: '' }, ...state.credentials()]
@@ -39,6 +40,7 @@ class EditApp {
     this.dockerfile(app.dockerfile)
     this.name(app.name)
     this.username(app.username)
+    this.autoBuild(!!app.autoBuild)
     this.password('')
     this.key('')
     this.label(app.label)
@@ -60,10 +62,12 @@ class EditApp {
       key: this.password() || this.key(),
       label: this.label(),
       dockerfile: this.dockerfile(),
-      credentialsId: this.selectedCredentials().id
+      credentialsId: this.selectedCredentials().id,
+      autoBuild: this.autoBuild()
     }
 
-    for (const key of Object.keys(body)) {
+    const keys = Object.keys(body) as Array<keyof typeof body>
+    for (const key of keys) {
       const original = this.originalApp[key]
       const modified = body[key]
       if (original === modified) {

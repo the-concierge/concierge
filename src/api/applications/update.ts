@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import * as db from '../../data'
 
 const handler: RequestHandler = async (req, res) => {
-  const { repository, name, username, key, label, dockerfile, credentialsId } = req.body
+  const { repository, name, username, key, label, dockerfile, credentialsId, autoBuild } = req.body
 
   const id = req.params.id
   const body = {
@@ -12,7 +12,8 @@ const handler: RequestHandler = async (req, res) => {
     key,
     label,
     dockerfile,
-    credentialsId: Number(credentialsId)
+    credentialsId: Number(credentialsId),
+    autoBuild: !!autoBuild
   }
 
   if (credentialsId > 0) {
