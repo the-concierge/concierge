@@ -36,7 +36,7 @@
     "@types/knex": "^0.0.53",
     "@types/knockout": "^3.4.39",
     "@types/minimist": "^1.2.0",
-    "@types/node": "^6.0.38",
+    "@types/node": "^9.3.0",
     "brfs": "^1.4.3",
     "browserify": "^14.1.0",
     "browserify-fs": "^1.0.0",
@@ -49,7 +49,7 @@
     "promise-polyfill": "^6.0.2",
     "rimraf": "^2.6.1",
     "tslint-config-standard": "^4.0.0",
-    "typescript": "^2.3.4",
+    "typescript": "^2.6.2",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
