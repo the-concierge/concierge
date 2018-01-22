@@ -10,7 +10,7 @@ import { port } from '../configurations/port'
 
 const app = express()
 
-export const server = http.createServer(app)
+export const server = http.createServer(app as any)
 
 export const socket = io(server)
 
