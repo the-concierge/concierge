@@ -26,7 +26,7 @@ export async function webSocketHandler(request: http.ServerRequest, socket: any,
     return
   }
 
-  const info = getProxyInfo(request.headers.host)
+  const info = getProxyInfo(request.headers.host || '')
   const target = `${container.concierge.host}:${info.port}`
   proxyServer.ws(request, socket, head, { target })
 }
@@ -38,7 +38,7 @@ export async function requestHandler(
   response: http.ServerResponse,
   next: (nextArg?: any) => void
 ) {
-  const info = getProxyInfo(request.headers.host)
+  const info = getProxyInfo(request.headers.host || '')
   const config = await getConfig()
 
   if ((config.proxyHostname || '').toLowerCase() !== info.hostname) {

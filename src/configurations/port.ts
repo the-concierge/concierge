@@ -1,1 +1,1 @@
-export const port = process.env.CONCIERGE_PORT || 3141
+export const port = Number(process.env.CONCIERGE_PORT || 3141)

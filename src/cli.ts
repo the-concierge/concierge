@@ -17,7 +17,7 @@ const port = Number(args.port)
 const dbPath = args.path || args.db
 
 if (!isNaN(port)) {
-  process.env.CONCIERGE_PORT = port
+  process.env.CONCIERGE_PORT = port.toString()
 }
 
 if (dbPath) {
