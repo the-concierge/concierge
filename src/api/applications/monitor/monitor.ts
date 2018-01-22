@@ -42,9 +42,22 @@ export class RemoteMonitor {
       return
     }
 
+    // We must update the applicaiton properties otherwise it's possible to build with incorrect info
+    this.app = {
+      ...this.app,
+      name: app.name,
+      label: app.label,
+      repository: app.repository,
+      key: app.key,
+      credentialsId: app.credentialsId,
+      username: app.username,
+      autoBuild: app.autoBuild
+    }
+
     const tracked = await db.getRemotes(this.app.id)
-    const remotes = (await getTags(this.app, true)) as StrictBranch[]
+    const remotes = (await getTags(app, true)) as StrictBranch[]
     const visited = new Set<string>()
+
     for (const current of remotes) {
       visited.add(current.ref)
       const existing = tracked.find(track => track.remote === current.ref)
@@ -85,6 +98,7 @@ export class RemoteMonitor {
         this.debug(`'${branch.ref}' existing 'in progress' build being marked as failed`)
         updateBuildStatus(this.app, branch, State.Failed)
         return
+
       case 'done':
       case 'inactive':
         return
