@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "2.6.11",
+  "version": "2.6.12",
   "description": "Concierge Service",
   "main": "build/index.js",
   "keywords": [
@@ -61,6 +61,7 @@
     "logs": "pm2 logs the-concierge",
     "status": "pm2 status the-concierge",
     "// Build scripts": "",
+    "prepare": "yarn build",
     "clean": "rimraf build/ && node scripts/clean.js",
     "build": "tsc -p scripts/tsconfig.node.json && tsc -p scripts/tsconfig.front.json",
     "postbuild": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
