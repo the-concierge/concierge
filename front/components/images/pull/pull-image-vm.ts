@@ -21,13 +21,13 @@ class Run {
     const imageName = this.imageName()
     const tag = this.tag()
 
-    if (!imageName || !tag) {
+    if (!imageName) {
       state.toast.error(`Must specify image name and tag`)
       return
     }
 
     this.pullEnabled(false)
-    const result = await fetch(`/api/images/pull?imageName=${imageName}&tag=${tag}`, {
+    const result = await fetch(`/api/images/pull?imageName=${imageName}&tag=${tag || 'latest'}`, {
       method: 'POST'
     })
     this.pullEnabled(true)
