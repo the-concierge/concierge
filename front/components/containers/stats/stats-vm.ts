@@ -59,7 +59,7 @@ class Performance {
         type: 'datetime',
         title: { text: 'Time' },
         labels: {
-          formatter: function (this: { value: number }) {
+          formatter: function(this: { value: number }) {
             return new Date(this.value).toTimeString().slice(0, 8)
           }
         }
@@ -79,13 +79,15 @@ class Performance {
           }
         ]
       },
-      series: [{
-        name: 'Percentage',
-        data,
-        tooltip: {
-          xDateFormat: '%H:%M:%S'
+      series: [
+        {
+          name: 'Percentage',
+          data,
+          tooltip: {
+            xDateFormat: '%H:%M:%S'
+          }
         }
-      }] as any
+      ] as any
     })
   }
 
@@ -96,13 +98,16 @@ class Performance {
       state.toast.error(`Failed to retrieve container stats: ${result.statusText}`)
     }
 
-    const stats = await result.json() as RawStats
-    const parsedStats = stats.reduce((prev, stat) => {
-      prev.cpu.push(JSON.parse(stat.cpu))
-      prev.memory.push(JSON.parse(stat.memory))
-      prev.timestamp.push(stat.timestamp)
-      return prev
-    }, { cpu: [], memory: [], timestamp: [] })
+    const stats = (await result.json()) as RawStats
+    const parsedStats = stats.reduce(
+      (prev, stat) => {
+        prev.cpu.push(JSON.parse(stat.cpu))
+        prev.memory.push(JSON.parse(stat.memory))
+        prev.timestamp.push(stat.timestamp)
+        return prev
+      },
+      { cpu: [], memory: [], timestamp: [] }
+    )
 
     this.timestamp = parsedStats.timestamp
     this.updateChart('cpu-chart', 'CPU Usage', parsedStats.cpu)

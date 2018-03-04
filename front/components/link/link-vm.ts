@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import menu from '../menu'
 
 type Context = {
-  element: Element,
+  element: Element
   templateNodes: Element[]
 }
 

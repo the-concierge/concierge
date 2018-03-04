@@ -4,7 +4,7 @@ import * as fs from 'fs'
 class Logs {
   modalActive = ko.observable(false)
 
-  buildLogs = ko.observableArray<{ url: string, name: string }>([])
+  buildLogs = ko.observableArray<{ url: string; name: string }>([])
 
   hideModal = () => {
     this.modalActive(false)
@@ -13,7 +13,7 @@ class Logs {
   showModal = async (app: Concierge.Application) => {
     this.buildLogs.destroyAll()
     this.modalActive(true)
-    const logs = await fetch(`/api/applications/${app.id}/logs`).then(r => r.json()) as string[]
+    const logs = (await fetch(`/api/applications/${app.id}/logs`).then(r => r.json())) as string[]
     const buildLogs = logs.map(log => ({
       name: log,
       url: `/api/applications/${app.id}/logs/${log}`

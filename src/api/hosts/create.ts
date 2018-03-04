@@ -17,15 +17,16 @@ const handler: RequestHandler = async (req, res) => {
   if (hasHostname && !hasUsername) {
     res
       .status(400)
-      .json({ message: 'Invalid SSH username provided: Must provided credentials if providing a hostname' })
+      .json({
+        message: 'Invalid SSH username provided: Must provided credentials if providing a hostname'
+      })
     return
   }
 
   const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname, proxyIp }
 
   try {
-    const result: number[] = await db.hosts()
-      .insert({ ...body, privateKey })
+    const result: number[] = await db.hosts().insert({ ...body, privateKey })
     res.json({ ...body, id: result[0] })
   } catch (ex) {
     res.status(500)

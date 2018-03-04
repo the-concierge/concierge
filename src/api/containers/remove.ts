@@ -8,12 +8,10 @@ const handler: RequestHandler = async (req, res) => {
 
   const host = await getHosts.getOne(hostId)
   if (!host) {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: 'Invalid Host ID'
-      })
+    return res.status(400).json({
+      status: 400,
+      message: 'Invalid Host ID'
+    })
   }
 
   const client = docker(host)
@@ -22,14 +20,13 @@ const handler: RequestHandler = async (req, res) => {
     // Stop the container before removing
     // If we fail to stop, it's most likely because it's already stopped
     // TODO: Deterministically determine if we need to stop first
-    await container.stop()
-      .catch(() => { /** Intentional NOOP */ })
+    await container.stop().catch(() => {
+      /** Intentional NOOP */
+    })
     await container.remove()
     return res.json({ message: 'Removed OK' })
   } catch (ex) {
-    return res
-      .status(500)
-      .json(ex)
+    return res.status(500).json(ex)
   }
 }
 

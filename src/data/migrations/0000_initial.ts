@@ -18,8 +18,7 @@ export async function up(db: Knex) {
     })
 
     const defaultName = os.hostname() || 'development'
-    await db('Configurations')
-      .insert({ name: defaultName })
+    await db('Configurations').insert({ name: defaultName })
 
     log.info(`Concierge renamed to: ${defaultName}`)
   }
@@ -55,7 +54,10 @@ export async function up(db: Knex) {
   if (!conciergesExists) {
     await db.schema.createTable(tables.CONCIERGES, tbl => {
       tbl.increments('id').primary()
-      tbl.text('label').unique().notNullable()
+      tbl
+        .text('label')
+        .unique()
+        .notNullable()
       tbl.text('hostname').notNullable()
       tbl.integer('port').defaultTo(3141)
     })

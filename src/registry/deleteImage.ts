@@ -17,7 +17,8 @@ export default async function remove(variant: string) {
 }
 
 function tryRemove(variant: string) {
-  return getContainers.all()
+  return getContainers
+    .all()
     .then((containers: Concierge.Container[]) => isBeingUsed(containers, variant))
     .then(() => getVariants.all())
     .then(isEnoughVariants)
@@ -48,9 +49,8 @@ function isEnoughVariants(variants: Concierge.Variant[]) {
 }
 
 function deleteVariant(variant: string) {
-  return getRegistry()
-    .then(registry => {
-      let deleteUrl = `${registry.url}/v2/${variant}/manifests` // V1: Was /v1/repositories/{variant}/
-      return request.del(deleteUrl)
-    })
+  return getRegistry().then(registry => {
+    let deleteUrl = `${registry.url}/v2/${variant}/manifests` // V1: Was /v1/repositories/{variant}/
+    return request.del(deleteUrl)
+  })
 }

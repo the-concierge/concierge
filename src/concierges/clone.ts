@@ -30,7 +30,7 @@ export default async function clone(cloneRequest: CloneRequest) {
 }
 
 function getVolumeUrl(cloneRequest: CloneRequest) {
-  const {hostname, port} = cloneRequest.concierge
+  const { hostname, port } = cloneRequest.concierge
   const containerId = cloneRequest.container.id
   const base = `http://${hostname}:${port}`
   const req = `/containers${containerId}/volume`
@@ -40,9 +40,9 @@ function getVolumeUrl(cloneRequest: CloneRequest) {
 
 interface CloneRequest {
   concierge: {
-    hostname: string;
-    port: string;
-  },
-  container: Concierge.Container,
+    hostname: string
+    port: string
+  }
+  container: Concierge.Container
   subdomain: string
 }

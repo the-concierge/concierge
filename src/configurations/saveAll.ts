@@ -4,7 +4,7 @@ import { ActiveState } from '../types/states'
 import updateWebServers from '../proxy'
 
 export default async function saveAll(request: Concierge.SaveRequest<Concierge.Configuration>) {
-  const trx = await (db.getTransaction())
+  const trx = await db.getTransaction()
   try {
     const table = 'Configurations'
 

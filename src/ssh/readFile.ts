@@ -1,9 +1,7 @@
-
 import getSftpClient from './getSftpClient'
 
 export default function read(host: Concierge.Host, filePath: string): Promise<Buffer> {
-  return getSftpClient(host)
-    .then(client => readFile(client, filePath))
+  return getSftpClient(host).then(client => readFile(client, filePath))
 }
 
 function readFile(client, filePath: string) {
@@ -11,7 +9,6 @@ function readFile(client, filePath: string) {
     let handlerThrown = false
 
     function readFileHandler(error, response) {
-
       // For reasons unknown, .readFile() now calls the handler on completion and on error
       if (!handlerThrown) {
         handlerThrown = true
@@ -25,7 +22,6 @@ function readFile(client, filePath: string) {
       resolve(new Buffer(response))
     }
     client.readFile(filePath, {}, readFileHandler)
-
   })
 
   return promise

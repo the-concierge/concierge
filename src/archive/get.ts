@@ -3,17 +3,16 @@ import { extname } from 'path'
 import archivePath from './archivePath'
 
 export default function get() {
-  return readdirAsync(archivePath())
-    .then((files: string[]) => {
-      const volumeArchives = files.filter(file => extname(file) === '.tar')
+  return readdirAsync(archivePath()).then((files: string[]) => {
+    const volumeArchives = files.filter(file => extname(file) === '.tar')
 
-      const archive = volumeArchives.map(mapFile)
-      const sortedArchive = archive.sort((left, right) => {
-        return right.timestamp - left.timestamp
-      })
-
-      return sortedArchive
+    const archive = volumeArchives.map(mapFile)
+    const sortedArchive = archive.sort((left, right) => {
+      return right.timestamp - left.timestamp
     })
+
+    return sortedArchive
+  })
 }
 
 function mapFile(file: string): Concierge.Archive {
@@ -24,7 +23,12 @@ function mapFile(file: string): Concierge.Archive {
   const split = file.split('_')
   const applicationName = split[0]
   const subdomain = split[1]
-  const timestamp = Number(split.slice(-1).join('').replace('.tar', ''))
+  const timestamp = Number(
+    split
+      .slice(-1)
+      .join('')
+      .replace('.tar', '')
+  )
   const variant = split.slice(2, -1).join('')
 
   return {

@@ -8,20 +8,25 @@ const handler: RequestHandler = async (req, res) => {
   const body = { name, username, key }
 
   // Do not update properties that are not in the request body
-  if (username === undefined) { delete body.username }
-  if (key === undefined) { delete body.key }
-  if (name === undefined) { delete body.name }
+  if (username === undefined) {
+    delete body.username
+  }
+  if (key === undefined) {
+    delete body.key
+  }
+  if (name === undefined) {
+    delete body.name
+  }
 
   try {
-    await db.credentials()
+    await db
+      .credentials()
       .update(body)
       .where('id', id)
     delete body.key
     res.json({ id, ...body })
   } catch (ex) {
-    res
-      .status(500)
-      .json({ message: ex.message || ex })
+    res.status(500).json({ message: ex.message || ex })
   }
 }
 

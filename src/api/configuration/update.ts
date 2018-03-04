@@ -8,8 +8,7 @@ const handler: RequestHandler = async (req, res) => {
     await update(body)
     res.json({ messsage: 'Successfully updated configuration' })
   } catch (ex) {
-    res.status(500)
-      .json({ message: ex.message || ex })
+    res.status(500).json({ message: ex.message || ex })
   }
 }
 

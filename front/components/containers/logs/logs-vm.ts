@@ -20,7 +20,10 @@ class Logs {
   }
 
   getLogs = async () => {
-    const result = await fetch(`/api/containers/${this.container().id()}/logs/${this.container().host.id}?tail=${this.tail()}`)
+    const result = await fetch(
+      `/api/containers/${this.container().id()}/logs/${this.container().host
+        .id}?tail=${this.tail()}`
+    )
     if (result.status >= 400) {
       state.toast.error(`Failed to retrieve container logs: ${result.statusText}`)
       return

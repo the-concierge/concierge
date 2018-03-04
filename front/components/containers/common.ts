@@ -25,12 +25,13 @@ export const defaultContainer: ObservableContainer = {
   }
 }
 
-export const activeContainer: KnockoutObservable<ObservableContainer> = ko.observable(defaultContainer)
+export const activeContainer: KnockoutObservable<ObservableContainer> = ko.observable(
+  defaultContainer
+)
 export const activeContainerId = ko.observable('')
 
 activeContainerId.subscribe(id => {
-  const container = state.containers()
-    .find(con => con.id() === id)
+  const container = state.containers().find(con => con.id() === id)
 
   if (container) {
     activeContainer(container)

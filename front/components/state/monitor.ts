@@ -12,7 +12,6 @@ class Monitor<T> {
       this.entries.push(JSON.stringify(event.event, null, 2))
     })
   }
-
 }
 
 export default Monitor

@@ -6,7 +6,7 @@ import * as request from '../request'
  */
 export async function one(conciergeId: number | Concierge.Concierge) {
   if (isNum(conciergeId)) {
-    let concierge = await (getConcierges.one(conciergeId))
+    let concierge = await getConcierges.one(conciergeId)
     return await request.get(toUrl(concierge))
   } else {
     return await request.get(toUrl(conciergeId))

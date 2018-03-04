@@ -8,24 +8,18 @@ const handler: RequestHandler = async (req, res) => {
 
   const host = await getHosts.getOne(hostId)
   if (!host) {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: 'Invalid Host ID'
-      })
+    return res.status(400).json({
+      status: 400,
+      message: 'Invalid Host ID'
+    })
   }
 
   const client = docker(host)
   try {
-    await client
-      .getContainer(containerId)
-      .stop()
+    await client.getContainer(containerId).stop()
     return res.json({ message: 'Stopped OK' })
   } catch (ex) {
-    return res
-      .status(500)
-      .json(ex)
+    return res.status(500).json(ex)
   }
 }
 

@@ -1,10 +1,13 @@
-
 import getSftpClient from './getSftpClient'
 
 /**
  * Create a file on the Host
  */
-export default async function writeFile(host: Concierge.Host, filename: string, data: Buffer): Promise<boolean> {
+export default async function writeFile(
+  host: Concierge.Host,
+  filename: string,
+  data: Buffer
+): Promise<boolean> {
   const client = await getSftpClient(host)
   const success = await write(client, filename, data)
   return success
@@ -12,7 +15,6 @@ export default async function writeFile(host: Concierge.Host, filename: string, 
 
 function write(client, filePath: string, data: Buffer) {
   const promise = new Promise<boolean>((resolve, reject) => {
-
     function readFileHandler(error, response) {
       client.end()
       if (error) {

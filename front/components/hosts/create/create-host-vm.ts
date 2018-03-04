@@ -50,9 +50,7 @@ class CreateHost {
     const sshUsername = this.username()
     const sshPort = this.sshPort() || 22
     const dockerPort = this.dockerPort() || 2375
-    const key = this.displayAuth() === 'key'
-      ? this.privateKey()
-      : this.password()
+    const key = this.displayAuth() === 'key' ? this.privateKey() : this.password()
 
     const url = `/api/hosts`
 

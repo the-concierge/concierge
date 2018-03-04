@@ -6,9 +6,7 @@ const handler: RequestHandler = async (req, res) => {
   const hosts = await db.getAll()
   const tag = req.query.tag
   if (!tag) {
-    res
-      .status(400)
-      .json({ message: 'No tag provided' })
+    res.status(400).json({ message: 'No tag provided' })
     return
   }
 

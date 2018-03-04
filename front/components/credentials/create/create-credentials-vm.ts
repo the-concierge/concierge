@@ -12,11 +12,15 @@ class CreateCredentials {
 
   constructor() {
     this.password.subscribe(pwd => {
-      if (pwd.length > 0 && this.key().length > 0) { this.key('') }
+      if (pwd.length > 0 && this.key().length > 0) {
+        this.key('')
+      }
     })
 
     this.key.subscribe(key => {
-      if (key.length > 0 && this.password().length > 0) { this.password('') }
+      if (key.length > 0 && this.password().length > 0) {
+        this.password('')
+      }
     })
   }
 

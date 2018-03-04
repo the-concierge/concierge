@@ -12,41 +12,35 @@ type Body = {
   links: Link[]
 }
 
-type Link = { containerName: string, alias: string }
-type Port = { expose: boolean, port: number, type: string, hostPort: string }
-type Volume = { hostPath: string, path: string }
-type Env = { key: string, value: string }
+type Link = { containerName: string; alias: string }
+type Port = { expose: boolean; port: number; type: string; hostPort: string }
+type Volume = { hostPath: string; path: string }
+type Env = { key: string; value: string }
 
 const handler: RequestHandler = async (req, res) => {
   const { name, image, envs, ports, volumes, links } = req.body as Body
 
-  const exposedPorts = ports
-    .filter(port => port.expose)
-    .reduce((prev, curr) => {
-      const key = `${curr.port}/${curr.type}`
-      prev[key] = {}
-      return prev
-    },
-    {} as any)
+  const exposedPorts = ports.filter(port => port.expose).reduce((prev, curr) => {
+    const key = `${curr.port}/${curr.type}`
+    prev[key] = {}
+    return prev
+  },
+  {} as any)
 
-  const portBindings = ports
-    .filter(port => port.expose)
-    .reduce((prev, curr) => {
-      const key = `${curr.port}/${curr.type}`
-      const hostCfg: any = {}
+  const portBindings = ports.filter(port => port.expose).reduce((prev, curr) => {
+    const key = `${curr.port}/${curr.type}`
+    const hostCfg: any = {}
 
-      // If a hostPort is specified, pass the option through to Docker
-      if (curr.hostPort) {
-        hostCfg.HostPort = curr.hostPort
-      }
-      prev[key] = [hostCfg]
-      return prev
-    },
-    {} as any)
+    // If a hostPort is specified, pass the option through to Docker
+    if (curr.hostPort) {
+      hostCfg.HostPort = curr.hostPort
+    }
+    prev[key] = [hostCfg]
+    return prev
+  },
+  {} as any)
 
-  const binds = volumes
-    .filter(vol => !!vol.hostPath)
-    .map(vol => `${vol.hostPath}:${vol.path}`)
+  const binds = volumes.filter(vol => !!vol.hostPath).map(vol => `${vol.hostPath}:${vol.path}`)
 
   const containerLinks = links.map(link => `${link.containerName}:${link.alias}`)
 
@@ -80,11 +74,8 @@ const handler: RequestHandler = async (req, res) => {
       host: host.host.hostname
     })
   } catch (ex) {
-    res
-      .status(500)
-      .json({ message: ex.message || ex })
+    res.status(500).json({ message: ex.message || ex })
   }
-
 }
 
 async function getAvailableHost() {
@@ -94,7 +85,7 @@ async function getAvailableHost() {
   }
 
   const loads = await Promise.all(hosts.map(getHostLoads))
-  loads.sort((left, right) => left > right ? 1 : -1)
+  loads.sort((left, right) => (left > right ? 1 : -1))
   const leastLoaded = loads[0]
   return leastLoaded
 }

@@ -7,9 +7,7 @@ const handler: RequestHandler = async (req, res) => {
   const id = req.params.id
   const app = await db.one(id)
   if (!app) {
-    res
-      .status(400)
-      .json({ message: `Application '${id}' does not exist` })
+    res.status(400).json({ message: `Application '${id}' does not exist` })
     return
   }
 
@@ -17,9 +15,7 @@ const handler: RequestHandler = async (req, res) => {
     const files = await getLogs(app)
     res.json(files)
   } catch (ex) {
-    res
-      .status(500)
-      .json({ message: ex.message || ex })
+    res.status(500).json({ message: ex.message || ex })
   }
 }
 export default handler
@@ -27,7 +23,6 @@ export default handler
 const logFileBase = path.resolve(__dirname, '../../../logs')
 function getLogs(application: Concierge.Application) {
   return new Promise<string[]>((resolve, reject) => {
-
     fs.readdir(path.resolve(logFileBase, application.id.toString()), (err, files) => {
       if (err) {
         return reject(err)

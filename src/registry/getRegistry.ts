@@ -8,10 +8,10 @@ export default async function getRegistry(): Promise<Concierge.Registry> {
 
   const details: Concierge.Registry = {
     url: config.dockerRegistry,
-    getUntaggedImage: function (application: Concierge.Application) {
+    getUntaggedImage: function(application: Concierge.Application) {
       return `${this.url}/${application.dockerNamespace}`
     },
-    getTaggedImage: function (application: Concierge.Application, tag: string) {
+    getTaggedImage: function(application: Concierge.Application, tag: string) {
       return `${this.url}/${application.dockerNamespace}:${tag}`
     }
   }

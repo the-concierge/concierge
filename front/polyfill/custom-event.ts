@@ -1,5 +1,5 @@
-(function () {
-  if (typeof window['CustomEvent'] === "function") {
+;(function() {
+  if (typeof window['CustomEvent'] === 'function') {
     return
   }
 

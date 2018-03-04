@@ -1,6 +1,6 @@
 if (!Array.prototype.find) {
   Object.defineProperty(Array.prototype, 'find', {
-    value: function (predicate) {
+    value: function(predicate) {
       // 1. Let O be ? ToObject(this value).
       if (this === null || this === undefined) {
         throw new TypeError('"this" is null or not defined')

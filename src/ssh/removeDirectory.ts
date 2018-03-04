@@ -4,8 +4,7 @@ import getSshClient from './getClient'
  * Delete a directry on a Host
  */
 export default function remove(host: Concierge.Host, path: string): Promise<boolean> {
-  return getSshClient(host)
-    .then(client => removeDirectory(client, path))
+  return getSshClient(host).then(client => removeDirectory(client, path))
 }
 
 function removeDirectory(client, path: string) {

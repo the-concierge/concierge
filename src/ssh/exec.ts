@@ -12,20 +12,22 @@ export default async function exec(host: Concierge.Host, command: string) {
         return reject(error)
       }
 
-      stream.on('exit', (code, signal) => {
-        if (typeof code === 'number' && code !== 0) {
-          log.error(`[SSH.EXEC] Failed to execute: ${command}`)
-          return reject(`Remote process exited with code ${code}`)
-        }
+      stream
+        .on('exit', (code, signal) => {
+          if (typeof code === 'number' && code !== 0) {
+            log.error(`[SSH.EXEC] Failed to execute: ${command}`)
+            return reject(`Remote process exited with code ${code}`)
+          }
 
-        if (signal) {
-          log.error(`[SSH.EXEC] Failed to execute: ${command}`)
-          return reject(`Remove process killed with signal ${signal}`)
-        } else {
-          resolve(true)
-        }
-      }).resume()
+          if (signal) {
+            log.error(`[SSH.EXEC] Failed to execute: ${command}`)
+            return reject(`Remove process killed with signal ${signal}`)
+          } else {
+            resolve(true)
+          }
+        })
+        .resume()
     })
   })
-  return await (promise)
+  return await promise
 }

@@ -1,4 +1,1 @@
-export {
-  requestHandler,
-  webSocketHandler
-} from './handler'
+export { requestHandler, webSocketHandler } from './handler'

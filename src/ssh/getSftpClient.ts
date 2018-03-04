@@ -4,8 +4,7 @@ import getClient from './getClient'
  * Create an instance of an SFTP client
  */
 export default function get(host: Concierge.Host) {
-  return getClient(host)
-    .then(getSftpClient)
+  return getClient(host).then(getSftpClient)
 }
 
 function getSftpClient(client) {
