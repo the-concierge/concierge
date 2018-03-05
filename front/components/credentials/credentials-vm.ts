@@ -10,7 +10,7 @@ class Credentials {
   showCreateModal = createCreds.showModal
   showEditModal = edit.editCredentials
 
-  refresh = () => state.getApplications()
+  refresh = () => state.getCredentials()
 
   removeCredentials = async (creds: Concierge.Credentials) => {
     await fetch(`/api/credentials/${creds.id}`, { method: 'DELETE' })

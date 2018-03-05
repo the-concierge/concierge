@@ -63,8 +63,8 @@ class Configuration {
           continue
         }
 
-        const stillExists = creds.find(c => c.id === cred.value)
-        if (!stillExists) {
+        const isDeleted = creds.every(c => c.id !== cred.value)
+        if (isDeleted) {
           this.credentials.remove(cred)
         }
       }

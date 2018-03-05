@@ -155,7 +155,7 @@ class StateManager {
   }
 
   getHosts = () => {
-    fetch('/api/hosts')
+    return fetch('/api/hosts')
       .then(res => res.json())
       .then(hosts => {
         this.hosts.removeAll()
@@ -164,7 +164,7 @@ class StateManager {
   }
 
   getImages = () => {
-    fetch('/api/images')
+    return fetch('/api/images')
       .then(res => res.json())
       .then(images => {
         for (const image of images) {
@@ -196,7 +196,7 @@ class StateManager {
   }
 
   getApplications = () => {
-    fetch('/api/applications')
+    return fetch('/api/applications')
       .then(res => res.json())
       .then((apps: Concierge.ApplicationDTO[]) => {
         // Remove applications that have been deleted
@@ -217,7 +217,7 @@ class StateManager {
   getApplicationRemotes = () => {
     const url = '/api/applications/branches?active'
 
-    fetch(url)
+    return fetch(url)
       .then(res => res.json())
       .then((remotes: Concierge.ApplicationRemote[]) => {
         const existingRemotes = this.applicationRemotes()
@@ -246,16 +246,16 @@ class StateManager {
   }
 
   getCredentials = () => {
-    fetch('/api/credentials')
+    return fetch('/api/credentials')
       .then(res => res.json())
       .then(creds => {
-        this.credentials.destroyAll()
+        this.credentials.removeAll()
         this.credentials.push(...creds)
       })
   }
 
   getConfiguration = () => {
-    fetch('/api/configuration')
+    return fetch('/api/configuration')
       .then(res => res.json())
       .then(cfg => this.configuration(cfg))
   }
