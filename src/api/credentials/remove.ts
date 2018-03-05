@@ -10,7 +10,7 @@ const handler: RequestHandler = async (req, res) => {
       .delete()
       .where('id', id)
 
-    res.json({ id, message: 'Successful' })
+    res.json({ id, message: 'Successfully removed credentials' })
   } catch (ex) {
     res.status(500).json({ message: ex.message || ex })
   }
