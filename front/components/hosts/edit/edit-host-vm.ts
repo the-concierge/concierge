@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class EditHost {
@@ -21,7 +20,7 @@ class EditHost {
   isPassword = ko.computed(() => this.displayAuth() === 'Password')
   isKey = ko.computed(() => this.displayAuth() === 'Key')
 
-  originalHost: Concierge.Host
+  originalHost: Concierge.Host = {} as any
 
   useKey = () => this.displayAuth('Key') || true
   usePassword = () => this.displayAuth('Password') || true
@@ -44,7 +43,7 @@ class EditHost {
 
   editHost = (host: Concierge.Host) => {
     this.originalHost = host
-    this.hostId(host.id)
+    this.hostId(host.id!)
     this.hostname(host.hostname)
     this.proxyIp(host.proxyIp)
     this.vanityHostname(host.vanityHostname)
@@ -67,7 +66,7 @@ class EditHost {
       capacity: this.capacity(),
       key: this.password() || this.privateKey(),
       dockerPort: this.dockerPort()
-    }
+    } as any
 
     for (const key of Object.keys(body)) {
       if (key === 'key' && !body.key) {
@@ -77,7 +76,7 @@ class EditHost {
 
       // If the original is empty and the "modified" is empty, the empty field isn't being modified
       // Therefore do not send the value (empty string) in the request body
-      if (!body[key] && !this.originalHost[key]) {
+      if (!body[key] && !(this.originalHost as any)[key]) {
         delete body[key]
       }
     }
@@ -106,7 +105,7 @@ class EditHost {
 const viewModel = new EditHost()
 
 ko.components.register('ko-edit-host', {
-  template: fs.readFileSync(`${__dirname}/edit-host.html`).toString(),
+  template: require('./edit-host.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

@@ -1,19 +1,12 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../state'
 import menu from '../menu'
 
 class Configuration {
   config = state.configuration
-  credentials = ko.computed(() => {
-    return [
-      { text: 'None', value: null },
-      ...state.credentials().map<DropdownOption>(cred => ({
-        text: cred.name,
-        value: cred.id
-      }))
-    ]
-  })
+  credentials = ko.observableArray<{ text: string; value: number | null }>([
+    { text: 'None', value: null }
+  ])
 
   original = ko.observable<Partial<Concierge.Configuration>>({})
   isEditing = ko.observable(false)
@@ -50,6 +43,29 @@ class Configuration {
 
           field.original(original)
           field.value(original)
+        }
+      }
+    })
+
+    state.credentials.subscribe(creds => {
+      const stored = this.credentials()
+      for (const cred of creds) {
+        const existing = stored.find(store => store.value === cred.id)
+        if (existing) {
+          this.credentials.replace(existing, { text: cred.name, value: cred.id })
+          continue
+        }
+        this.credentials.push({ text: cred.name, value: cred.id })
+      }
+
+      for (const cred of this.credentials()) {
+        if (cred.value === null) {
+          continue
+        }
+
+        const stillExists = creds.find(c => c.id === cred.value)
+        if (!stillExists) {
+          this.credentials.remove(cred)
         }
       }
     })
@@ -112,7 +128,7 @@ class Configuration {
 const viewModel = new Configuration()
 
 ko.components.register('ko-configuration', {
-  template: fs.readFileSync(`${__dirname}/configuration.html`).toString(),
+  template: require('./configuration.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

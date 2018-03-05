@@ -41,3 +41,5 @@ logs/*
 build/
 .env
 .DS_Store
+front/*.html
+!front/index.html

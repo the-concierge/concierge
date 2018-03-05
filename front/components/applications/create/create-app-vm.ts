@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class CreateApp {
@@ -93,7 +92,7 @@ class CreateApp {
 const viewModel = new CreateApp()
 
 ko.components.register('ko-create-application', {
-  template: fs.readFileSync(`${__dirname}/create-app.html`).toString(),
+  template: require('./create-app.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

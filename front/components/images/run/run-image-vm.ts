@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state, { Image } from '../../state'
 import { ImageInspectInfo } from 'dockerode'
 
@@ -233,7 +232,7 @@ class Run {
 const viewModel = new Run()
 
 ko.components.register('ko-run-image', {
-  template: fs.readFileSync(`${__dirname}/run-image.html`).toString(),
+  template: require('./run-image.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

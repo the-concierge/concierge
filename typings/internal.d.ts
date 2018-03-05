@@ -5,6 +5,11 @@ interface Window {
   containerPoller: any
 }
 
+declare module '*.html' {
+  const html: string
+  export default html
+}
+
 interface Logger {
   info: (message: string) => void
   warn: (message: string) => void

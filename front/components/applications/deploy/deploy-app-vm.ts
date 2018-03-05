@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class Deploy {
@@ -103,7 +102,7 @@ class Deploy {
 const viewModel = new Deploy()
 
 ko.components.register('ko-deploy-application', {
-  template: fs.readFileSync(`${__dirname}/deploy-app.html`).toString(),
+  template: require('./deploy-app.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

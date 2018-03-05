@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class Run {
@@ -46,7 +45,7 @@ class Run {
 const viewModel = new Run()
 
 ko.components.register('ko-pull-image', {
-  template: fs.readFileSync(`${__dirname}/pull-image.html`).toString(),
+  template: require('./pull-image.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

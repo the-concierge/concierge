@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 import { activeContainer } from '../common'
 
@@ -32,9 +31,7 @@ class Logs {
     const logs: string[] = await result.json()
 
     const flattenedLogs = logs
-      .reduce((prev, entry) => {
-        return prev.concat(entry.split('\n'))
-      }, [])
+      .reduce((prev, entry) => prev.concat(entry.split('\n')), [] as string[])
       .filter(line => !!line.trim())
 
     this.logs.removeAll()
@@ -45,7 +42,7 @@ class Logs {
 const viewModel = new Logs()
 
 ko.components.register('ko-container-logs', {
-  template: fs.readFileSync(`${__dirname}/logs.html`).toString(),
+  template: require('./logs.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

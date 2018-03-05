@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import menu from '../menu'
 
 type Context = {
@@ -22,7 +21,7 @@ export class Link {
 }
 
 ko.components.register('ko-link', {
-  template: fs.readFileSync(`${__dirname}/link.html`).toString(),
+  template: require('./link.html'),
   viewModel: {
     createViewModel: (params: any, info: Context) => new Link(params, info)
   }

@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import Monitor from '../state/monitor'
 import state from '../state'
 import menu from '../menu'
@@ -20,7 +19,7 @@ class Logs {
 const viewModel = new Logs()
 
 ko.components.register('ko-logs', {
-  template: fs.readFileSync(`${__dirname}/logs.html`).toString(),
+  template: require('./logs.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

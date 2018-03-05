@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import { activeContainer } from '../common'
 import state from '../../state'
 
@@ -43,7 +42,7 @@ class Details {
 const viewModel = new Details()
 
 ko.components.register('ko-container-details', {
-  template: fs.readFileSync(`${__dirname}/details.html`).toString(),
+  template: require('./details.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

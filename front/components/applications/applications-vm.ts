@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import createApp from './create'
 import editApp from './edit'
 import deployApp from './deploy'
@@ -126,7 +125,7 @@ class Applications {
 const applications = new Applications()
 
 ko.components.register('ko-applications', {
-  template: fs.readFileSync(`${__dirname}/applications.html`).toString(),
+  template: require('./applications.html'),
   viewModel: {
     createViewModel: () => applications
   }

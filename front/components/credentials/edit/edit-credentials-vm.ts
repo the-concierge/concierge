@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class EditCredentials {
@@ -88,7 +87,7 @@ class EditCredentials {
 const viewModel = new EditCredentials()
 
 ko.components.register('ko-edit-credentials', {
-  template: fs.readFileSync(`${__dirname}/edit-credentials.html`).toString(),
+  template: require('./edit-credentials.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

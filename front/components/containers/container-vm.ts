@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state, { ObservableContainer } from '../state'
 import menu from '../menu'
 import inspect from './inspect'
@@ -42,7 +41,7 @@ class Containers {
 const viewModel = new Containers()
 
 ko.components.register('ko-containers', {
-  template: fs.readFileSync(`${__dirname}/containers.html`).toString(),
+  template: require('./containers.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

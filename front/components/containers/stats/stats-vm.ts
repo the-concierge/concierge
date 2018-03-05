@@ -1,11 +1,10 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 import { activeContainerId } from '../common'
 import { BoxData } from 'analysis'
 import * as hs from 'highcharts'
-require('highcharts/highcharts-more')(hs)
-require('highcharts/modules/exporting')(hs)
+require('highcharts/highcharts-more.js')(hs)
+require('highcharts/modules/exporting.js')(hs)
 
 type RawStats = Array<{
   cpu: string
@@ -106,7 +105,7 @@ class Performance {
         prev.timestamp.push(stat.timestamp)
         return prev
       },
-      { cpu: [], memory: [], timestamp: [] }
+      { cpu: [] as any[], memory: [] as any[], timestamp: [] as any[] }
     )
 
     this.timestamp = parsedStats.timestamp
@@ -120,7 +119,7 @@ class Performance {
 const viewModel = new Performance()
 
 ko.components.register('ko-container-stats', {
-  template: fs.readFileSync(`${__dirname}/stats.html`).toString(),
+  template: require('./stats.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

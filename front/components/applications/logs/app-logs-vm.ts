@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 
 class Logs {
   modalActive = ko.observable(false)
@@ -26,7 +25,7 @@ class Logs {
 const viewModel = new Logs()
 
 ko.components.register('ko-application-logs', {
-  template: fs.readFileSync(`${__dirname}/app-logs.html`).toString(),
+  template: require('./app-logs.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

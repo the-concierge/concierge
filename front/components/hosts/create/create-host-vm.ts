@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class CreateHost {
@@ -86,7 +85,7 @@ class CreateHost {
 const viewModel = new CreateHost()
 
 ko.components.register('ko-create-host', {
-  template: fs.readFileSync(`${__dirname}/create-host.html`).toString(),
+  template: require('./create-host.html'),
   viewModel: {
     createViewModel: () => viewModel
   }

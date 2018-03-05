@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import runImage from './run'
 import pullImage from './pull'
 import { common } from 'analysis'
@@ -58,7 +57,7 @@ const images = new Images()
 export default images
 
 ko.components.register('ko-images', {
-  template: fs.readFileSync(`${__dirname}/images.html`).toString(),
+  template: require('./images.html'),
   viewModel: {
     createViewModel: () => images
   }

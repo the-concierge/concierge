@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import menu from '../menu'
 import state from '../state'
 
@@ -22,7 +21,7 @@ class Body {
 const body = new Body()
 
 ko.components.register('ko-body', {
-  template: fs.readFileSync(`${__dirname}/body.html`).toString(),
+  template: require('./body.html'),
   viewModel: {
     createViewModel: () => body
   }

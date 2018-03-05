@@ -1,5 +1,4 @@
 import * as ko from 'knockout'
-import * as fs from 'fs'
 import state from '../../state'
 
 class EditApp {
@@ -13,7 +12,7 @@ class EditApp {
   label = ko.observable('')
   dockerfile = ko.observable('')
   autoBuild = ko.observable(false)
-  originalApp: Concierge.Application
+  originalApp: Concierge.Application = {} as any
   credentials = ko.computed(() => {
     return [{ id: 0, name: 'None', username: '', key: '' }, ...state.credentials()]
   })
@@ -97,7 +96,7 @@ class EditApp {
 const viewModel = new EditApp()
 
 ko.components.register('ko-edit-application', {
-  template: fs.readFileSync(`${__dirname}/edit-app.html`).toString(),
+  template: require('./edit-app.html'),
   viewModel: {
     createViewModel: () => viewModel
   }
