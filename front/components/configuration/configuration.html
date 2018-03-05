@@ -29,7 +29,14 @@
       <label data-bind="text: label" class="form-label"></label>
     </div>
     <div class="col-4">
-      <input type="text" class="form-input" data-bind="textInput: value, css: cls, enable: $parent.isEditing" />
+      <!-- ko if: type === 'text' -->
+      <input type="text" class="form-input" data-bind="textInput: value, css: style, enable: $parent.isEditing" />
+      <!-- /ko -->
+
+      <!-- ko if: type === 'dropdown' -->
+      <select class="form-select" data-bind="options: options, optionsText: 'text', value: value, css: style, enable: $parent.isEditing"></select>
+      <!-- /ko -->
+
     </div>
     <div class="col-5"></div>
   </div>

@@ -1,5 +1,6 @@
 import * as db from '../configuration/db'
-import docker from '../docker'
+import docker, { getAuthConfig } from '../docker'
+import { toast } from '../stats/emitter'
 
 /**
  * Push a tag to the configured registry (if available)
@@ -37,18 +38,48 @@ export default async function push(host: Concierge.Host, imageName: string): Pro
   const imageToPush = client.getImage(`${repo}:${tag}`)
 
   log.info(`Pushing to registry: ${repo}:${tag}`)
+  const authconfig = await getAuthConfig()
 
-  const stream = await imageToPush.push({
-    authconfig: {
-      auth: ''
-    }
-  })
+  try {
+    const stream = await imageToPush.push({ insecure: true, authconfig })
 
-  stream.on('error', (err: any) => {
-    log.error(`Failed to push to registry: ${err.message || err}`)
-  })
+    stream.on('error', (err: any) => {
+      log.error(`Failed to push to registry: ${err.message || err}`)
+    })
 
-  stream.on('end', () => log.info(`Pushed to registry: ${repo}:${tag}`))
+    let isSuccessful = true
+    stream.on('data', data => {
+      try {
+        const json = JSON.parse(data)
+        if (!json.errorDetail) {
+          return
+        }
+        isSuccessful = false
+        const msg = `Failed to push image ${repo}:${tag}: ${json.errorDetail.message}`
+        log.error(msg)
+        toast('error', msg)
+      } catch (ex) {
+        const raw: string = data.toString()
+        if (raw.indexOf('errorDetail') === -1) {
+          return
+        }
+
+        isSuccessful = false
+        const msg = `Failed to push image ${repo}:${tag}: Raw Event: ${raw}`
+        log.error(msg)
+        toast('error', msg)
+      }
+    })
+
+    stream.on('end', () => {
+      if (isSuccessful) {
+        log.info(`Pushed to registry: ${repo}:${tag}`)
+        toast('success', `Successfully pushed ${repo}:${tag} to registry`)
+      }
+    })
+  } catch (ex) {
+    log.error(`Failed to push to registry: ${ex.message || ex}`)
+  }
 }
 
 function getRepoTag(registry: string, originalTag: string): { repo: string; tag: string } | void {

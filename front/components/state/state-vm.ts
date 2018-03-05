@@ -26,18 +26,41 @@ class StateManager {
   }
 
   constructor() {
+    /**
+     * The order here is important due to foreign key references
+     */
     this.getContainers()
-    this.getHosts()
-    this.getImages()
-    this.getApplications()
-    this.getApplicationRemotes()
-    this.getConfiguration()
-    this.getCredentials()
+      .then(this.getHosts)
+      .then(this.getImages)
+      .then(this.getCredentials)
+      .then(this.getApplications)
+      .then(this.getApplicationRemotes)
+      .then(this.getConfiguration)
 
     setInterval(() => {
       this.getContainers()
       this.getImages()
     }, 5000)
+
+    socket.on('toast', (event: ConciergeEvent<ToastEvent>) => {
+      switch (event.type) {
+        case 'info':
+          this.toast.primary(event.event)
+          break
+
+        case 'warning':
+          this.toast.warn(event.event)
+          break
+
+        case 'error':
+          this.toast.error(event.event)
+          break
+
+        case 'success':
+          this.toast.success(event.event)
+          break
+      }
+    })
 
     socket.on('stats', (event: ConciergeEvent<ContainerEvent>) => {
       const container = this.containers().find(container => event.name.startsWith(container.id()))

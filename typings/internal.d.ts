@@ -63,6 +63,7 @@ declare namespace Concierge {
     statsBinSize: number // Samples per bin at 1Hert per container
     statsRetentionDays: number // Truncate stats records older than N day(s)
     dockerRegistry?: string
+    registryCredentials?: number
   }
 
   interface Application {
@@ -249,6 +250,8 @@ interface BuildStatusEvent {
   imageId?: string
   state: number
 }
+
+type ToastEvent = string
 
 /**
  * TODO: Contribute back to @types/dockerode

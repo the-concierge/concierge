@@ -23,6 +23,11 @@ export function buildStatus(appId: number, event: BuildStatusEvent) {
   emitter.emit('build-status', appId, event)
 }
 
+export type ToastType = 'info' | 'warning' | 'error' | 'success'
+export function toast(type: ToastType, message: string) {
+  socket.emit('toast', newEvent('toast', type, message))
+}
+
 emitter.addListener('container', (subdomain: string, event: any) => {
   socket.emit('event', newEvent(subdomain, 'Container', event))
 })

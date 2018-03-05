@@ -16,7 +16,7 @@ class EditCredentials {
 
   isPassword = ko.computed(() => this.displayAuth() === 'Password')
   isKey = ko.computed(() => this.displayAuth() === 'Key')
-  originalCredentials: Concierge.Credentials
+  originalCredentials: Concierge.Credentials = {} as any
 
   useKey = () => this.displayAuth('Key') || true
   usePassword = () => this.displayAuth('Password') || true
@@ -47,7 +47,9 @@ class EditCredentials {
       name: this.name(),
       username: this.username(),
       key: this.password() || this.privateKey()
-    }
+    } as any
+
+    const originalCreds = this.originalCredentials as any
 
     for (const key of Object.keys(body)) {
       if (key === 'key' && !body.key) {
@@ -57,7 +59,7 @@ class EditCredentials {
 
       // If the original is empty and the "modified" is empty, the empty field isn't being modified
       // Therefore do not send the value (empty string) in the request body
-      if (!body[key] && !this.originalCredentials[key]) {
+      if (!body[key] && !originalCreds[key]) {
         delete body[key]
       }
     }
