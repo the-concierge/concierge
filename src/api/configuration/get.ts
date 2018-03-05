@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { getConfig as get } from './db'
+import { get } from './db'
 
 const handler: RequestHandler = async (_, res) => {
   try {

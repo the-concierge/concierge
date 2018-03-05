@@ -1,5 +1,11 @@
 import * as db from '../../data'
-import getCache, * as cache from '../../configurations/get'
+
+export function getQuery() {
+  return db
+    .configurations()
+    .select()
+    .first()
+}
 
 export async function get() {
   const config = (await db
@@ -12,11 +18,5 @@ export async function get() {
 export async function update(config: Partial<Concierge.Configuration>) {
   delete config.conciergePort
   const result = await db.configurations().update(config)
-
-  cache.setCache(config)
   return result
-}
-
-export async function getConfig() {
-  return getCache()
 }

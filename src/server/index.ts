@@ -6,7 +6,8 @@ import v2Router from '../api'
 import * as http from 'http'
 import * as io from 'socket.io'
 import * as proxy from './proxy'
-import { port } from '../configurations/port'
+
+const PORT = Number(process.env.CONCIERGE_PORT || 3141)
 
 const app = express()
 
@@ -18,12 +19,12 @@ const router = express.Router()
 
 export default function start() {
   return new Promise((resolve, reject) => {
-    server.listen(port, (err: any) => {
+    server.listen(PORT, (err: any) => {
       if (err) {
         return reject(err)
       }
-      log.info(`HTTP server started on port ${port}`)
-      resolve(port)
+      log.info(`HTTP server started on port ${PORT}`)
+      resolve(PORT)
     })
   })
 }

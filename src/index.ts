@@ -4,14 +4,10 @@ import startServer from './server'
 import watchHosts from './api/stats/hosts'
 import watchContainers from './api/stats/containers'
 import watchRemotes from './api/applications/monitor'
-import { initialise as initConfig } from './configurations/get'
 
 async function start() {
   // Migrate the database
   await migrateDatabase()
-
-  // Fetch the configuration from the database and cache it
-  await initConfig()
 
   // Start the web server
   await startServer()
