@@ -65,7 +65,7 @@ class EditCredentials {
     }
 
     const result = await fetch(`/api/credentials/${this.id()}`, {
-      method: 'POST',
+      method: 'PUT',
       body: JSON.stringify(body),
       headers: {
         'Content-Type': 'application/json'
