@@ -62,7 +62,7 @@
     "logs": "pm2 logs the-concierge",
     "status": "pm2 status the-concierge",
     "// Build scripts": "",
-    "clean": "rimraf build/ && node scripts/clean.js",
+    "clean": "rimraf build",
     "build": "tsc -p scripts/tsconfig.node.json && tsc -p scripts/tsconfig.front.json",
     "build:front": "tsc -p scripts/tsconfig.front.json && yarn bundle",
     "build:back": "tsc -p scripts/tsconfig.node.json",
