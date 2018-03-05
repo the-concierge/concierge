@@ -7,7 +7,8 @@ RUN mkdir -p archive \
 	&& mkdir -p db \
 	&& mkdir -p repositories \
 	&& yarn	\
-	&& yarn build
+	&& yarn build \
+	&& yarn bundle
 
 VOLUME /concierge/db /concierge/repositories /concierge/logs
 

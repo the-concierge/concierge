@@ -48,7 +48,7 @@
     "promise-polyfill": "^6.0.2",
     "rimraf": "^2.6.1",
     "ts-loader": "^4.0.1",
-    "typescript": "^2.6.2",
+    "typescript": "^2.7.2",
     "webpack": "^4.1.0",
     "webpack-cli": "^2.0.10",
     "whatwg-fetch": "^2.0.3"
@@ -64,7 +64,6 @@
     "// Build scripts": "",
     "clean": "rimraf build/ && node scripts/clean.js",
     "build": "tsc -p scripts/tsconfig.node.json && tsc -p scripts/tsconfig.front.json",
-    "postbuild": "browserify -e front/index.js -o front/bundle.js -r fs:browserify-fs -t brfs",
     "build:front": "tsc -p scripts/tsconfig.front.json && yarn bundle",
     "build:back": "tsc -p scripts/tsconfig.node.json",
     "bundle": "webpack --module-bind 'html=raw-loader' --config build/webpack.config.js",
