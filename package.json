@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "2.6.12",
+  "version": "2.7.0",
   "description": "Concierge Service",
   "main": "build/index.js",
   "keywords": [
@@ -62,9 +62,9 @@
     "logs": "pm2 logs the-concierge",
     "status": "pm2 status the-concierge",
     "// Build scripts": "",
-    "clean": "rimraf build",
-    "build": "tsc -p scripts/tsconfig.node.json && tsc -p scripts/tsconfig.front.json",
-    "build:front": "tsc -p scripts/tsconfig.front.json && yarn bundle",
+    "clean": "rimraf \"build\" \"front/**/*.js\" front/**/*.js.map\"",
+    "build": "yarn build:back && yarn build:front",
+    "build:front": "yarn bundle",
     "build:back": "tsc -p scripts/tsconfig.node.json",
     "bundle": "webpack --module-bind 'html=raw-loader' --config build/webpack.config.js",
     "lint": "prettier --single-quote=true --no-bracket-spacing=true --tab-width=2 --trailing-comma=none --use-tabs=false --print-width=100 --no-semi --write \"./src/**/*.ts\" \"./front/**/*.ts\"",
