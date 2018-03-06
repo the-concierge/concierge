@@ -6,23 +6,14 @@
   "isShellCommand": true,
   "showOutput": "always",
   "suppressTaskName": true,
-  "problemMatcher": "$tsc",
+  "problemMatcher": "$tsc-watch",
   "tasks": [
     {
       "isBuildCommand": true,
+      "isBackground": true,
       "taskName": "build:back",
-      "args": [
-        "build:back"
-      ],
-      "problemMatcher": "$tsc"
-    },
-    {
-      "isBuildCommand": true,
-      "taskName": "build:front",
-      "args": [
-        "build:front"
-      ],
-      "problemMatcher": "$tsc"
+      "args": ["build:back", "--watch"],
+      "problemMatcher": "$tsc-watch"
     }
   ]
 }

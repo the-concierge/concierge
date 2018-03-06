@@ -24,6 +24,10 @@ export = {
             }
           }
         ]
+      },
+      {
+        test: /\.html$/,
+        use: 'raw-loader'
       }
     ]
   }
