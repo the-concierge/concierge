@@ -4,7 +4,7 @@ import create from './create'
 import update from './update'
 import refs from './refs'
 import remove from './remove'
-import deploy from './deploy'
+import build from './build'
 import getAppLogs from './logs'
 import getAppLog from './log'
 import getBranches from './branches'
@@ -20,7 +20,7 @@ router.get('/', get.all)
 router.get('/:id/refs', refs)
 router.post('/', create)
 router.post('/:id', update)
-router.put('/:id/deploy', deploy)
+router.put('/:id/build', build)
 router.delete('/:id', remove)
 
 export default router

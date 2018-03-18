@@ -1,6 +1,6 @@
 import { Branch, State } from '../types'
 import * as db from '../db'
-import build from '../build'
+import buildImage from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
 
@@ -76,7 +76,7 @@ class BuildQueue {
       const app = item.app
       const refSlug = slug(item.ref)
       const buildTag = `${app.label}:${refSlug}`
-      const buildJob = await build(app, item.sha, buildTag)
+      const buildJob = await buildImage(app, item.sha, buildTag)
 
       await updateRemote(item, State.Building)
       const result = await buildJob.build

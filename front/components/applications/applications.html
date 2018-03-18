@@ -32,7 +32,7 @@
       <td data-bind="text: repository, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
       <td data-bind="text: dockerfile, click: function() { displayImages(!displayImages()) }" style="cursor: pointer"></td>
       <td>
-        <button class="btn btn-md" data-bind="click: $parent.showDeployModal">Build</button>
+        <button class="btn btn-md" data-bind="click: $parent.showBuildModal">Build</button>
         <button class="btn btn-md" data-bind="click: $parent.showEditModal">Edit</button>
         <button class="btn btn-md" data-bind="click: $parent.removeApplication">Remove</button>
         <button class="btn btn-md" data-bind="click: $parent.showLogsModal">Logs</button>
@@ -86,7 +86,7 @@
 
 <ko-edit-application></ko-edit-application>
 
-<ko-deploy-application></ko-deploy-application>
+<ko-build-application></ko-build-application>
 
 <ko-application-logs></ko-application-logs>
 

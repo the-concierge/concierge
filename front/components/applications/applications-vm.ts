@@ -1,7 +1,7 @@
 import * as ko from 'knockout'
 import createApp from './create'
 import editApp from './edit'
-import deployApp from './deploy'
+import buildApp from './build'
 import appLogs from './logs'
 import state, { Image, State } from '../state'
 import menu from '../menu'
@@ -56,13 +56,13 @@ class Applications {
   }
 
   showCreateModal = createApp.showModal
-  showDeployModal = deployApp.showModal
+  showBuildModal = buildApp.showModal
   showLogsModal = appLogs.showModal
   showEditModal = editApp.editApplication
 
   rebuildBranch = async (app: ApplicationVM, remote: Concierge.ApplicationRemote) => {
-    const tag = deployApp.toImageTag(app.label, remote.remote)
-    const url = `/api/applications/${app.id}/deploy?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
+    const tag = buildApp.toImageTag(app.label, remote.remote)
+    const url = `/api/applications/${app.id}/build?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
     const result = await fetch(url, { method: 'PUT' })
     const json = await result.json()
     if (result.status <= 400) {
