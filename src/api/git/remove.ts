@@ -6,7 +6,7 @@ export default async function remove(application: Concierge.Application) {
   const workDir = __dirname
 
   const path = appPath(application)
-  const command = `rm -rf ${path}`
+  const command = `rm -rf ${path}/*`
   const result = await cmd(application, workDir, command)
   return result
 }
