@@ -22,7 +22,7 @@
       "runtimeArgs": ["--nolazy"],
       "env": {
         "NODE_ENV": "development",
-        "CONCIERGE_PORT": "10000"
+        "CONCIERGE_PORT": "3141"
       },
       "console": "internalConsole",
       "sourceMaps": true,

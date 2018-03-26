@@ -26,6 +26,13 @@ export = {
         ]
       },
       {
+        test: /\.vue$/,
+        options: {
+          configFile: 'tsconfig.front.json',
+          appendTsSuffixTo: [/\.vue$/]
+        }
+      },
+      {
         test: /\.html$/,
         use: 'raw-loader'
       }

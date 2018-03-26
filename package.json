@@ -30,7 +30,8 @@
     "socket.io-client": "^2.0.4",
     "sqlite3": "^3.1.4",
     "ssh2": "^0.4.9",
-    "tar-fs": "^1.5.1"
+    "tar-fs": "^1.5.1",
+    "vue": "^2.5.16"
   },
   "devDependencies": {
     "@types/express": "^4.0.35",
@@ -49,6 +50,8 @@
     "rimraf": "^2.6.1",
     "ts-loader": "^4.0.1",
     "typescript": "^2.7.2",
+    "vue-loader": "^14.2.2",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^4.1.0",
     "webpack-cli": "^2.0.10",
     "whatwg-fetch": "^2.0.3"
