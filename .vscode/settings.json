@@ -23,13 +23,12 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.tabSize": 2,
   "files.eol": "\n",
-  "tslint.enable": false,
   "prettier.printWidth": 100,
   "prettier.semi": false,
   "prettier.tabWidth": 2,
   "prettier.useTabs": false,
   "prettier.singleQuote": true,
   "prettier.trailingComma": "none",
-  "prettier.disableLanguages": ["json", "markdown"],
+  "prettier.disableLanguages": ["json", "markdown", "vue"],
   "editor.formatOnSave": true
 }

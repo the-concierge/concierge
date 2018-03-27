@@ -3955,9 +3955,9 @@ multimatch@^2.0.0:
     arrify "^1.0.0"
     minimatch "^3.0.0"
 
-multiple-dispatch@^0.3.5:
-  version "0.3.5"
-  resolved "https://registry.npmjs.org/multiple-dispatch/-/multiple-dispatch-0.3.5.tgz#8624bfda4121a6a144573906dfbd59748fa206a6"
+multiple-dispatch@^0.3.7:
+  version "0.3.7"
+  resolved "https://registry.npmjs.org/multiple-dispatch/-/multiple-dispatch-0.3.7.tgz#36cc7ee22113ca2233cbfda09c6755fb7370979e"
 
 mute-stream@0.0.6:
   version "0.0.6"
