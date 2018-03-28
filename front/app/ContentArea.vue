@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import { router } from './router'
 import Containers from './Containers.vue'
+import Images from './Images.vue'
 import { VueConstructor } from 'vue/types/vue'
 
 export interface Toast {
@@ -11,6 +12,7 @@ export interface Toast {
 }
 
 interface NavItem {
+  id: string
   component: VueConstructor<any>
   title: string
   active: boolean
@@ -19,7 +21,8 @@ interface NavItem {
 export default Vue.extend({
   props: ['state'],
   components: {
-    Containers
+    Containers,
+    Images
   },
   data() {
     return {
@@ -27,9 +30,16 @@ export default Vue.extend({
       toasts: [],
       navItems: [
         {
+          id: 'containers',
           component: Containers,
           title: 'Containers',
           active: true
+        },
+        {
+          id: 'images',
+          component: Images,
+          title: 'Images',
+          active: false
         }
       ] as NavItem[]
     }
@@ -50,6 +60,12 @@ export default Vue.extend({
       }
 
       this.view = '404'
+    },
+    setTab(view: string) {
+      this.view = view
+      for (const item of this.navItems) {
+        item.active = view === item.id
+      }
     }
   }
 })
@@ -68,7 +84,7 @@ export default Vue.extend({
             </span>
             <ul class="tab" v-for="item in navItems" v-bind:key="item.title">
               <li class="tab-item" v-bind:class="{ active: item.active }">
-                <span>{{ title }}</span>
+                <a href="#" class="btn btn-link" v-on:click="setTab(item.id)">{{ item.title }}</a>
               </li>
             </ul>
           </section>
@@ -77,7 +93,10 @@ export default Vue.extend({
       </div>
     </div>
 
-    <Containers v-show="view === 'containers'" v-bind:containers="state.containers" />
+    <div class="container">
+      <Containers v-show="view === 'containers'" v-bind:containers="state.containers" />
+      <Images v-show="view === 'images'" v-bind:images="state.images" />
+    </div>
 
     <div v-for="toast in toasts" v-bind:key="toast.index">
       <div style="position: fixed; bottom: 20px; right: 50px">

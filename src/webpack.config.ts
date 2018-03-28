@@ -3,13 +3,16 @@ import * as path from 'path'
 
 export = {
   mode: 'development',
-  devtool: 'inline-source-map',
-  entry: './front/index.ts',
+  devtool: '#eval-source-map',
+  entry: './front/app/index.ts',
   output: {
-    path: path.resolve(process.cwd(), 'front'),
+    path: path.resolve(process.cwd(), 'front/app'),
     filename: 'bundle.js'
   },
   resolve: {
+    alias: {
+      vue: 'vue/dist/vue.esm.js'
+    },
     extensions: ['.js', '.ts']
   },
   module: {
@@ -20,21 +23,16 @@ export = {
           {
             loader: 'ts-loader',
             options: {
-              configFile: 'scripts/tsconfig.front.json'
+              configFile: 'scripts/tsconfig.front.json',
+              appendTsSuffixTo: [/\.vue$/]
             }
           }
         ]
       },
       {
         test: /\.vue$/,
-        options: {
-          configFile: 'tsconfig.front.json',
-          appendTsSuffixTo: [/\.vue$/]
-        }
-      },
-      {
-        test: /\.html$/,
-        use: 'raw-loader'
+        loader: 'vue-loader',
+        options: {}
       }
     ]
   }

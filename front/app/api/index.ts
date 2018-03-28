@@ -1,4 +1,7 @@
 import { Image, Container, ApplicationRemoteDTO } from './types'
+import * as io from 'socket.io-client'
+
+export const socket = io() as SocketIOClient.Socket
 
 export interface AppState {
   containers: Container[]
@@ -30,14 +33,54 @@ export async function getAll(state: AppState): Promise<AppState> {
   }
 }
 
+export async function getDockerResources(state: AppState): Promise<AppState> {
+  const containers = await getContainers(state.containers)
+  const images = await getImages(state.images)
+
+  return {
+    ...state,
+    containers,
+    images
+  }
+}
+
 export async function getContainers(from: Container[]) {
-  const to = await get<Container[]>('/api/containers')
-  return merge(from, to, 'Id')
+  const to = await get<Container[]>('/api/hosts/containers')
+  for (const left of from) {
+    const right = to.find(t => t.Id === left.Id)
+    if (!right) {
+      continue
+    }
+
+    left.State = right.State
+    left.Status = right.Status
+  }
+
+  const mapped = to.map(container => ({
+    ...container,
+    stats: {
+      mbIn: 'N/A',
+      mbOut: 'N/A',
+      cpu: '0%',
+      memory: '0%'
+    }
+  }))
+
+  return merge(from, mapped, 'Id')
 }
 
 export async function getImages(from: Image[]) {
   const to = await get<Image[]>('/api/images')
-  return merge(from, to, 'Id')
+  for (const img of to) {
+    const name = getTag(img.RepoTags || [])
+    img.name = name
+  }
+  return merge(from, to.filter(t => t.name !== '<unknown>'), 'Id')
+}
+
+function getTag(tags: string[]) {
+  const tag = tags.find(tag => tag !== '<none>:<none>')
+  return tag || '<unknown>'
 }
 
 export async function getHosts(from: Concierge.Host[]) {
