@@ -86,14 +86,17 @@
       </tbody>
     </table>
 
+    <Create v-bind:credentials="credentials" />
+
   </div>
 </template>
 
 
 <script lang="ts">
 import Vue from 'vue'
-import { Application, Image, Remote } from './api'
+import { Application, Image, Remote, Credential } from './api'
 import { State } from '../../src/api/applications/types'
+import Create, { showModal } from './applications/Create.vue'
 
 interface AppVM extends Application {
   images: Image[]
@@ -104,8 +107,10 @@ type MetaState = { displayImages: boolean }
 type AppMeta = { [appId: string]: MetaState }
 
 export default Vue.extend({
+  components: { Create },
   props: {
     applications: { type: Array as () => Application[] },
+    credentials: { type: Array as () => Credential[] },
     images: { type: Array as () => Image[] },
     remotes: { type: Array as () => Remote[] }
   },
@@ -135,7 +140,7 @@ export default Vue.extend({
       console.log('Refresh')
     },
     showCreateModal() {
-      console.log('Show Create Modal')
+      showModal()
     },
     async rebuildBranch(_app: AppVM, _remote: Remote) {
       console.log('Rebuild Branch')
