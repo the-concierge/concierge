@@ -25,7 +25,7 @@ const handler: RequestHandler = async (req, res) => {
 
     const logs: string[] = []
     const append = (data: Buffer) => {
-      logs.push(data.toString())
+      logs.push(data.toString('utf8'))
     }
 
     const stdout = new stream.PassThrough()

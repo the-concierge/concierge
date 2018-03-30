@@ -1,6 +1,5 @@
 <script lang="ts">
 import Vue from 'vue'
-import { router } from './router'
 import { Image } from '../components/state/types'
 import { common } from 'analysis'
 
@@ -34,8 +33,6 @@ const Images = Vue.extend({
     }
   }
 })
-
-router.override([(i: string) => i === 'images'], () => Images)
 </script>
 
 <template>

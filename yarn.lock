@@ -2052,9 +2052,9 @@ docker-modem@^1.0.0:
     readable-stream "~1.0.26-4"
     split-ca "^1.0.0"
 
-dockerode@^2.4.3:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-2.5.0.tgz#3fb1ff0e14b6901d92abff75a8a5440569f0538b"
+dockerode@^2.5.4:
+  version "2.5.4"
+  resolved "https://registry.npmjs.org/dockerode/-/dockerode-2.5.4.tgz#c46bab98098a9cc46ac0218b6e98a820233e556b"
   dependencies:
     concat-stream "~1.5.1"
     docker-modem "^1.0.0"
@@ -6435,9 +6435,9 @@ typedarray@^0.0.6, typedarray@~0.0.5:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
+typescript@^2.8.1:
+  version "2.8.1"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-2.8.1.tgz#6160e4f8f195d5ba81d4876f9c0cc1fbc0820624"
 
 uglify-es@^3.3.4:
   version "3.3.9"

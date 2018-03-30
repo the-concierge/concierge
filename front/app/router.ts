@@ -1,16 +1,12 @@
-import mm from 'multiple-dispatch'
-import { VueConstructor } from 'vue'
+type Listener = (path: string) => void
+const listeners: Listener[] = []
 
-type Component = VueConstructor<any>
+export function listen(listener: Listener) {
+  listeners.push(listener)
+}
 
-export const router = mm<Component, any>({
-  name: 'router',
-  throw: false,
-  ignoreArity: false,
-  params: [
-    {
-      name: 'resource',
-      isa: (resource, isaFunc) => isaFunc(resource)
-    }
-  ]
-})
+export function navigate(path: string) {
+  for (const listener of listeners) {
+    listener(path)
+  }
+}

@@ -12,20 +12,6 @@ type RawStats = Array<{
   timestamp: number
 }>
 
-type ParsedStats = Array<{
-  cpu: BoxData[]
-  memory: BoxData[]
-  timestamp: number
-  date: Date
-}>
-
-type ExtractedData = {
-  mean: Array<string | number>
-  min: Array<string | number>
-  max: Array<string | number>
-  x: Array<number>
-}
-
 class Performance {
   cpu: BoxData[] = []
   memory: BoxData[] = []

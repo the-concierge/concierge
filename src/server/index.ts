@@ -45,7 +45,7 @@ app.use(proxy.requestHandler)
 app.use(router)
 
 const staticPath = path.resolve(__dirname, '..', '..', 'front')
-const indexFile = path.resolve(staticPath, 'index.html')
+const indexFile = path.resolve(staticPath, 'app/index.html')
 app.use(express.static(staticPath))
 
 app.get('/index.html', (_, res) => res.sendFile(indexFile))

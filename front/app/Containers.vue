@@ -1,14 +1,16 @@
 <script lang="ts">
 import Vue from 'vue'
-import { router } from './router'
+import SafeLink from './SafeLink.vue'
 
-export { Containers as default }
-
-const Containers = Vue.extend({
-  props: ['containers']
+export default Vue.extend({
+  props: ['containers'],
+  components: { SafeLink },
+  methods: {
+    toUrl(id: string) {
+      return `/inspect/${id}`
+    }
+  }
 })
-
-router.override([(i: string) => i === 'containers'], () => Containers)
 </script>
 
 <template>
@@ -37,11 +39,7 @@ router.override([(i: string) => i === 'containers'], () => Containers)
       <tbody v-for="c in containers" v-bind:key="c.Id">
         <tr>
           <td style="padding: 3px">
-            <a href="#" class="btn btn-link">
-              {{(c.Names[0] || '/Unknown').slice(1)}}
-            </a>
-            <!-- <ko-link class="btn btn-link" params="href: '/containers/' + id() + '/inspect'"> -->
-            <!-- </ko-link> -->
+            <SafeLink v-bind:url="toUrl(c.Id)" className="btn btn-link">{{ (c.Names[0] || '/Unknown').slice(1) }}</SafeLink>
           </td>
           <td style="padding: 3px">{{c.Id.slice(0, 10)}}</td>
           <td style="padding: 3px">{{c.Image}}</td>

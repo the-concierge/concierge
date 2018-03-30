@@ -3,6 +3,8 @@ import * as io from 'socket.io-client'
 
 export { Container, Image }
 
+export type Host = Concierge.Host
+
 export type Credential = Concierge.Credentials
 
 export type Configuration = Concierge.Configuration
