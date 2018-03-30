@@ -3,7 +3,7 @@
         "module": "commonjs",
         "target": "es6",
         "sourceMap": true,
-        "outDir": "../build",
+        "outDir": "../dist",
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
