@@ -1,6 +1,16 @@
 import { Image, Container, ApplicationRemoteDTO } from './types'
 import * as io from 'socket.io-client'
 
+export { Container, Image }
+
+export type Credential = Concierge.Credentials
+
+export type Configuration = Concierge.Configuration
+
+export type Application = Concierge.ApplicationDTO
+
+export type Remote = ApplicationRemoteDTO
+
 export const socket = io() as SocketIOClient.Socket
 
 export interface AppState {

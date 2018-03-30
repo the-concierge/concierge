@@ -46,6 +46,7 @@ export default Vue.extend({
   },
   mounted() {
     // TODO: Register toasts event-handler
+    // TODO: Inspect path and set view
   },
   methods: {
     navigate(path: string) {
