@@ -37,7 +37,6 @@ class BuildQueue {
       // If we are already aware of the SHA and it is 'dealt with', do nothing
       switch (existingItem.state) {
         case State.Building:
-        case State.Successful:
         case State.Waiting:
           return
       }
