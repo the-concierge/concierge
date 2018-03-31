@@ -1,14 +1,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import ContentArea from './ContentArea.vue'
-import { AppState, getAll, getDockerResources, socket } from './api'
 import { Container } from '../components/state/types'
 import { setInterval } from 'timers'
+import * as api from './api'
+import { onRefresh } from './common'
 
 export default Vue.extend({
   components: { ContentArea },
   data() {
-    const state: AppState = {
+    const state: api.AppState = {
       containers: [],
       images: [],
       hosts: [],
@@ -29,16 +30,40 @@ export default Vue.extend({
     return { state }
   },
   async mounted() {
-    const newState = await getAll(this.state)
+    const newState = await api.getAll(this.state)
     setInterval(async () => {
-      const nextState = await getDockerResources(this.state)
+      const nextState = await api.getDockerResources(this.state)
       this.state = nextState
     }, 5000)
     this.state = newState
 
-    socket.on('stats', (event: ConciergeEvent<ContainerEvent>) =>
+    api.socket.on('stats', (event: ConciergeEvent<ContainerEvent>) =>
       updateContainer(this.state.containers, event)
     )
+
+    onRefresh(async res => {
+      switch (res) {
+        case 'containers':
+          this.state.containers = await api.getContainers(this.state.containers)
+          return
+
+        case 'hosts':
+          this.state.hosts = await api.getHosts(this.state.hosts)
+          return
+
+        case 'applications':
+          this.state.applications = await api.getApplications(this.state.applications)
+          return
+
+        case 'images':
+          this.state.images = await api.getImages(this.state.images)
+          return
+
+        case 'credentials':
+          this.state.credentials = await api.getCredentials(this.state.credentials)
+          return
+      }
+    })
   }
 })
 

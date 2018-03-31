@@ -1,7 +1,7 @@
 <script lang="ts">
 import Vue from 'vue'
-import { listen } from './router'
-import { AppState, Container } from './api'
+import { listen, onToast, Toast, toast } from './common'
+import { AppState, Container, socket } from './api'
 import Containers from './Containers.vue'
 import Images from './Images.vue'
 import Applications from './Applications.vue'
@@ -41,7 +41,7 @@ export default Vue.extend({
     return {
       view: 'containers',
       inspectId: '',
-      toasts: [],
+      toasts: [] as Toast[],
       navItems: [
         {
           id: 'containers',
@@ -87,7 +87,34 @@ export default Vue.extend({
       this.setTab(path)
     })
     this.setTab(window.location.pathname)
-    // TODO: Register toasts event handler
+
+    socket.on('toast', (event: ConciergeEvent<ToastEvent>) => {
+      switch (event.type) {
+        case 'info':
+          toast.primary(event.event)
+          break
+
+        case 'warning':
+          toast.warn(event.event)
+          break
+
+        case 'error':
+          toast.error(event.event)
+          break
+
+        case 'success':
+          toast.success(event.event)
+          break
+      }
+    })
+
+    onToast(toast => {
+      this.toasts.push(toast)
+      setTimeout(() => {
+        const filtered = this.toasts.filter(t => t !== toast)
+        this.toasts = filtered
+      }, toast.duration)
+    })
   },
   computed: {
     inspectContainer: function(): Container | undefined {

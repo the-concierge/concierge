@@ -36,7 +36,7 @@
             <div class="form-group">
               <label class="form-switch">
                 <input type="checkbox" data-bind="checked: autoBuild" />
-                <i class="form-icon" v-on:click="toggleAutoBuild(_, event)"></i>
+                <i class="form-icon" v-on:click="toggleAutoBuild"></i>
                 Automatically build branches and tags
               </label>
             </div>
@@ -44,29 +44,29 @@
             <div class="form-group" v-if="creds.length > 0">
               <label class="form-label">Credentials</label>
               <select class="form-select" v-model="selectedCredentials">
-                <option v-for="cred in creds" :key="cred.value" v-bind:value="cred.value">
+                <option v-for="cred in creds" :key="cred.value" v-bind:value="selectedCredentials">
                   {{cred.name}}
                 </option>
               </select>
             </div>
 
-            <!-- <div class="form-group" v-if="selectedCredentials.value > -1">
+            <div class="form-group" v-if="selectedCredentials.value > 0">
               <label class="form-label">Username
                 <cite>Optional: This can be provided in the Git repository</cite>
               </label>
-              <input class="form-input" type="text" data-bind="textInput: username" placeholder="Optional" />
+              <input class="form-input" type="text" v-model="username" placeholder="Optional" />
             </div>
 
             <b>Use either Password or Key -- Provide a password if you are using HTTP/HTTPS over SSH</b>
             <div class="form-group">
               <label class="form-label">Password</label>
-              <input class="form-input" type="password" data-bind="textInput: password" />
+              <input class="form-input" type="password" v-model="password" />
             </div>
 
             <div class="form-group">
               <label class="form-label">Key</label>
-              <textarea class="form-input" type="password" data-bind="textInput: key"></textarea>
-            </div> -->
+              <textarea class="form-input" type="password" v-model="key"></textarea>
+            </div>
 
           </form>
         </div>
@@ -81,6 +81,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Credential } from '../api'
+import { toast, refresh } from '../common'
 
 export default Vue.extend({
   props: {
@@ -104,15 +105,40 @@ export default Vue.extend({
     onShowModal(() => (this.modalActive = true))
   },
   methods: {
-    toggleAutoBuild(_: any, event: any) {
-      event.preventDefault()
+    toggleAutoBuild() {
       this.autoBuild = !this.autoBuild
       return true
     },
     hideModal() {
       this.modalActive = false
     },
-    createApplication() {}
+    async createApplication() {
+      const app = {
+        repository: this.repository,
+        name: this.name,
+        username: this.username,
+        password: this.password,
+        key: this.key,
+        label: this.label,
+        dockerfile: this.dockerfile,
+        credentialsId: this.selectedCredentials.value,
+        autoBuild: this.autoBuild
+      }
+      const result = await fetch('/api/applications', {
+        method: 'POST',
+        body: JSON.stringify(app),
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      if (result.status === 200) {
+        refresh.applications()
+        toast.success('Successfully created application')
+        this.hideModal()
+        return
+      }
+      const error = await result.json()
+      toast.error(`Failed to create application: ${error.message}`)
+    }
   },
   computed: {
     creds: function(): Array<{ name: string; value: number }> {

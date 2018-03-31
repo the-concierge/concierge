@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { navigate } from './router'
+import { navigate } from './common'
 
 export default Vue.extend({
   props: ['url', 'className'],

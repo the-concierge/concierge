@@ -25,10 +25,10 @@
       <tbody v-for="app in apps" v-bind:key="app.id">
         <tr class="active">
           <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer">
-            <span v-if="!displayImages(app)">▶</span>
-            <span v-if="displayImages(app)">▼</span>
+            <span v-if="!app.display">▶</span>
+            <span v-if="app.display">▼</span>
             <span>{{ app.name }}</span>
-            <span v-if="!displayImages(app) && app.images.length > 0" style="color: #999; float: right">{{ app.images.length }} hidden</span>
+            <span v-if="app.display && app.images.length > 0" style="color: #999; float: right">{{ app.images.length }} hidden</span>
           </td>
           <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer"></td>
           <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer"></td>
@@ -41,7 +41,7 @@
           </td>
         </tr>
 
-        <tr v-if="displayImages(app)">
+        <tr v-if="app.display">
           <td colspan="4">
 
             <table class="table" style="table-layout: fixed">
@@ -64,7 +64,7 @@
               </thead>
 
               <tbody v-for="(r, i) in remotes" v-bind:key="i">
-                <tr v-if="displayImages(app)">
+                <tr v-if="app.display">
                   <td style="padding: 3px">{{ r.remote }}</td>
                   <td style="padding: 3px">{{r.sha.slice(0, 10) }}</td>
                   <td style="padding: 3px">{{ cleanSha(r.imageId) }}</td>
@@ -97,14 +97,14 @@ import Vue from 'vue'
 import { Application, Image, Remote, Credential } from './api'
 import { State } from '../../src/api/applications/types'
 import Create, { showModal } from './applications/Create.vue'
+import { toImageTag } from './applications/Build.vue'
+import { toast, refresh } from './common'
 
 interface AppVM extends Application {
   images: Image[]
   remotes: Remote[]
+  display: boolean
 }
-
-type MetaState = { displayImages: boolean }
-type AppMeta = { [appId: string]: MetaState }
 
 export default Vue.extend({
   components: { Create },
@@ -116,61 +116,46 @@ export default Vue.extend({
   },
   data() {
     return {
-      meta: {} as AppMeta
+      apps: this.applications.map(app => toAppVM(app, [], this.images, this.remotes)) as AppVM[]
     }
   },
-  computed: {
-    apps: function(): AppVM[] {
-      return this.applications.map(app => {
-        const images = this.images.filter(i => i.name.indexOf(app.label) === 0)
-        const remotes = this.remotes
-          .filter(r => r.applicationId === app.id && r.state !== 4)
-          .filter(r => r.state !== State.Inactive)
-
-        return {
-          ...app,
-          images,
-          remotes
-        }
-      })
+  watch: {
+    applications: function(apps: Application[]) {
+      this.apps = apps.map(app => toAppVM(app, this.apps, this.images, this.remotes))
     }
   },
   methods: {
     refresh() {
-      console.log('Refresh')
+      return refresh.applications()
     },
     showCreateModal() {
       showModal()
     },
-    async rebuildBranch(_app: AppVM, _remote: Remote) {
-      console.log('Rebuild Branch')
-      // const tag = buildApp.toImageTag(app.label, remote.remote)
-      // const url = `/api/applications/${app.id}/build?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
-      // const result = await fetch(url, { method: 'PUT' })
-      // const json = await result.json()
-      // if (result.status <= 400) {
-      //   state.toast.success(json.message)
-      //   return
-      // }
+    showBuildModal() {},
+    showEditModal() {},
+    showLogsModal() {},
 
-      // state.toast.error(`Failed to queue build: ${json.message}`)
+    async rebuildBranch(app: AppVM, remote: Remote) {
+      const tag = toImageTag(app.label, remote.remote)
+      const url = `/api/applications/${app.id}/build?ref=${
+        remote.remote
+      }&tag=${tag}&type=branch&sha=${remote.sha}`
+      const result = await fetch(url, { method: 'PUT' })
+      const json = await result.json()
+      if (result.status <= 400) {
+        toast.success(json.message)
+        return
+      }
+
+      toast.error(`Failed to queue build: ${json.message}`)
     },
     removeApplication(app: AppVM) {
-      return fetch(`/api/applications/${app.id}`, { method: 'DELETE' }).then(res => res.json())
-      // .then(res => state.toast.primary(res.message))
+      return fetch(`/api/applications/${app.id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(res => toast.primary(res.message))
     },
-    getMeta<TKey extends keyof MetaState>(app: Application, prop: TKey): MetaState[TKey] {
-      if (!this.meta[app.id]) {
-        this.meta[app.id] = { displayImages: false }
-      }
-      return this.meta[app.id][prop]
-    },
-    displayImages(app: Application) {
-      return this.getMeta(app, 'displayImages')
-    },
-    toggleDisplayImages(app: Application) {
-      const existing = this.getMeta(app, 'displayImages')
-      this.meta[app.id].displayImages = !existing
+    toggleDisplayImages(app: AppVM) {
+      app.display = !app.display
     },
     cleanSha(sha: string) {
       return (sha || '').replace('sha256:', '').slice(0, 10)
@@ -209,5 +194,25 @@ export default Vue.extend({
     }
   }
 })
+
+function toAppVM(
+  app: Application,
+  existingApps: AppVM[],
+  allImages: Image[],
+  allRemotes: Remote[]
+) {
+  const existing = existingApps.find(a => a.id === app.id)
+  const images = allImages.filter(i => i.name.indexOf(app.label) === 0)
+  const remotes = allRemotes
+    .filter(r => r.applicationId === app.id && r.state !== 4)
+    .filter(r => r.state !== State.Inactive)
+
+  return {
+    ...app,
+    display: existing ? existing.display : true,
+    images,
+    remotes
+  }
+}
 </script>
 
