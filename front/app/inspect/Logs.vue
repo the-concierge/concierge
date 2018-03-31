@@ -26,7 +26,6 @@ export default Vue.extend({
   },
   mounted() {
     this.getLogs()
-    console.log(this.container)
   },
   methods: {
     async getLogs() {

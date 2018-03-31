@@ -35,7 +35,7 @@
 
             <div class="form-group">
               <label class="form-switch">
-                <input type="checkbox" data-bind="checked: autoBuild" />
+                <input type="checkbox" v-model="autoBuild" />
                 <i class="form-icon" v-on:click="toggleAutoBuild"></i>
                 Automatically build branches and tags
               </label>
@@ -95,7 +95,7 @@ export default Vue.extend({
       dockerfile: '',
       label: '',
       repository: '',
-      autoBuild: false,
+      autoBuild: true,
       username: '',
       password: '',
       key: ''

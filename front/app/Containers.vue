@@ -36,8 +36,8 @@ export default Vue.extend({
           <th style="min-width: 150px">Memory</th>
         </tr>
       </thead>
-      <tbody v-for="c in containers" v-bind:key="c.Id">
-        <tr>
+      <tbody>
+        <tr v-for="c in containers" v-bind:key="c.Id">
           <td style="padding: 3px">
             <SafeLink v-bind:url="toUrl(c.Id)" className="btn btn-link">{{ (c.Names[0] || '/Unknown').slice(1) }}</SafeLink>
           </td>

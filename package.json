@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "2.8.0",
+  "version": "3.0.0",
   "description": "Concierge Service",
   "main": "dist/index.js",
   "keywords": [
@@ -11,10 +11,10 @@
     "typescript"
   ],
   "scripts": {
-    "debug": "node --inspect start.js",
+    "debug": "node --inspect start.js --init",
     "// Service control": "",
-    "start": "pm2 start env.json",
-    "stop": "pm2 stop the-concierge",
+    "start": "node dist/cli start",
+    "stop": "node dist/cli stop",
     "restart": "pm2 restart the-concierge",
     "logs": "pm2 logs the-concierge",
     "status": "pm2 status the-concierge",

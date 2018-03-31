@@ -37,9 +37,11 @@ export default Vue.extend({
     }, 5000)
     this.state = newState
 
-    api.socket.on('stats', (event: ConciergeEvent<ContainerEvent>) =>
-      updateContainer(this.state.containers, event)
-    )
+    api.socket.on('stats', (event: ContainerEvt) => updateContainer(this.state.containers, event))
+
+    api.socket.on('build-status', (event: RemoteEvt) => {
+      updateRemotes(this.state.remotes, event)
+    })
 
     onRefresh(async res => {
       switch (res) {
@@ -67,10 +69,9 @@ export default Vue.extend({
   }
 })
 
-function updateContainer(
-  containers: Container[],
-  { event: stats }: ConciergeEvent<ContainerEvent>
-) {
+type ContainerEvt = ConciergeEvent<ContainerEvent>
+
+function updateContainer(containers: Container[], { event: stats }: ContainerEvt) {
   const container = containers.find(c => c.Id === stats.id)
   if (!container) {
     return
@@ -80,6 +81,29 @@ function updateContainer(
   container.stats.memory = stats.memory
   container.stats.mbIn = stats.rx
   container.stats.mbOut = stats.tx
+}
+
+type RemoteEvt = ConciergeEvent<BuildStatusEvent>
+function updateRemotes(remotes: api.Remote[], { event }: RemoteEvt) {
+  const existing = remotes.find(
+    remote => remote.applicationId === event.applicationId && remote.remote === event.remote
+  )
+
+  if (existing) {
+    const imageId = event.imageId || existing.imageId
+    existing.imageId = imageId
+    existing.sha = event.sha
+    existing.state = event.state
+
+    return remotes
+  }
+
+  remotes.push({
+    id: 0,
+    ...event,
+    imageId: event.imageId || ''
+  })
+  return remotes
 }
 </script>
 

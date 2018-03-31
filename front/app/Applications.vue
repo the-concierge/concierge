@@ -24,17 +24,17 @@
       </thead>
       <tbody v-for="app in apps" v-bind:key="app.id">
         <tr class="active">
-          <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer">
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer">
             <span v-if="!app.display">▶</span>
             <span v-if="app.display">▼</span>
             <span>{{ app.name }}</span>
-            <span v-if="app.display && app.images.length > 0" style="color: #999; float: right">{{ app.images.length }} hidden</span>
+            <span v-if="!app.display && app.remotes.length > 0" style="color: #999; float: right">{{ app.images.length }} hidden</span>
           </td>
-          <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer"></td>
-          <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer"></td>
-          <td v-on:click="toggleDisplayImages(app)" style="cursor: pointer"></td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
           <td>
-            <button class="btn btn-md" v-on:click="showBuildModal">Build</button>
+            <button class="btn btn-md" v-on:click="showBuildModal(app)">Build</button>
             <button class="btn btn-md" v-on:click="showEditModal">Edit</button>
             <button class="btn btn-md" v-on:click="removeApplication">Remove</button>
             <button class="btn btn-md" v-on:click="showLogsModal">Logs</button>
@@ -44,7 +44,7 @@
         <tr v-if="app.display">
           <td colspan="4">
 
-            <table class="table" style="table-layout: fixed">
+            <table v-if="app.remotes.length > 0" class="table" style="table-layout: fixed">
               <thead>
                 <tr>
                   <td style="padding: 3px">
@@ -63,7 +63,7 @@
                 </tr>
               </thead>
 
-              <tbody v-for="(r, i) in remotes" v-bind:key="i">
+              <tbody v-for="(r, i) in app.remotes" v-bind:key="i">
                 <tr v-if="app.display">
                   <td style="padding: 3px">{{ r.remote }}</td>
                   <td style="padding: 3px">{{r.sha.slice(0, 10) }}</td>
@@ -87,6 +87,7 @@
     </table>
 
     <Create v-bind:credentials="credentials" />
+    <Build />
 
   </div>
 </template>
@@ -96,7 +97,8 @@
 import Vue from 'vue'
 import { Application, Image, Remote, Credential } from './api'
 import { State } from '../../src/api/applications/types'
-import Create, { showModal } from './applications/Create.vue'
+import Create, { showModal as showCreate } from './applications/Create.vue'
+import Build, { showModal as showBuild } from './applications/Build.vue'
 import { toImageTag } from './applications/Build.vue'
 import { toast, refresh } from './common'
 
@@ -107,7 +109,7 @@ interface AppVM extends Application {
 }
 
 export default Vue.extend({
-  components: { Create },
+  components: { Create, Build },
   props: {
     applications: { type: Array as () => Application[] },
     credentials: { type: Array as () => Credential[] },
@@ -129,9 +131,11 @@ export default Vue.extend({
       return refresh.applications()
     },
     showCreateModal() {
-      showModal()
+      showCreate()
     },
-    showBuildModal() {},
+    showBuildModal(app: Application) {
+      showBuild(app)
+    },
     showEditModal() {},
     showLogsModal() {},
 
@@ -154,7 +158,7 @@ export default Vue.extend({
         .then(res => res.json())
         .then(res => toast.primary(res.message))
     },
-    toggleDisplayImages(app: AppVM) {
+    toggleDisplay(app: AppVM) {
       app.display = !app.display
     },
     cleanSha(sha: string) {

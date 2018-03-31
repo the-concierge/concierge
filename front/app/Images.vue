@@ -64,8 +64,8 @@ const Images = Vue.extend({
           <th></th>
         </tr>
       </thead>
-      <tbody v-for="i in filterImages(imageFilter)" v-bind:key="i.Id">
-        <tr>
+      <tbody>
+        <tr v-for="i in filterImages(imageFilter)" v-bind:key="i.Id">
           <td style="padding: 3px">{{i.name}}</td>
           <td style="padding: 3px">{{i.Id.replace('sha256:', '').slice(0, 10)}}</td>
           <td style="padding: 3px">{{toMb(i.Size)}}</td>

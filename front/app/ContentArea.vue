@@ -141,6 +141,10 @@ export default Vue.extend({
 
       const parts = [view, ...splits.slice(1)]
       window.history.pushState({}, 'Concierge', '/' + parts.join('/'))
+    },
+    removeToast(index: number) {
+      const nextToasts = [...this.toasts.slice(0, index), ...this.toasts.slice(index + 1)]
+      this.toasts = nextToasts
     }
   }
 })
@@ -171,17 +175,17 @@ export default Vue.extend({
     <div class="container">
       <Containers v-if="view === 'containers'" v-bind:containers="state.containers" />
       <Inspect v-if="view==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
-      <Applications v-if="view==='applications' " v-bind:applications="state.applications " v-bind:images="state.images " v-bind:remotes="state.remotes " />
-      <Images v-if="view==='images' " v-bind:images="state.images " />
-      <Hosts v-if="view==='hosts' " v-bind:hosts="state.hosts " />
+      <Applications v-if="view==='applications' " v-bind:applications="state.applications " v-bind:images="state.images " v-bind:remotes="state.remotes" />
+      <Images v-if="view==='images' " v-bind:images="state.images" />
+      <Hosts v-if="view==='hosts' " v-bind:hosts="state.hosts" />
       <Credentials v-if="view==='credentials' " v-bind:credentials="state.credentials " />
-      <Config v-if="view==='config' " v-bind:config="state.config " v-bind:credentials="state.credentials " />
+      <Config v-if="view==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials " />
     </div>
 
-    <div v-for="toast in toasts " v-bind:key="toast.index ">
+    <div v-for="(toast, i) in toasts" v-bind:key="i">
       <div style="position: fixed; bottom: 20px; right: 50px ">
-        <div class="toast " v-bind:class="toast.state ">
-          <button class="btn btn-clear float-right " v-on:click="remove "></button>
+        <div class="toast" v-bind:class="toast.type">
+          <button class="btn btn-clear float-right " v-on:click="removeToast(i)"></button>
           <span>{{ toast.msg }}</span>
         </div>
       </div>
