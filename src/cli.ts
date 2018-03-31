@@ -71,7 +71,7 @@ ${chalk.cyan.bold(' Restarts')}: ${status.pm2_env.restart_time}`
 
   switch (state) {
     case 'start':
-      pm2.start({ name, script, instances: 1, exec_mode: 'fork' }, errCallback)
+      pm2.start({ name, script, instances: 1, exec_mode: 'fork', args: ['--init'] }, errCallback)
       break
     case 'stop':
       pm2.stop(name, errCallback)

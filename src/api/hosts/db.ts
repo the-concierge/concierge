@@ -16,3 +16,19 @@ export async function getAll() {
     .orderBy('id', 'asc')
   return hosts
 }
+
+export interface CreateHost {
+  hostname: string
+  dockerPort: number
+  sshPort: number
+  capacity: number
+  sshUsername: string
+  vanityHostname: string
+  proxyIp: string
+  privateKey: string
+}
+
+export async function create(host: CreateHost) {
+  const result: number[] = await db.hosts().insert({ ...host })
+  return result
+}
