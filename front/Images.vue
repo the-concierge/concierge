@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue from 'vue'
-import { Image } from '../components/state/types'
+import { Image } from './api'
 import { common } from 'analysis'
 
 export { Images as default }

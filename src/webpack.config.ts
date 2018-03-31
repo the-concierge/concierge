@@ -4,9 +4,9 @@ import * as path from 'path'
 export = {
   mode: 'development',
   devtool: '#eval-source-map',
-  entry: './front/app/index.ts',
+  entry: './front/index.ts',
   output: {
-    path: path.resolve(process.cwd(), 'front/app'),
+    path: path.resolve(process.cwd(), 'front'),
     filename: 'bundle.js'
   },
   resolve: {

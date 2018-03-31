@@ -95,8 +95,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Application, Image, Remote, Credential } from './api'
-import { State } from '../../src/api/applications/types'
+import { Application, Image, Remote, Credential, State } from './api'
 import Create, { showModal as showCreate } from './applications/Create.vue'
 import Build, { showModal as showBuild } from './applications/Build.vue'
 import { toImageTag } from './applications/Build.vue'

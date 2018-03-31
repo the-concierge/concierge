@@ -1,7 +1,35 @@
-import { Image, Container, ApplicationRemoteDTO } from './types'
 import * as io from 'socket.io-client'
+import { ContainerInfo, ImageInfo } from 'dockerode'
 
-export { Container, Image }
+export { State } from '../src/api/applications/types'
+
+export interface Container extends ContainerInfo {
+  stats: Stats
+  concierge: {
+    hostId: number
+    host: {
+      id: number
+      hostname: string
+      capacity: number
+      dockerPort: number
+      vanityHostname: string
+    }
+  }
+}
+
+export interface Image extends ImageInfo {
+  name: string
+  concierge: {
+    hostId: number
+    host: {
+      id: number
+      hostname: string
+      capacity: number
+      dockerPort: number
+      vanityHostname: string
+    }
+  }
+}
 
 export type Host = Concierge.Host
 
@@ -11,18 +39,25 @@ export type Configuration = Concierge.Configuration
 
 export type Application = Concierge.ApplicationDTO
 
-export type Remote = ApplicationRemoteDTO
+export type Remote = Concierge.ApplicationRemote
 
 export const socket = io() as SocketIOClient.Socket
+
+export type Stats = {
+  memory: string
+  cpu: string
+  mbIn: string
+  mbOut: string
+}
 
 export interface AppState {
   containers: Container[]
   images: Image[]
-  hosts: Concierge.Host[]
-  credentials: Concierge.Credentials[]
-  applications: Concierge.ApplicationDTO[]
-  remotes: ApplicationRemoteDTO[]
-  config: Concierge.Configuration
+  hosts: Host[]
+  credentials: Credential[]
+  applications: Application[]
+  remotes: Remote[]
+  config: Configuration
 }
 
 export async function getAll(state: AppState): Promise<AppState> {
@@ -110,8 +145,8 @@ export async function getApplications(from: Concierge.ApplicationDTO[]) {
   return merge(from, to, 'id')
 }
 
-export async function getApplicationRemotes(from: ApplicationRemoteDTO[]) {
-  const to = await get<ApplicationRemoteDTO[]>('/api/applications/branches?active')
+export async function getApplicationRemotes(from: Remote[]) {
+  const to = await get<Remote[]>('/api/applications/branches?active')
   return merge(from, to, 'id')
 }
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import ContentArea from './ContentArea.vue'
-import { Container } from '../components/state/types'
 import { setInterval } from 'timers'
 import * as api from './api'
 import { onRefresh } from './common'
@@ -71,7 +70,7 @@ export default Vue.extend({
 
 type ContainerEvt = ConciergeEvent<ContainerEvent>
 
-function updateContainer(containers: Container[], { event: stats }: ContainerEvt) {
+function updateContainer(containers: api.Container[], { event: stats }: ContainerEvt) {
   const container = containers.find(c => c.Id === stats.id)
   if (!container) {
     return

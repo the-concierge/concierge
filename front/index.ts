@@ -1,8 +1,9 @@
-// Registry polyfills
 import './polyfill'
+import Vue from 'vue'
+import App from './App.vue'
 
-// Register components
-import './components'
-
-import * as ko from 'knockout'
-ko.applyBindings(document.body)
+new Vue({
+  el: '#app',
+  components: { App },
+  template: `<App />`
+})
