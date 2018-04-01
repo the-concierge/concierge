@@ -123,6 +123,9 @@ export default Vue.extend({
   watch: {
     applications: function(apps: Application[]) {
       this.apps = apps.map(app => toAppVM(app, this.apps, this.images, this.remotes))
+    },
+    remotes: function(remotes: Remote[]) {
+      this.apps = this.apps.map(app => toAppVM(app, this.apps, this.images, remotes))
     }
   },
   methods: {

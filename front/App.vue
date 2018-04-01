@@ -102,6 +102,7 @@ function updateRemotes(remotes: api.Remote[], { event }: RemoteEvt) {
     ...event,
     imageId: event.imageId || ''
   })
+
   return remotes
 }
 </script>
