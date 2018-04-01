@@ -54,3 +54,13 @@ export const refresh = {
   applications: () => refreshListener('applications'),
   credentials: () => refreshListener('credentials')
 }
+
+export type Callback<T> = (value: T) => void
+export function createEmitter<T>() {
+  const listeners: Array<Callback<T>> = []
+  const emitter = {
+    on: (cb: Callback<T>) => listeners.push(cb),
+    emit: (value: T) => listeners.forEach(cb => cb(value))
+  }
+  return emitter
+}

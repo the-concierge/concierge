@@ -1,12 +1,15 @@
 <script lang="ts">
 import Vue from 'vue'
-import { Image } from './api'
+import Run, { showModal } from './images/Run.vue'
+import { Image, Container } from './api'
 import { common } from 'analysis'
 
-export { Images as default }
-
-const Images = Vue.extend({
-  props: ['images'],
+export default Vue.extend({
+  components: { Run },
+  props: {
+    images: { type: Array as () => Image[] },
+    containers: { type: Array as () => Container[] }
+  },
   data() {
     return {
       imageFilter: ''
@@ -20,7 +23,7 @@ const Images = Vue.extend({
       return new Date(timestamp * 1000).toUTCString()
     },
     runImage(image: Image) {
-      console.log('Remove', image.Id)
+      showModal(image)
     },
     clearFilter() {
       this.imageFilter = ''
@@ -28,9 +31,8 @@ const Images = Vue.extend({
     filterImages(filter: string) {
       return this.images.filter((img: Image) => img.name.indexOf(filter) > -1)
     },
-    pullImage() {
-      console.log('TODO')
-    }
+    pullImage() {},
+    removeImage(_image: Image) {}
   }
 })
 </script>
@@ -78,10 +80,9 @@ const Images = Vue.extend({
       </tbody>
     </table>
 
-    <!-- <ko-run-image></ko-run-image> -->
-
     <!-- <ko-pull-image></ko-pull-image> -->
 
+    <Run v-bind:containers="containers" />
   </div>
 </template>
 

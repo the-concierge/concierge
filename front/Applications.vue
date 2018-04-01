@@ -30,9 +30,9 @@
             <span>{{ app.name }}</span>
             <span v-if="!app.display && app.remotes.length > 0" style="color: #999; float: right">{{ app.images.length }} hidden</span>
           </td>
-          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
-          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
-          <td v-on:click="toggleDisplay(app)" style="cursor: pointer"></td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer">{{ app.label }}</td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer">{{ app.repository }}</td>
+          <td v-on:click="toggleDisplay(app)" style="cursor: pointer">{{ app.dockerfile }}</td>
           <td>
             <button class="btn btn-md" v-on:click="showBuildModal(app)">Build</button>
             <button class="btn btn-md" v-on:click="showEditModal">Edit</button>

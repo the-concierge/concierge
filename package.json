@@ -20,6 +20,7 @@
     "status": "pm2 status the-concierge",
     "// Build scripts": "",
     "clean": "rimraf \"dist\" \"front/bundle.js\" \"front/**/*.js\" \"front/**/*.js.map\"",
+    "start:mon": "nodemon dist/index.js",
     "start:watch": "nodemon --watch dist dist/index.js",
     "build": "yarn build:back && yarn build:front",
     "build:front": "yarn bundle",
