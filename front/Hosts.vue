@@ -22,15 +22,14 @@
           <td>{{ h.sshPort }}</td>
           <td>{{ h.dockerPort }}</td>
           <td>
-            <button class="btn btn-md" v-on:click="showEditHost">Edit</button>
+            <button class="btn btn-md" v-on:click="showEditHost(h)">Edit</button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <!-- <ko-edit-host></ko-edit-host> -->
-
     <Create />
+    <Edit />
   </div>
 </template>
 
@@ -38,15 +37,16 @@
 import Vue from 'vue'
 import { Host } from './api'
 import Create, { showModal as showCreate } from './hosts/Create.vue'
+import Edit, { showModal as showEdit } from './hosts/Edit.vue'
 
 export default Vue.extend({
-  components: { Create },
+  components: { Create, Edit },
   props: {
     hosts: { type: Array as () => Host[] }
   },
   methods: {
-    showEditHost() {
-      console.log('ShowEditHost')
+    showEditHost(host: Host) {
+      showEdit(host)
     },
     showCreateHost() {
       showCreate()
