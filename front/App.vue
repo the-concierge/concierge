@@ -15,6 +15,7 @@ export default Vue.extend({
       credentials: [],
       applications: [],
       remotes: [],
+      queue: { done: [], progress: [] },
       monitors: [],
       config: {
         name: '',
@@ -71,6 +72,10 @@ export default Vue.extend({
 
         case 'config':
           this.state.config = await api.getConfig()
+          return
+
+        case 'queue':
+          this.state.queue = await api.getQueue()
           return
       }
     })

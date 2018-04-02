@@ -46,6 +46,10 @@ export type Application = Concierge.ApplicationDTO
 
 export type Remote = Concierge.ApplicationRemote
 
+export type QueueItem = Concierge.QueueItem
+
+export type Queue = { progress: QueueItem[]; done: QueueItem[] }
+
 export const socket = io() as SocketIOClient.Socket
 
 export type Stats = {
@@ -64,6 +68,7 @@ export interface AppState {
   remotes: Remote[]
   config: Configuration
   monitors: Monitor[]
+  queue: Queue
 }
 
 export async function getAll(state: AppState): Promise<AppState> {
@@ -74,6 +79,7 @@ export async function getAll(state: AppState): Promise<AppState> {
   const applications = await getApplications(state.applications)
   const remotes = await getApplicationRemotes(state.remotes)
   const config = await getConfig()
+  const queue = await getQueue()
 
   return {
     containers,
@@ -83,6 +89,7 @@ export async function getAll(state: AppState): Promise<AppState> {
     applications,
     remotes,
     config,
+    queue,
     monitors: []
   }
 }
@@ -159,6 +166,12 @@ export async function getApplicationRemotes(from: Remote[]) {
 
 export async function getConfig() {
   return get<Concierge.Configuration>('/api/configuration')
+}
+
+export async function getQueue() {
+  const res = await fetch('/api/queue')
+  const json: Queue = await res.json()
+  return json
 }
 
 function get<T>(path: string) {

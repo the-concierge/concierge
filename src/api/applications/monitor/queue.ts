@@ -83,7 +83,6 @@ class BuildQueue {
     } catch (ex) {
       if (ex.code === 'E_REPOBUSY') {
         // If the repository on disk is busy, try this repo again in the next poll
-        this.queue.unshift(item)
         await updateRemote(item, State.Waiting)
         return
       }

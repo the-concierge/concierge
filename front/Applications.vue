@@ -72,7 +72,7 @@
                     <span v-bind:class="toStatusClass(r.state)" class="label label-rounded">{{ toStatus(r.state) }}</span>
                   </td>
                   <td style="padding: 3px">
-                    <button class="btn btn-sm" :disabled="r.state !== 2" v-on:click="rebuildBranch(app, r)">Re-Build</button>
+                    <button class="btn btn-sm" v-on:click="rebuildBranch(app, r)">Re-Build</button>
                     <button class="btn btn-sm" :disabled="r.imageId.length === 0" v-on:click="runImage(r)">Run</button>
                     <button class="btn btn-sm" v-on:click="removeImage(r.image)">Remove Image</button>
                   </td>

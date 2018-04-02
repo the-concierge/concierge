@@ -11,6 +11,7 @@ import Config from './Configuration.vue'
 import SafeLink from './SafeLink.vue'
 import Inspect from './Inspect.vue'
 import Logs from './Logs.vue'
+import Queue from './Queue.vue'
 
 export interface Toast {
   state: string
@@ -37,7 +38,8 @@ export default Vue.extend({
     Config,
     SafeLink,
     Inspect,
-    Logs
+    Logs,
+    Queue
   },
   data() {
     return {
@@ -59,6 +61,11 @@ export default Vue.extend({
         {
           id: 'applications',
           title: 'Applications',
+          active: false
+        },
+        {
+          id: 'queue',
+          title: 'Builds',
           active: false
         },
         {
@@ -183,6 +190,7 @@ export default Vue.extend({
       <Containers v-if="view === 'containers'" v-bind:containers="state.containers" />
       <Inspect v-if="view ==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
       <Applications v-if="view ==='applications'" v-bind:credentials="state.credentials" v-bind:applications="state.applications" v-bind:images="state.images" v-bind:remotes="state.remotes" v-bind:containers="state.containers" />
+      <Queue v-if="view === 'queue'" v-bind:queue="state.queue" />
       <Images v-if="view ==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
       <Hosts v-if="view ==='hosts' " v-bind:hosts="state.hosts" />
       <Credentials v-if="view ==='credentials' " v-bind:credentials="state.credentials " />

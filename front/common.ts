@@ -48,7 +48,8 @@ export const refresh = {
   images: () => refreshEmitter.emit('images'),
   applications: () => refreshEmitter.emit('applications'),
   credentials: () => refreshEmitter.emit('credentials'),
-  config: () => refreshEmitter.emit('config')
+  config: () => refreshEmitter.emit('config'),
+  queue: () => refreshEmitter.emit('queue')
 }
 
 export type Callback<T> = (value: T) => void

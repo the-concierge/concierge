@@ -178,20 +178,15 @@ declare namespace Concierge {
     upperQuartile: number
   }
 
-  interface SourceControlApi {
-    getTags: (application: Application) => Promise<Array<string>>
-    getRepository: (application: Application) => string
-    privateBaseUrl: string
-    publicBaseUrl: string
-  }
-
-  interface Archive {
-    application: string
-    filename: string
-    subdomain: string
-    timestamp: number
-    variant: string
-    date: string
+  interface QueueItem {
+    app: {
+      id: number
+      name: string
+    }
+    ref: string
+    sha: string
+    state: string
+    stateId: number
   }
 }
 
