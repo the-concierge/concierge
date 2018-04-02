@@ -51,7 +51,6 @@ app.get('/', (_, res) => res.sendFile(indexFile))
 
 // 404 handler -- return index.html and use client-side routing
 app.use((_, res) => {
-  console.log(_.path)
   res.sendFile(indexFile)
   return
 })

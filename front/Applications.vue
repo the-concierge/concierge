@@ -36,7 +36,7 @@
           <td>
             <button class="btn btn-md" v-on:click="showBuildModal(app)">Build</button>
             <button class="btn btn-md" v-on:click="showEditModal(app)">Edit</button>
-            <button class="btn btn-md" v-on:click="removeApplication">Remove</button>
+            <button class="btn btn-md" v-on:click="removeApplication(app)">Remove</button>
             <button class="btn btn-md" v-on:click="showLogsModal">Logs</button>
           </td>
         </tr>
@@ -170,6 +170,7 @@ export default Vue.extend({
       return fetch(`/api/applications/${app.id}`, { method: 'DELETE' })
         .then(res => res.json())
         .then(res => toast.primary(res.message))
+        .then(() => refresh.applications())
     },
     toggleDisplay(app: AppVM) {
       app.display = !app.display
