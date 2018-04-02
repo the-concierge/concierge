@@ -1,9 +1,0 @@
-<!-- ko if: logs().length === 0 -->
-<h3>No logs are available to display</h3>
-<!-- /ko -->
-
-<!-- ko if: logs().length > 0 -->
-<div data-bind="foreach: logs">
-  <pre data-bind="text: $data" style="white-space: pre-wrap; margin-bottom: 5px; display: block"></pre>
-</div>
-<!-- /ko -->
