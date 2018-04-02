@@ -30,15 +30,17 @@
 
     <!-- <ko-edit-host></ko-edit-host> -->
 
-    <!-- <ko-create-host></ko-create-host> -->
+    <Create />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { Host } from './api'
+import Create, { showModal as showCreate } from './hosts/Create.vue'
 
 export default Vue.extend({
+  components: { Create },
   props: {
     hosts: { type: Array as () => Host[] }
   },
@@ -47,7 +49,7 @@ export default Vue.extend({
       console.log('ShowEditHost')
     },
     showCreateHost() {
-      console.log('ShowCreateHost')
+      showCreate()
     }
   }
 })
