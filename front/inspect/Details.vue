@@ -25,7 +25,7 @@
         <b>Urls</b>
       </div>
       <div class="column col-10">
-        <table class="table table-striped table-hover">
+        <table class="table">
           <tbody>
             <tr v-for="(url, i) of urls" :key="i">
               <td>
