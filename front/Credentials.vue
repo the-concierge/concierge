@@ -35,8 +35,7 @@
     </table>
 
     <Create />
-
-    <!-- <ko-edit-credentials></ko-edit-credentials> -->
+    <Edit />
   </div>
 </template>
 
@@ -44,10 +43,11 @@
 import Vue from 'vue'
 import { Credential } from './api'
 import Create, { showModal as showCreate } from './credentials/Create.vue'
+import Edit, { showModal as showEdit } from './credentials/Edit.vue'
 import { refresh } from './common'
 
 export default Vue.extend({
-  components: { Create },
+  components: { Create, Edit },
   props: {
     credentials: { type: Array as () => Credential[] }
   },
@@ -58,7 +58,9 @@ export default Vue.extend({
     refresh() {
       refresh.credentials()
     },
-    showEditModal(_creds: Credential) {},
+    showEditModal(creds: Credential) {
+      showEdit(creds)
+    },
     removeCredentials(_creds: Credential) {}
   }
 })

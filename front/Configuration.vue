@@ -69,7 +69,7 @@ export default Vue.extend({
     credentials: function() {
       this.resetFields()
     }
-  }
+  },
   methods: {
     editConfig() {
       this.isEditing = true
