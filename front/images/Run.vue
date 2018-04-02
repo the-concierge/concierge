@@ -22,20 +22,18 @@
 
             <div v-if="linkableContainers.length > 0" class="input-group" style="margin-bottom: 10px">
               <select v-model="selectedContainerLink" class="form-select">
-                <option v-for="(c, i) in linkableContainers" :key="i" v-bind:value="c.name">
+                <option v-for="(c, i) in linkableContainers" :key="i" v-bind:value="c">
                   {{c.label}}
                 </option>
               </select>
 
               <button class="btn btn-md" v-on:click="addContainerLink">Add</button>
+            </div>
 
-              <div v-for="(l, i) in links" :key="i">
-                <div class="input-group" style="margin-bottom: 10px">
-                  <span class="input-group-addon">{{l.containerName}}</span>
-                  <input type="text" class="form-input" v-model="l.alias" placeholder="[Required] Link alias..." />
-                  <button class="btn btn-md" v-on:click="removeContainerLink(l)">Remove</button>
-                </div>
-              </div>
+            <div v-for="(l, i) in links" :key="i" class="input-group" style="margin-bottom: 10px">
+              <span class="input-group-addon">{{l.name}}</span>
+              <input v-model="l.alias" v-bind:class="{ 'is-error': l.alias.length === 0 }" type="text" class="form-input" placeholder="[Required] Link alias..." />
+              <button class="btn btn-md" v-on:click="removeContainerLink(l)">Remove</button>
             </div>
 
             <div v-if="ports.length > 0">
@@ -130,7 +128,7 @@
 import Vue from 'vue'
 import { Image, Container } from '../api'
 import { ImageInspectInfo } from 'dockerode'
-import { createEmitter } from '../common'
+import { createEmitter, toast } from '../common'
 
 export default Vue.extend({
   props: {
@@ -139,6 +137,7 @@ export default Vue.extend({
   data() {
     return {
       ...baseData,
+      creatingContainer: false,
       modalActive: false,
       loading: false
     }
@@ -162,11 +161,29 @@ export default Vue.extend({
       this.customEnvs.push({ key: this.newCustomVariableName, value: '' })
       this.newCustomVariableName = ''
     },
-    removeCustomVolume(_volume: Volume) {},
-    removeCustomVariable(_env: Env) {},
-    addContainerLink(_container: Container) {},
-    removeContainerLink(_container: Container) {},
-    runContainer() {},
+    removeCustomVolume(volume: Volume) {
+      this.customVolumes = this.customVolumes.filter(cv => cv.path !== volume.path)
+    },
+    removeCustomVariable(env: Env) {
+      this.customEnvs = this.customEnvs.filter(ce => ce.key !== env.key)
+    },
+    addContainerLink() {
+      const link = this.selectedContainerLink
+      this.links.push({ ...link, alias: '' })
+      this.linkableContainers = this.linkableContainers.filter(lc => lc.name !== link.name)
+      this.selectedContainerLink = this.linkableContainers[0] || {
+        name: 'N/A',
+        label: '',
+        image: ''
+      }
+    },
+    removeContainerLink(link: Link) {
+      this.links = this.links.filter(l => l.name !== link.name)
+      this.linkableContainers.push(link)
+      if (this.linkableContainers.length === 1) {
+        this.selectedContainerLink = this.linkableContainers[0]
+      }
+    },
     toggleAllPorts() {
       const to = !this.exposeAll
       this.exposeAll = to
@@ -174,21 +191,65 @@ export default Vue.extend({
         port.expose = to
       }
     },
+    copyPort(port: Port) {
+      port.hostPort = port.port.toString()
+    },
     copyAllPorts() {
       for (const port of this.ports) {
         port.hostPort = port.port.toString()
       }
+    },
+    async runContainer() {
+      const envs = [...this.envs, ...this.customEnvs].map(({ key, value }) => ({ key, value }))
+      const ports = this.ports.map(p => ({
+        port: p.port,
+        type: p.type,
+        hostPort: p.hostPort,
+        expose: p.expose
+      }))
+      const volumes = [...this.volumes, ...this.customVolumes].map(v => ({
+        path: v.path,
+        hostPath: v.hostPath
+      }))
+      const links = this.links.map(l => ({
+        containerName: l.name,
+        alas: l.alias
+      }))
+
+      const body = {
+        name: this.name,
+        image: this.image.name,
+        ports,
+        envs,
+        volumes,
+        links
+      }
+
+      this.creatingContainer = true
+      try {
+        const result = await fetch('/api/images/run', {
+          body: JSON.stringify(body),
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json ' }
+        })
+
+        if (result.status < 400) {
+          toast.success('Successfully created container')
+          return
+        }
+
+        const msg = await result.json()
+        toast.error(`Failed to create container: [${result.status}] ${msg.message}`, 15000)
+      } finally {
+        this.creatingContainer = false
+      }
     }
   },
-  watch: {
-    links: function(links: Link[]) {
-      this.linkableContainers = getLinkableContainers(links, this.containers)
-      this.selectedContainerLink = this.linkableContainers[0] || { name: '', label: '', image: '' }
-    }
-  },
+
   computed: {
     canRunContainer: function(): boolean {
-      return true
+      const allLinksSet = this.links.every(l => l.alias.trim() !== '')
+      return !this.creatingContainer && allLinksSet
     }
   },
   mounted() {
@@ -204,13 +265,13 @@ export default Vue.extend({
       const info = await getInfo(img)
 
       this.links = []
+      this.linkableContainers = getLinkableContainers([], this.containers)
+      this.selectedContainerLink = this.linkableContainers[0] || { name: '', label: '', image: '' }
       this.customVolumes = []
       this.customEnvs = []
       this.ports = getPorts(info)
       this.envs = getEnvs(info)
       this.volumes = getVolumes(info)
-      this.selectedContainerLink = { name: '', label: '', image: '' }
-
       this.loading = false
     })
   }
@@ -242,7 +303,7 @@ async function getInfo(img: Image) {
 type Port = { port: number; type: string; expose: boolean; hostPort: string }
 type Volume = { path: string; hostPath: string }
 type Env = { key: string; value: string }
-type Link = { containerName: string; alias: string }
+type Link = Linkable & { alias: string }
 type Linkable = { name: string; image: string; label: string }
 function getPorts(info: ImageInspectInfo): Port[] {
   if (!info.Config.ExposedPorts) {
@@ -291,7 +352,7 @@ function getLinkableContainers(links: Link[], containers: Container[]): Linkable
   return containers
     .filter(c => {
       const isRunning = c.State === 'running'
-      const isNotLinked = links.every(link => link.containerName !== c.Names[0])
+      const isNotLinked = links.every(link => link.name !== c.Names[0])
       return isRunning && isNotLinked
     })
     .map(c => ({

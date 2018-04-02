@@ -1,7 +1,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Application } from '../api'
-import { toast } from '../common'
+import { toast, createEmitter } from '../common'
 
 interface Ref {
   type: string
@@ -74,7 +74,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    onShowModal(async app => {
+    emitter.on(async app => {
       this.app = app
       this.modalActive = true
       this.modalLoading = true
@@ -99,14 +99,9 @@ export default Vue.extend({
   }
 })
 
-type CB = (app: Application) => void
-let _onShow: CB = () => {}
-function onShowModal(callback: CB) {
-  _onShow = callback
-}
-
+const emitter = createEmitter<Application>()
 export function showModal(app: Application) {
-  _onShow(app)
+  emitter.emit(app)
 }
 
 export function toImageTag(appLabel: string, ref: string) {

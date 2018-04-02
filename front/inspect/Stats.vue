@@ -10,6 +10,7 @@ import Vue from 'vue'
 import { Container } from '../api'
 import { BoxData } from 'analysis'
 import * as hs from 'highcharts'
+import { createEmitter } from '../common'
 require('highcharts/highcharts-more.js')(hs)
 require('highcharts/modules/exporting.js')(hs)
 
@@ -32,6 +33,7 @@ export default Vue.extend({
   },
   mounted() {
     this.getStats()
+    emitter.on(() => this.getStats())
   },
   methods: {
     async getStats(): Promise<any> {
@@ -118,4 +120,9 @@ export default Vue.extend({
     }
   }
 })
+
+const emitter = createEmitter<any>()
+export function refreshStats() {
+  emitter.emit(undefined)
+}
 </script>

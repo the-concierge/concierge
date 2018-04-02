@@ -35,9 +35,10 @@
 import Vue from 'vue'
 import SafeLink from './SafeLink.vue'
 import Details from './inspect/Details.vue'
-import Stats from './inspect/Stats.vue'
+import Stats, { refreshStats } from './inspect/Stats.vue'
 import Logs from './inspect/Logs.vue'
 import { Container, Configuration } from './api'
+import { toast } from './common'
 
 export default Vue.extend({
   components: { SafeLink, Details, Stats, Logs },
@@ -62,10 +63,29 @@ export default Vue.extend({
     }
   },
   methods: {
-    stopContainer() {},
-    startContainer() {},
-    removeContainer() {},
-    refreshStats() {}
+    async request(cmd: string, method: string = 'GET') {
+      const container = this.container
+      const route = `/api/containers/${container.Id}/${cmd}/${container.concierge.hostId}`
+      const res = await fetch(route, { method })
+      const result = await res.json()
+      if (res.status >= 400) {
+        toast.error(`Request failed: ${result.message}`)
+      }
+      return result
+    },
+    stopContainer() {
+      this.request('stop')
+    },
+    startContainer() {
+      this.request('start')
+    },
+    async removeContainer() {
+      await this.request('host', 'DELETE')
+      this.waiting = true
+    },
+    refreshStats() {
+      refreshStats()
+    }
   }
 })
 </script>

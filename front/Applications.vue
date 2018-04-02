@@ -41,10 +41,10 @@
           </td>
         </tr>
 
-        <tr v-if="app.display">
+        <tr v-if="app.display && app.remotes.length > 0">
           <td colspan="4">
 
-            <table v-if="app.remotes.length > 0" class="table" style="table-layout: fixed">
+            <table class="table" style="table-layout: fixed">
               <thead>
                 <tr>
                   <td style="padding: 3px">
@@ -73,7 +73,7 @@
                   </td>
                   <td style="padding: 3px">
                     <button class="btn btn-sm" :disabled="r.state !== 2" v-on:click="rebuildBranch(app, r)">Re-Build</button>
-                    <button class="btn btn-sm" :disabled="r.imageId.length === 0" v-on:click="runImage(r.image)">Run</button>
+                    <button class="btn btn-sm" :disabled="r.imageId.length === 0" v-on:click="runImage(r)">Run</button>
                     <button class="btn btn-sm" v-on:click="removeImage(r.image)">Remove Image</button>
                   </td>
                 </tr>
@@ -87,6 +87,7 @@
     </table>
 
     <Create v-bind:credentials="credentials" />
+    <Run v-bind:containers="containers" />
     <Build />
 
   </div>
@@ -95,7 +96,8 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { Application, Image, Remote, Credential, State } from './api'
+import Run, { showModal as showRun } from './images/Run.vue'
+import { Application, Image, Remote, Credential, State, Container } from './api'
 import Create, { showModal as showCreate } from './applications/Create.vue'
 import Build, { showModal as showBuild } from './applications/Build.vue'
 import { toImageTag } from './applications/Build.vue'
@@ -108,12 +110,13 @@ interface AppVM extends Application {
 }
 
 export default Vue.extend({
-  components: { Create, Build },
+  components: { Create, Build, Run },
   props: {
     applications: { type: Array as () => Application[] },
     credentials: { type: Array as () => Credential[] },
     images: { type: Array as () => Image[] },
-    remotes: { type: Array as () => Remote[] }
+    remotes: { type: Array as () => Remote[] },
+    containers: { type: Array as () => Container[] }
   },
   data() {
     return {
@@ -131,6 +134,10 @@ export default Vue.extend({
   methods: {
     refresh() {
       return refresh.applications()
+    },
+    runImage(remote: Remote) {
+      const img = this.images.find(img => img.Id === remote.imageId)
+      showRun(img!)
     },
     showCreateModal() {
       showCreate()

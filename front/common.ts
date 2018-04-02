@@ -12,10 +12,10 @@ export function navigate(path: string) {
 }
 
 export const toast = {
-  primary: (msg: string) => emitToast('toast-primary', msg),
-  error: (msg: string) => emitToast('toast-error', msg),
-  warn: (msg: string) => emitToast('toast-warning', msg),
-  success: (msg: string) => emitToast('toast-success', msg)
+  primary: (msg: string, duration?: number) => emitToast('toast-primary', msg, duration),
+  error: (msg: string, duration?: number) => emitToast('toast-error', msg, duration),
+  warn: (msg: string, duration?: number) => emitToast('toast-warning', msg, duration),
+  success: (msg: string, duration?: number) => emitToast('toast-success', msg, duration)
 }
 
 function emitToast(cls: string, msg: string, duration: number = 5000) {

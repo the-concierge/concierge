@@ -175,7 +175,7 @@ export default Vue.extend({
     <div class="container">
       <Containers v-if="view === 'containers'" v-bind:containers="state.containers" />
       <Inspect v-if="view==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
-      <Applications v-if="view==='applications' " v-bind:applications="state.applications " v-bind:images="state.images " v-bind:remotes="state.remotes" />
+      <Applications v-if="view==='applications'" v-bind:applications="state.applications" v-bind:images="state.images" v-bind:remotes="state.remotes" v-bind:containers="state.containers" />
       <Images v-if="view==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
       <Hosts v-if="view==='hosts' " v-bind:hosts="state.hosts" />
       <Credentials v-if="view==='credentials' " v-bind:credentials="state.credentials " />
