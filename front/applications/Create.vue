@@ -85,7 +85,7 @@ import { toast, refresh } from '../common'
 
 export default Vue.extend({
   props: {
-    credentials: { type: Object as () => Credential[] }
+    credentials: { type: Array as () => Credential[] }
   },
   data() {
     return {

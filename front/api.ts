@@ -163,8 +163,12 @@ function merge<T>(fromList: T[], toList: T[], idKey: keyof T) {
   for (const to of toList) {
     seen.add(to[idKey])
 
-    const isOld = fromList.some(from => from[idKey] === to[idKey])
-    if (isOld) {
+    const original = fromList.find(from => from[idKey] === to[idKey])
+    if (original) {
+      for (const key of Object.keys(original) as Array<keyof typeof original>) {
+        if (key === idKey) continue
+        original[key] = to[key]
+      }
       continue
     }
 

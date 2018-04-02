@@ -138,7 +138,7 @@ export function slug(text: string) {
             <p>Image Tag:
               <code>{{finalImageTag}}</code>
             </p>
-            <form class="form-horizonal">
+            <form v-on:submit.prevent class="form-horizonal">
               <div class="form-group">
                 <div class="col-3">Docker image tag</div>
                 <div class="col-9">

@@ -35,7 +35,7 @@
           <td v-on:click="toggleDisplay(app)" style="cursor: pointer">{{ app.dockerfile }}</td>
           <td>
             <button class="btn btn-md" v-on:click="showBuildModal(app)">Build</button>
-            <button class="btn btn-md" v-on:click="showEditModal">Edit</button>
+            <button class="btn btn-md" v-on:click="showEditModal(app)">Edit</button>
             <button class="btn btn-md" v-on:click="removeApplication">Remove</button>
             <button class="btn btn-md" v-on:click="showLogsModal">Logs</button>
           </td>
@@ -66,7 +66,7 @@
               <tbody v-for="(r, i) in app.remotes" v-bind:key="i">
                 <tr v-if="app.display">
                   <td style="padding: 3px">{{ r.remote }}</td>
-                  <td style="padding: 3px">{{r.sha.slice(0, 10) }}</td>
+                  <td style="padding: 3px">{{ r.sha.slice(0, 10) }}</td>
                   <td style="padding: 3px">{{ cleanSha(r.imageId) }}</td>
                   <td style="padding: 3px">
                     <span v-bind:class="toStatusClass(r.state)" class="label label-rounded">{{ toStatus(r.state) }}</span>
@@ -88,6 +88,7 @@
 
     <Create v-bind:credentials="credentials" />
     <Run v-bind:containers="containers" />
+    <Edit v-bind:credentials="credentials" />
     <Build />
 
   </div>
@@ -96,8 +97,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Run, { showModal as showRun } from './images/Run.vue'
 import { Application, Image, Remote, Credential, State, Container } from './api'
+import Run, { showModal as showRun } from './images/Run.vue'
+import Edit, { showModal as showEdit } from './applications/Edit.vue'
 import Create, { showModal as showCreate } from './applications/Create.vue'
 import Build, { showModal as showBuild } from './applications/Build.vue'
 import { toImageTag } from './applications/Build.vue'
@@ -110,7 +112,7 @@ interface AppVM extends Application {
 }
 
 export default Vue.extend({
-  components: { Create, Build, Run },
+  components: { Create, Build, Run, Edit },
   props: {
     applications: { type: Array as () => Application[] },
     credentials: { type: Array as () => Credential[] },
@@ -145,7 +147,9 @@ export default Vue.extend({
     showBuildModal(app: Application) {
       showBuild(app)
     },
-    showEditModal() {},
+    showEditModal(app: Application) {
+      showEdit(app)
+    },
     showLogsModal() {},
 
     async rebuildBranch(app: AppVM, remote: Remote) {
