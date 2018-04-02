@@ -1,11 +1,12 @@
 <script lang="ts">
 import Vue from 'vue'
-import Run, { showModal } from './images/Run.vue'
+import Run, { showModal as showRun } from './images/Run.vue'
+import Pull, { showModal as showPull } from './images/Pull.vue'
 import { Image, Container } from './api'
 import { common } from 'analysis'
 
 export default Vue.extend({
-  components: { Run },
+  components: { Run, Pull },
   props: {
     images: { type: Array as () => Image[] },
     containers: { type: Array as () => Container[] }
@@ -23,7 +24,7 @@ export default Vue.extend({
       return new Date(timestamp * 1000).toUTCString()
     },
     runImage(image: Image) {
-      showModal(image)
+      showRun(image)
     },
     clearFilter() {
       this.imageFilter = ''
@@ -31,7 +32,9 @@ export default Vue.extend({
     filterImages(filter: string) {
       return this.images.filter((img: Image) => img.name.indexOf(filter) > -1)
     },
-    pullImage() {},
+    pullImage() {
+      showPull()
+    },
     removeImage(_image: Image) {}
   }
 })
@@ -80,9 +83,8 @@ export default Vue.extend({
       </tbody>
     </table>
 
-    <!-- <ko-pull-image></ko-pull-image> -->
-
     <Run v-bind:containers="containers" />
+    <Pull />
   </div>
 </template>
 
