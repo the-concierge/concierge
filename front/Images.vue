@@ -4,6 +4,7 @@ import Run, { showModal as showRun } from './images/Run.vue'
 import Pull, { showModal as showPull } from './images/Pull.vue'
 import { Image, Container } from './api'
 import { common } from 'analysis'
+import { toast } from './common'
 
 export default Vue.extend({
   components: { Run, Pull },
@@ -35,7 +36,21 @@ export default Vue.extend({
     pullImage() {
       showPull()
     },
-    removeImage(_image: Image) {}
+    async removeImage(image: Image) {
+      const tag = image.name
+      const result = await fetch(`/api/images?tag=${tag}`, {
+        method: 'DELETE'
+      })
+
+      const msg = await result.json()
+
+      if (result.status < 400) {
+        toast.success(msg.message)
+        return
+      }
+
+      toast.error(msg.message)
+    }
   }
 })
 </script>
