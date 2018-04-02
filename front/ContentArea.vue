@@ -10,6 +10,7 @@ import Credentials from './Credentials.vue'
 import Config from './Configuration.vue'
 import SafeLink from './SafeLink.vue'
 import Inspect from './Inspect.vue'
+import Logs from './Logs.vue'
 
 export interface Toast {
   state: string
@@ -35,7 +36,8 @@ export default Vue.extend({
     Credentials,
     Config,
     SafeLink,
-    Inspect
+    Inspect,
+    Logs
   },
   data() {
     return {
@@ -77,6 +79,11 @@ export default Vue.extend({
         {
           id: 'config',
           title: 'Configuration',
+          active: false
+        },
+        {
+          id: 'logs',
+          title: 'Logs',
           active: false
         }
       ] as NavItem[]
@@ -174,12 +181,13 @@ export default Vue.extend({
 
     <div class="container">
       <Containers v-if="view === 'containers'" v-bind:containers="state.containers" />
-      <Inspect v-if="view==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
-      <Applications v-if="view==='applications'" v-bind:credentials="state.credentials" v-bind:applications="state.applications" v-bind:images="state.images" v-bind:remotes="state.remotes" v-bind:containers="state.containers" />
-      <Images v-if="view==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
-      <Hosts v-if="view==='hosts' " v-bind:hosts="state.hosts" />
-      <Credentials v-if="view==='credentials' " v-bind:credentials="state.credentials " />
-      <Config v-if="view==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials" />
+      <Inspect v-if="view ==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
+      <Applications v-if="view ==='applications'" v-bind:credentials="state.credentials" v-bind:applications="state.applications" v-bind:images="state.images" v-bind:remotes="state.remotes" v-bind:containers="state.containers" />
+      <Images v-if="view ==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
+      <Hosts v-if="view ==='hosts' " v-bind:hosts="state.hosts" />
+      <Credentials v-if="view ==='credentials' " v-bind:credentials="state.credentials " />
+      <Config v-if="view ==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials" />
+      <Logs v-show="view === 'logs'" v-bind:monitors="state.monitors" />
     </div>
 
     <div v-for="(toast, i) in toasts" v-bind:key="i">

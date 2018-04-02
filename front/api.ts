@@ -31,6 +31,11 @@ export interface Image extends ImageInfo {
   }
 }
 
+export type Monitor = {
+  id: string
+  logs: string[]
+}
+
 export type Host = Concierge.Host
 
 export type Credential = Concierge.Credentials
@@ -58,6 +63,7 @@ export interface AppState {
   applications: Application[]
   remotes: Remote[]
   config: Configuration
+  monitors: Monitor[]
 }
 
 export async function getAll(state: AppState): Promise<AppState> {
@@ -76,7 +82,8 @@ export async function getAll(state: AppState): Promise<AppState> {
     credentials,
     applications,
     remotes,
-    config
+    config,
+    monitors: []
   }
 }
 

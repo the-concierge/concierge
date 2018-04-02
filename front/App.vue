@@ -15,6 +15,7 @@ export default Vue.extend({
       credentials: [],
       applications: [],
       remotes: [],
+      monitors: [],
       config: {
         name: '',
         conciergePort: 0,
@@ -40,6 +41,10 @@ export default Vue.extend({
 
     api.socket.on('build-status', (event: RemoteEvt) => {
       updateRemotes(this.state.remotes, event)
+    })
+
+    api.socket.on('build', (event: ConciergeEvent<string>) => {
+      updateMonitors(this.state.monitors, event)
     })
 
     onRefresh(async res => {
@@ -73,6 +78,19 @@ export default Vue.extend({
 })
 
 type ContainerEvt = ConciergeEvent<ContainerEvent>
+type RemoteEvt = ConciergeEvent<BuildStatusEvent>
+type MonitorEvt = ConciergeEvent<string>
+
+function updateMonitors(monitors: api.Monitor[], event: MonitorEvt) {
+  const monitor = monitors.find(mon => mon.id === event.name)
+  if (!monitor) {
+    monitors.push({ id: event.name, logs: [event.event] })
+    return monitors
+  }
+
+  monitor.logs.push(event.event)
+  return monitors
+}
 
 function updateContainer(containers: api.Container[], { event: stats }: ContainerEvt) {
   const container = containers.find(c => c.Id === stats.id)
@@ -86,7 +104,6 @@ function updateContainer(containers: api.Container[], { event: stats }: Containe
   container.stats.mbOut = stats.tx
 }
 
-type RemoteEvt = ConciergeEvent<BuildStatusEvent>
 function updateRemotes(remotes: api.Remote[], { event }: RemoteEvt) {
   const existing = remotes.find(
     remote => remote.applicationId === event.applicationId && remote.remote === event.remote
