@@ -63,6 +63,10 @@ export default Vue.extend({
         case 'credentials':
           this.state.credentials = await api.getCredentials(this.state.credentials)
           return
+
+        case 'config':
+          this.state.config = await api.getConfig()
+          return
       }
     })
   }

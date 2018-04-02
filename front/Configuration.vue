@@ -49,6 +49,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Configuration, Credential } from './api'
+import { toast, refresh } from './common'
 
 export default Vue.extend({
   props: {
@@ -87,7 +88,7 @@ export default Vue.extend({
 
       this.fields = fields
     },
-    saveConfig() {
+    async saveConfig() {
       const cfg = { ...this.config }
       for (const field of this.fields) {
         cfg[field.name as TConf] = field.value.value || field.value
@@ -97,7 +98,23 @@ export default Vue.extend({
         delete cfg.registryCredentials
       }
 
-      console.log('SaveConfig', cfg)
+      const result = await fetch('/api/configuration', {
+        method: 'POST',
+        body: JSON.stringify(cfg),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (result.status < 400) {
+        toast.success('Successfully updated configuration')
+        refresh.config()
+        this.isEditing = false
+        return
+      }
+
+      const msg = await result.json()
+      toast.error(`Failed to update configuration: ${msg.message}`)
     }
   },
   mounted() {

@@ -52,7 +52,8 @@ export const refresh = {
   hosts: () => refreshListener('hosts'),
   images: () => refreshListener('images'),
   applications: () => refreshListener('applications'),
-  credentials: () => refreshListener('credentials')
+  credentials: () => refreshListener('credentials'),
+  config: () => refreshListener('config')
 }
 
 export type Callback<T> = (value: T) => void
