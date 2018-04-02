@@ -1,6 +1,6 @@
 <script lang="ts">
 import Vue from 'vue'
-import { listen, onToast, Toast, toast } from './common'
+import { onNavigate, onToast, Toast, toast } from './common'
 import { AppState, Container, socket } from './api'
 import Containers from './Containers.vue'
 import Images from './Images.vue'
@@ -83,7 +83,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    listen((path: string) => {
+    onNavigate((path: string) => {
       this.setTab(path)
     })
     this.setTab(window.location.pathname)
@@ -179,7 +179,7 @@ export default Vue.extend({
       <Images v-if="view==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
       <Hosts v-if="view==='hosts' " v-bind:hosts="state.hosts" />
       <Credentials v-if="view==='credentials' " v-bind:credentials="state.credentials " />
-      <Config v-if="view==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials " />
+      <Config v-if="view==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials" />
     </div>
 
     <div v-for="(toast, i) in toasts" v-bind:key="i">

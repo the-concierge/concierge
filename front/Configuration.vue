@@ -62,6 +62,14 @@ export default Vue.extend({
       isEditing: false
     }
   },
+  watch: {
+    config: function() {
+      this.resetFields()
+    },
+    credentials: function() {
+      this.resetFields()
+    }
+  }
   methods: {
     editConfig() {
       this.isEditing = true
@@ -70,23 +78,24 @@ export default Vue.extend({
       this.resetFields()
       this.isEditing = false
     },
+    getBaseFields() {
+      return []
+    },
     resetFields() {
-      const credOptions = [
+      const creds = [
         { text: 'None', value: -1 },
-        ...this.credentials.map(cred => ({ text: cred.name, value: cred.id }))
+        ...this.credentials.map(({ name, id }) => ({ text: name, value: id }))
       ]
 
-      const fields = [
+      this.fields = [
         textInput('name', 'Name', this.config),
         textInput('proxyHostname', 'Proxy Hostname', this.config),
         textInput('debug', 'Debug Level', this.config),
         textInput('statsBinSize', 'Samples per Bin (1Hz)', this.config),
         textInput('statsRetentionDays', 'Stats Retention Time (days)', this.config),
         textInput('dockerRegistry', 'Docker Registry URL', this.config),
-        dropdown('registryCredentials', 'Docker Registry Credentials', credOptions, this.config)
+        dropdown('registryCredentials', 'Docker Registry Credentials', creds, this.config)
       ]
-
-      this.fields = fields
     },
     async saveConfig() {
       const cfg = { ...this.config }
@@ -108,8 +117,9 @@ export default Vue.extend({
 
       if (result.status < 400) {
         toast.success('Successfully updated configuration')
-        refresh.config()
         this.isEditing = false
+        await refresh.config()
+        this.resetFields()
         return
       }
 

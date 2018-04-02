@@ -1,14 +1,15 @@
-type Listener = (path: string) => void
-const navListeners: Listener[] = []
-
-export function listen(listener: Listener) {
-  navListeners.push(listener)
+const navEmitter = createEmitter<string>()
+export function onNavigate(cb: (path: string) => void) {
+  navEmitter.on(cb)
 }
 
 export function navigate(path: string) {
-  for (const listener of navListeners) {
-    listener(path)
-  }
+  navEmitter.emit(path)
+}
+
+const toastEmitter = createEmitter<Toast>()
+export function onToast(cb: (toast: Toast) => void) {
+  toastEmitter.on(cb)
 }
 
 export const toast = {
@@ -25,9 +26,7 @@ function emitToast(cls: string, msg: string, duration: number = 5000) {
     duration
   }
 
-  for (const cb of toastListeners) {
-    cb(toast)
-  }
+  toastEmitter.emit(toast)
 }
 
 export interface Toast {
@@ -36,24 +35,20 @@ export interface Toast {
   duration: number
 }
 
-const toastListeners: Function[] = []
-export function onToast(cb: (toast: Toast) => void) {
-  toastListeners.push(cb)
-}
+const refreshEmitter = createEmitter<Refresh>()
 
-let refreshListener: Function = () => {}
 export function onRefresh(cb: (resource: Refresh) => void) {
-  refreshListener = cb
+  refreshEmitter.on(cb)
 }
 
 type Refresh = keyof typeof refresh
 export const refresh = {
-  containers: () => refreshListener('containers'),
-  hosts: () => refreshListener('hosts'),
-  images: () => refreshListener('images'),
-  applications: () => refreshListener('applications'),
-  credentials: () => refreshListener('credentials'),
-  config: () => refreshListener('config')
+  containers: () => refreshEmitter.emit('containers'),
+  hosts: () => refreshEmitter.emit('hosts'),
+  images: () => refreshEmitter.emit('images'),
+  applications: () => refreshEmitter.emit('applications'),
+  credentials: () => refreshEmitter.emit('credentials'),
+  config: () => refreshEmitter.emit('config')
 }
 
 export type Callback<T> = (value: T) => void
