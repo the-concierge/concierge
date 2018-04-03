@@ -79,6 +79,6 @@
   "license": "MIT",
   "contributors": [],
   "bin": {
-    "the-concierge": "./build/cli.js"
+    "the-concierge": "./dist/cli.js"
   }
 }
