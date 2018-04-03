@@ -38,7 +38,7 @@ repositories/
 registry/
 logs/*
 !yarn.lock
-build/
+dist/
 .env
 .DS_Store
 front/*.html

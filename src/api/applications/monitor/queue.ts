@@ -1,6 +1,6 @@
 import { Branch, State } from '../types'
 import * as db from '../db'
-import build from '../build'
+import buildImage from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
 
@@ -37,7 +37,6 @@ class BuildQueue {
       // If we are already aware of the SHA and it is 'dealt with', do nothing
       switch (existingItem.state) {
         case State.Building:
-        case State.Successful:
         case State.Waiting:
           return
       }
@@ -76,7 +75,7 @@ class BuildQueue {
       const app = item.app
       const refSlug = slug(item.ref)
       const buildTag = `${app.label}:${refSlug}`
-      const buildJob = await build(app, item.sha, buildTag)
+      const buildJob = await buildImage(app, item.sha, buildTag)
 
       await updateRemote(item, State.Building)
       const result = await buildJob.build
@@ -84,7 +83,6 @@ class BuildQueue {
     } catch (ex) {
       if (ex.code === 'E_REPOBUSY') {
         // If the repository on disk is busy, try this repo again in the next poll
-        this.queue.unshift(item)
         await updateRemote(item, State.Waiting)
         return
       }

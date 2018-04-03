@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import * as db from '../../data'
+import { create } from './db'
 
 const handler: RequestHandler = async (req, res) => {
   const hostname = req.body.hostname || ''
@@ -15,18 +15,25 @@ const handler: RequestHandler = async (req, res) => {
   const hasUsername = !!sshUsername.length
 
   if (hasHostname && !hasUsername) {
-    res
-      .status(400)
-      .json({
-        message: 'Invalid SSH username provided: Must provided credentials if providing a hostname'
-      })
+    res.status(400).json({
+      message: 'Invalid SSH username provided: Must provided credentials if providing a hostname'
+    })
     return
   }
 
-  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname, proxyIp }
+  const body = {
+    hostname,
+    dockerPort,
+    sshPort,
+    capacity,
+    sshUsername,
+    vanityHostname,
+    proxyIp,
+    privateKey
+  }
 
   try {
-    const result: number[] = await db.hosts().insert({ ...body, privateKey })
+    const result = await create(body)
     res.json({ ...body, id: result[0] })
   } catch (ex) {
     res.status(500)

@@ -6,7 +6,7 @@
       "request": "launch",
       "name": "Launch CLI",
       "program": "${workspaceRoot}/src/cli.ts",
-      "outFiles": ["${workspaceRoot}/build/**/*.js"],
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
       "args": ["status"]
     },
     {
@@ -22,11 +22,11 @@
       "runtimeArgs": ["--nolazy"],
       "env": {
         "NODE_ENV": "development",
-        "CONCIERGE_PORT": "10000"
+        "CONCIERGE_PORT": "3141"
       },
       "console": "internalConsole",
       "sourceMaps": true,
-      "outFiles": ["${workspaceRoot}/build/**/*.js"]
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"]
     }
   ]
 }

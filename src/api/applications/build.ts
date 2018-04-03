@@ -1,180 +1,48 @@
-import * as fs from 'fs'
-import * as path from 'path'
-import pack from '../git/pack'
-import docker from '../docker'
-import { build as emitBuild } from '../stats/emitter'
-import * as getHost from '../hosts/db'
-import push from './push'
+import * as db from './db'
+import { RequestHandler } from 'express'
+import queue from './monitor/queue'
 
-const logBasePath = path.resolve(__dirname, '..', '..', '..', 'logs')
+type Body = {
+  ref: string
+  tag: string
+  type: string
+  sha: string
+}
 
-export default async function buildImage(
-  application: Concierge.Application,
-  sha: string,
-  tag: string,
-  hostId?: number
-) {
-  const host = hostId ? await getHost.getOne(hostId) : await getAvailableHost()
+const handler: RequestHandler = async (req, res) => {
+  const { id } = req.params as { id: number }
+  const { tag, sha, ref } = req.query as Body
+  const app = await db.one(id)
 
-  const client = docker(host)
-  const stream = await pack(application, sha)
-  await createApplicationLogPath(application)
-
-  const logFile = getLogFilename(application, tag)
-  const id = path.basename(logFile)
-
-  const options: any = {
-    t: tag,
-    forcerm: true,
-    nocache: true,
-    dockerfile: application.dockerfile || 'Dockerfile'
+  if (!app) {
+    res.status(400).json({ message: `Application '${id}' does not exist` })
+    return
   }
 
-  const promise = new Promise<{ responses: BuildEvent[]; imageId?: string }>((resolve, reject) => {
-    client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
-      const buildName = `${application.id}/${tag}`
-      if (err) {
-        reject(err)
-        appendAsync(logFile, err.message || err)
-        emitBuild(buildName, `Failed to start build: ${err.message || err}`)
-        return
-      }
-
-      handleBuildStream(buildStream, logFile)
-        .then(responses => {
-          const imageId = getImageId(responses)
-          resolve({ responses, imageId })
-          push(host, tag)
-        })
-        .catch(err => reject(err))
-    })
-  })
-
-  return { id, build: promise }
-}
-
-function getLogFilename(app: Concierge.Application, ref: string) {
-  const now = new Date()
-  const date = `${now.getFullYear()}${now.getMonth()}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
-  const filename = `${date}__${ref}.log`.split('/').join('_')
-
-  const logPath = path
-    .resolve(logBasePath, app.id.toString(), filename)
-    .replace('refs/heads/', '')
-    .replace('refs/tags/', '')
-
-  log.debug(`Using log file: ${logPath}`)
-  return logPath
-}
-
-async function getAvailableHost() {
-  const hosts = await getHost.getAll()
-  const host = hosts[0]
-
-  if (!host) {
-    throw new Error(`Unable to build image: No hosts available`)
-  }
-
-  return host
-}
-
-/**
- * TODO:
- * - Emit build events over web socket (application, ref, message)
- * - Have front-end monitor build events for application + ref
- */
-function handleBuildStream(stream: NodeJS.ReadableStream, logFile: string) {
-  const buildResponses: BuildEvent[] = []
-  const id = path.basename(logFile)
-
-  const promise = new Promise<BuildEvent[]>((resolve, reject) => {
-    stream.on('data', (data: Buffer) => {
-      const msg = data.toString()
-      const output = tryParse(msg)
-
-      if (!Array.isArray(output)) {
-        return
-      }
-
-      buildResponses.push(...output)
-
-      for (const event of output) {
-        emitBuild(id, event.stream || event.errorDetail)
-      }
-
-      appendAsync(logFile, msg.trim() + '\n')
-    })
-
-    stream.on('end', () => {
-      const hasErrors = buildResponses.some(res => {
-        return res.hasOwnProperty('errorDetail')
-      })
-      if (hasErrors) {
-        return reject(buildResponses)
-      }
-
-      resolve(buildResponses)
-    })
-  })
-
-  return promise
-}
-
-type BuildEvent = { stream: string; aux?: { ID: string }; errorDetail: string }
-
-type ParseResult = BuildEvent[] | string
-
-function tryParse(text: string): ParseResult {
   try {
-    const json = JSON.parse(text.trim())
-    return [json]
-  } catch (_) {
-    try {
-      const split = text.trim().split('\n')
-      return split.map(splitText => JSON.parse(splitText))
-    } catch (__) {
-      return text
+    /**
+     * This will fail if:
+     * - This is no available host
+     * - It fails to pack the repo tar ball due to a deployment of that image already taking place
+     *
+     * It will not await the entire build
+     */
+    queue.add(app, {
+      age: new Date(),
+      ref,
+      sha,
+      seen: new Date()
+    })
+
+    res.json({ message: `Added image '${tag}' to build queue` })
+  } catch (ex) {
+    log.error(ex.message || ex)
+    if (ex.stack) {
+      log.debug(ex.stack)
     }
+
+    res.status(500).json({ message: ex.message || ex })
   }
 }
 
-function appendAsync(file: string, content: any) {
-  return new Promise<void>((resolve, reject) => {
-    fs.appendFile(file, content, err => {
-      if (err) {
-        return reject(err)
-      }
-      resolve()
-    })
-  })
-}
-
-async function createApplicationLogPath(application: Concierge.Application) {
-  return mkdirAsync(path.resolve(logBasePath, application.id.toString()))
-}
-
-function mkdirAsync(folder: string) {
-  return new Promise<void>((resolve, reject) => {
-    fs.mkdir(folder, err => {
-      if (err) {
-        const msg = (err.message || err) as string
-        if (msg.indexOf('EEXIST') > -1) {
-          return resolve()
-        }
-        return reject(err)
-      }
-      resolve()
-    })
-  })
-}
-
-function getImageId(buildResponses: BuildEvent[]): string | undefined {
-  for (const response of buildResponses) {
-    if (!response.aux) {
-      continue
-    }
-
-    return response.aux.ID
-  }
-  return
-}
+export default handler

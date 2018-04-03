@@ -184,9 +184,9 @@ function getBranchAction(
     return 'deleted'
   }
 
-  const isNewRemote = !existing && !!current && autoBuild
+  const isNewRemote = !existing && !!current
   if (isNewRemote) {
-    return 'new'
+    return autoBuild ? 'new' : 'inactive'
   }
 
   // Due due the previous XOR checks, both current and existing definitely exist past this point
