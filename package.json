@@ -46,6 +46,7 @@
     "express": "^4.14.1",
     "highcharts": "^5.0.14",
     "http-proxy": "^1.13.3",
+    "js-yaml": "^3.11.0",
     "knex": "^0.11.7",
     "minimist": "^1.2.0",
     "multiple-dispatch": "^0.3.7",
@@ -60,6 +61,7 @@
   "devDependencies": {
     "@types/express": "^4.0.35",
     "@types/history": "^4.6.2",
+    "@types/js-yaml": "^3.11.1",
     "@types/knex": "^0.0.53",
     "@types/minimist": "^1.2.0",
     "@types/node": "^9.3.0",
