@@ -14,9 +14,10 @@
         ]
     },
     "include": [
-        "../src/*.ts",
-        "../src/api/**/*.ts",
-        "../src/data/**/*.ts",
+        "../src/**/*.ts",
         "../typings/**/*.ts"
+    ],
+    "exclude": [
+        "../src/__deprecated/**/*ts"
     ]
 }
