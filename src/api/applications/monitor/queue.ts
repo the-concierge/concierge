@@ -1,6 +1,7 @@
 import { Branch, State } from '../types'
 import * as db from '../db'
-import buildImage from '../build-image'
+import { checkout } from '../checkout'
+import { buildImage } from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
 
@@ -12,6 +13,10 @@ class BuildQueue {
   queue: QueueItem[] = []
 
   // TODO: Retrieve from DB configuration
+  // This will eventually be derived from "Hosts"
+  // Hosts config will determine how many concurrent builds they support
+  // "Host.capacity" will become ultimately mean "Host.concurrentBuildLimit"
+  // At the moment we just support builds on "localhost"
   maxConcurrent = 2
 
   constructor() {
@@ -75,10 +80,26 @@ class BuildQueue {
       const app = item.app
       const refSlug = slug(item.ref)
       const buildTag = `${app.label}:${refSlug}`
-      const buildJob = await buildImage(app, item.sha, buildTag)
+
+      // Stage: checkout:pre
+      /**
+       * TODO: Move checkout step here
+       * Pass tarball to buildImage
+       * e.g:
+       * const buildContext = await pack(app, item.sha)
+       * const job = await buildImage(job, buildTag)
+       */
+      const context = await checkout(app, item.sha)
+      // Stage: checkout:post
+
+      // Stage: build:pre
+      const buildJob = await buildImage(app, context, buildTag)
 
       await updateRemote(item, State.Building)
       const result = await buildJob.build
+      // Stage: build:post
+      // Stage: success
+
       await updateRemote(item, State.Successful, { imageId: result.imageId })
     } catch (ex) {
       if (ex.code === 'E_REPOBUSY') {
@@ -87,8 +108,11 @@ class BuildQueue {
         return
       }
 
+      // Stage: fail
       // The build has failed -- we won't re-add it to the queue
       await updateRemote(item, State.Failed)
+    } finally {
+      // Stage: complete
     }
   }
 }
@@ -123,3 +147,16 @@ function emit(item: QueueItem, state: State, imageId?: string) {
     seen: item.seen ? item.seen.toISOString() : undefined
   })
 }
+
+/**
+ * Environment variables passed into each step:
+ * CONCIERGE_REPO: Git repository url
+ * CONCIERGE_APP: Application name
+ * CONCIERGE_LABEL: Application label (Used to generate image tag)
+ * CONCIERGE_REFTYPE: Git ref type, "branch" or "tag"
+ * CONCIERGE_REF: Git ref - Branch or tag name
+ * CONCIERGE_SHA: Git SHA
+ * CONCIERGE_IMAGE_TAG: Docker tag
+ * CONCIERGE_IMAGE_ID Docker image ID
+ * CONCIERGE_STATUS ("Successful", "Failed")
+ */

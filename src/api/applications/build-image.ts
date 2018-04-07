@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import pack from '../git/pack'
 import docker from '../docker'
 import { build as emitBuild } from '../stats/emitter'
 import * as getHost from '../hosts/db'
@@ -8,16 +7,15 @@ import push from './push'
 
 const logBasePath = path.resolve(__dirname, '..', '..', '..', 'logs')
 
-export default async function buildImage(
+export async function buildImage(
   application: Concierge.Application,
-  sha: string,
+  buildContext: NodeJS.ReadableStream,
   tag: string,
   hostId?: number
 ) {
   const host = hostId ? await getHost.getOne(hostId) : await getAvailableHost()
 
   const client = docker(host)
-  const stream = await pack(application, sha)
   await createApplicationLogPath(application)
 
   const logFile = getLogFilename(application, tag)
@@ -31,7 +29,8 @@ export default async function buildImage(
   }
 
   const promise = new Promise<{ responses: BuildEvent[]; imageId?: string }>((resolve, reject) => {
-    client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
+    // Pre-build
+    client.buildImage(buildContext, options, async (err, buildStream: NodeJS.ReadableStream) => {
       const buildName = `${application.id}/${tag}`
       if (err) {
         reject(err)
@@ -68,8 +67,10 @@ function getLogFilename(app: Concierge.Application, ref: string) {
 }
 
 async function getAvailableHost() {
-  const hosts = await getHost.getAll()
-  const host = hosts[0]
+  /**
+   * TODO: Iterate over hosts and find first host with available capacity
+   */
+  const [host] = await getHost.getAll()
 
   if (!host) {
     throw new Error(`Unable to build image: No hosts available`)
