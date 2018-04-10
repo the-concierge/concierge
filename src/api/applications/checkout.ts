@@ -20,14 +20,15 @@ export async function checkout(app: Concierge.Application, sha: string) {
 }
 
 function getTaskFile(app: Concierge.Application) {
-  const path = appPath(app)
+  const configPath = join(appPath(app), 'concierge.yml')
 
   return new Promise<Task | null>(resolve => {
-    readFile(join(path, 'concierge.yml'), (err, data) => {
+    readFile(configPath, (err, data) => {
       if (err) {
         return resolve(null)
       }
 
+      log.debug(`Raw file: ${data.toString()}`)
       const task = parseTaskFile(data.toString())
       resolve(task)
     })

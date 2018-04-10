@@ -12,7 +12,7 @@ export function parseTaskFile(content: string) {
   }
 
   for (const parser of parsers) {
-    const cfg = parser(content)
+    const cfg = parser(file)
     if (cfg) {
       return cfg
     }

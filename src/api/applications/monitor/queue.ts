@@ -95,6 +95,7 @@ class BuildQueue {
     try {
       // Stage: checkout
       const { stream, task } = await checkout(app, item.sha)
+
       failCommands.push(...getCommands(task, 'fail'))
       completeCommands.push(...getCommands(task, 'complete'))
 
@@ -214,12 +215,17 @@ function executeTask(opts: TaskOpts, command: string) {
     const [cmd, ...args] = command.split(' ').filter(cmd => !!cmd)
     const proc = spawn(cmd, args, {
       cwd,
-      env
+      env,
+      shell: true
     })
 
     const output: string[] = []
-    proc.stdout.on('data', data => output.push(...data.toString().split('\n')))
+    proc.stdout.on('data', data => {
+      output.push(...data.toString().split('\n'))
+    })
+
     proc.stderr.on('error', (err: any) => output.push(err.message || err))
+
     proc.on('close', code => {
       resolve({
         code,
