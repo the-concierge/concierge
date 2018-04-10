@@ -37,6 +37,7 @@ export default async function refToStream(
   const resetSentinal = () => {
     sentinal[id] = false
   }
+
   stream.on('close', resetSentinal)
   stream.on('end', resetSentinal)
   stream.on('error', resetSentinal)

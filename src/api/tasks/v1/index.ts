@@ -6,9 +6,6 @@ export interface V1Task {
    */
   use?: string
 
-  /** Prior to checking out -- Start of the build process */
-  start: string[]
-
   /** After successfully checking out */
   checkout: string[]
 
@@ -32,7 +29,6 @@ export function parse(content: any): V1Task | null {
 
   const version: 'v1' = content.version
   const use = content.use ? content.use.toString() : undefined
-  const start = toCommands(content.start)
   const checkout = toCommands(content.checkout)
   const success = toCommands(content.success)
   const fail = toCommands(content.fail)
@@ -41,7 +37,6 @@ export function parse(content: any): V1Task | null {
   return {
     version,
     use,
-    start,
     checkout,
     success,
     fail,

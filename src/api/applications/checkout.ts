@@ -1,4 +1,8 @@
 import pack from '../git/pack'
+import appPath from '../git/path'
+import { join } from 'path'
+import { readFile } from 'fs'
+import { parseTaskFile, Task } from '../tasks'
 
 export async function checkout(app: Concierge.Application, sha: string) {
   /**
@@ -10,5 +14,22 @@ export async function checkout(app: Concierge.Application, sha: string) {
 
   // TODO: This should use a specific host
   const stream = await pack(app, sha)
-  return stream
+
+  const task = await getTaskFile(app)
+  return { task, stream }
+}
+
+function getTaskFile(app: Concierge.Application) {
+  const path = appPath(app)
+
+  return new Promise<Task | null>(resolve => {
+    readFile(join(path, 'concierge.yml'), (err, data) => {
+      if (err) {
+        return resolve(null)
+      }
+
+      const task = parseTaskFile(data.toString())
+      resolve(task)
+    })
+  })
 }

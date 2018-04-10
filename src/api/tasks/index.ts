@@ -1,7 +1,9 @@
 import * as yaml from 'js-yaml'
-import { parse as parseV1 } from './v1'
+import { parse as parseV1, V1Task } from './v1'
 
 const parsers = [parseV1]
+
+export type Task = V1Task
 
 export function parseTaskFile(content: string) {
   const file = loadFile(content)

@@ -4,6 +4,9 @@ import { checkout } from '../checkout'
 import { buildImage } from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
+import { spawn } from 'child_process'
+import appPath from '../../git/path'
+import { Task } from '../../tasks'
 
 export type StrictBranch = Branch & { age: Date }
 
@@ -76,29 +79,41 @@ class BuildQueue {
   }
 
   private build = async (item: QueueItem) => {
+    const app = item.app
+    const refSlug = slug(item.ref)
+    const buildTag = `${app.label}:${refSlug}`
+    const failCommands: string[] = []
+    const completeCommands: string[] = []
+
+    const opts: TaskOpts = {
+      app,
+      ref: item.ref,
+      sha: item.sha,
+      state: State.Building
+    }
+
     try {
-      const app = item.app
-      const refSlug = slug(item.ref)
-      const buildTag = `${app.label}:${refSlug}`
+      // Stage: checkout
+      const { stream, task } = await checkout(app, item.sha)
+      failCommands.push(...getCommands(task, 'fail'))
+      completeCommands.push(...getCommands(task, 'complete'))
 
-      // Stage: checkout:pre
-      /**
-       * TODO: Move checkout step here
-       * Pass tarball to buildImage
-       * e.g:
-       * const buildContext = await pack(app, item.sha)
-       * const job = await buildImage(job, buildTag)
-       */
-      const context = await checkout(app, item.sha)
-      // Stage: checkout:post
+      for (const cmd of getCommands(task, 'checkout')) {
+        await executeTask(opts, cmd)
+      }
 
-      // Stage: build:pre
-      const buildJob = await buildImage(app, context, buildTag)
+      const buildJob = await buildImage(app, stream, buildTag)
 
       await updateRemote(item, State.Building)
       const result = await buildJob.build
-      // Stage: build:post
+      opts.imageId = result.imageId
+      opts.imageTag = buildTag
+      opts.state = State.Successful
+
       // Stage: success
+      for (const cmd of getCommands(task, 'success')) {
+        await executeTask(opts, cmd)
+      }
 
       await updateRemote(item, State.Successful, { imageId: result.imageId })
     } catch (ex) {
@@ -110,9 +125,16 @@ class BuildQueue {
 
       // Stage: fail
       // The build has failed -- we won't re-add it to the queue
+      opts.state = State.Failed
+      for (const cmd of failCommands) {
+        await executeTask(opts, cmd)
+      }
       await updateRemote(item, State.Failed)
     } finally {
       // Stage: complete
+      for (const cmd of completeCommands) {
+        await executeTask(opts, cmd)
+      }
     }
   }
 }
@@ -148,15 +170,73 @@ function emit(item: QueueItem, state: State, imageId?: string) {
   })
 }
 
+type TaskResult = {
+  code: number
+  output: string[]
+}
+
+interface TaskOpts {
+  app: Concierge.Application
+  ref: string
+  sha: string
+  imageId?: string
+  imageTag?: string
+  state: State
+}
+
+function getCommands(task: Task | null, stage: keyof Task) {
+  if (!task) {
+    return []
+  }
+
+  const commands = task[stage]
+  if (!Array.isArray(commands)) {
+    return []
+  }
+
+  return commands
+}
+
+function executeTask(opts: TaskOpts, command: string) {
+  const env = {
+    CONCIERGE_REPO: opts.app.repository,
+    CONCIERGE_APP: opts.app.name,
+    CONCIERGE_LABEL: opts.app.label,
+    CONCIERGE_REF: opts.ref,
+    CONCIERGE_SHA: opts.sha,
+    CONCIERGE_IMAGE_TAG: opts.imageTag || '',
+    CONCIERGE_IMAGE_ID: opts.imageId || '',
+    CONCIERGE_STATUS: State[opts.state]
+  }
+
+  const cwd = appPath(opts.app)
+  return new Promise<TaskResult>(resolve => {
+    const [cmd, ...args] = command.split(' ').filter(cmd => !!cmd)
+    const proc = spawn(cmd, args, {
+      cwd,
+      env
+    })
+
+    const output: string[] = []
+    proc.stdout.on('data', data => output.push(...data.toString().split('\n')))
+    proc.stderr.on('error', (err: any) => output.push(err.message || err))
+    proc.on('close', code => {
+      resolve({
+        code,
+        output
+      })
+    })
+  })
+}
+
 /**
  * Environment variables passed into each step:
  * CONCIERGE_REPO: Git repository url
  * CONCIERGE_APP: Application name
  * CONCIERGE_LABEL: Application label (Used to generate image tag)
- * CONCIERGE_REFTYPE: Git ref type, "branch" or "tag"
  * CONCIERGE_REF: Git ref - Branch or tag name
  * CONCIERGE_SHA: Git SHA
- * CONCIERGE_IMAGE_TAG: Docker tag
- * CONCIERGE_IMAGE_ID Docker image ID
+ * CONCIERGE_IMAGE_TAG?: Docker tag
+ * CONCIERGE_IMAGE_ID?: Docker image ID
  * CONCIERGE_STATUS ("Successful", "Failed")
  */
