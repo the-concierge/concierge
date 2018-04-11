@@ -25,7 +25,7 @@ export default async function refToStream(
   const workDir = appPath(application)
 
   try {
-    await cmd(application, workDir, `git fetch origin`)
+    await cmd(application, workDir, `git fetch origin ${sha} --depth=1`)
     await cmd(application, workDir, `git checkout ${sha}`)
   } catch (ex) {
     sentinal[id] = false

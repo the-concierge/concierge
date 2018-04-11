@@ -5,8 +5,8 @@ const parsers = [parseV1]
 
 export type Task = V1Task
 
-export function parseTaskFile(content: string) {
-  const file = loadFile(content)
+export function parseTaskFile(content: string, extension: string) {
+  const file = loadFile(content, extension)
   if (!file) {
     return null
   }
@@ -21,7 +21,17 @@ export function parseTaskFile(content: string) {
   return null
 }
 
-function loadFile(content: string) {
+function loadFile(content: string, extension: string) {
+  // .JSON
+  if (extension === '.json') {
+    try {
+      return JSON.parse(content)
+    } catch {
+      return null
+    }
+  }
+
+  // YML/YAML
   try {
     const file = yaml.safeLoad(content)
     return file

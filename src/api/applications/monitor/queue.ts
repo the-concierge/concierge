@@ -1,12 +1,8 @@
 import { Branch, State } from '../types'
 import * as db from '../db'
-import { checkout } from '../checkout'
 import { buildImage } from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
-import { spawn } from 'child_process'
-import appPath from '../../git/path'
-import { Task } from '../../tasks'
 
 export type StrictBranch = Branch & { age: Date }
 
@@ -60,7 +56,10 @@ class BuildQueue {
 
   private poll = async () => {
     try {
-      const inProgress = this.queue.filter(item => item.state === State.Building)
+      const inProgress = this.queue.filter(
+        item => item.state === State.Building || item.state === State.Started
+      )
+
       const waiting = this.queue.filter(item => item.state === State.Waiting)
       if (inProgress.length >= this.maxConcurrent) {
         return
@@ -79,64 +78,19 @@ class BuildQueue {
   }
 
   private build = async (item: QueueItem) => {
-    const app = item.app
     const refSlug = slug(item.ref)
-    const buildTag = `${app.label}:${refSlug}`
-    const failCommands: string[] = []
-    const completeCommands: string[] = []
+    const buildTag = `${item.app.label}:${refSlug}`
 
-    const opts: TaskOpts = {
-      app,
+    // Not awaiting is intentional here
+    // If we awaited, we would only perform one build at a time
+    await updateRemote(item, State.Started)
+    buildImage({
+      app: item.app,
       ref: item.ref,
       sha: item.sha,
-      state: State.Building
-    }
-
-    try {
-      // Stage: checkout
-      const { stream, task } = await checkout(app, item.sha)
-
-      failCommands.push(...getCommands(task, 'fail'))
-      completeCommands.push(...getCommands(task, 'complete'))
-
-      for (const cmd of getCommands(task, 'checkout')) {
-        await executeTask(opts, cmd)
-      }
-
-      const buildJob = await buildImage(app, stream, buildTag)
-
-      await updateRemote(item, State.Building)
-      const result = await buildJob.build
-      opts.imageId = result.imageId
-      opts.imageTag = buildTag
-      opts.state = State.Successful
-
-      // Stage: success
-      for (const cmd of getCommands(task, 'success')) {
-        await executeTask(opts, cmd)
-      }
-
-      await updateRemote(item, State.Successful, { imageId: result.imageId })
-    } catch (ex) {
-      if (ex.code === 'E_REPOBUSY') {
-        // If the repository on disk is busy, try this repo again in the next poll
-        await updateRemote(item, State.Waiting)
-        return
-      }
-
-      // Stage: fail
-      // The build has failed -- we won't re-add it to the queue
-      opts.state = State.Failed
-      for (const cmd of failCommands) {
-        await executeTask(opts, cmd)
-      }
-      await updateRemote(item, State.Failed)
-    } finally {
-      // Stage: complete
-      for (const cmd of completeCommands) {
-        await executeTask(opts, cmd)
-      }
-    }
+      tag: buildTag,
+      setState: (state, props) => updateRemote(item, state, props)
+    })
   }
 }
 
@@ -170,79 +124,3 @@ function emit(item: QueueItem, state: State, imageId?: string) {
     seen: item.seen ? item.seen.toISOString() : undefined
   })
 }
-
-type TaskResult = {
-  code: number
-  output: string[]
-}
-
-interface TaskOpts {
-  app: Concierge.Application
-  ref: string
-  sha: string
-  imageId?: string
-  imageTag?: string
-  state: State
-}
-
-function getCommands(task: Task | null, stage: keyof Task) {
-  if (!task) {
-    return []
-  }
-
-  const commands = task[stage]
-  if (!Array.isArray(commands)) {
-    return []
-  }
-
-  return commands
-}
-
-function executeTask(opts: TaskOpts, command: string) {
-  const env = {
-    CONCIERGE_REPO: opts.app.repository,
-    CONCIERGE_APP: opts.app.name,
-    CONCIERGE_LABEL: opts.app.label,
-    CONCIERGE_REF: opts.ref,
-    CONCIERGE_SHA: opts.sha,
-    CONCIERGE_IMAGE_TAG: opts.imageTag || '',
-    CONCIERGE_IMAGE_ID: opts.imageId || '',
-    CONCIERGE_STATUS: State[opts.state]
-  }
-
-  const cwd = appPath(opts.app)
-  return new Promise<TaskResult>(resolve => {
-    const [cmd, ...args] = command.split(' ').filter(cmd => !!cmd)
-    const proc = spawn(cmd, args, {
-      cwd,
-      env,
-      shell: true
-    })
-
-    const output: string[] = []
-    proc.stdout.on('data', data => {
-      output.push(...data.toString().split('\n'))
-    })
-
-    proc.stderr.on('error', (err: any) => output.push(err.message || err))
-
-    proc.on('close', code => {
-      resolve({
-        code,
-        output
-      })
-    })
-  })
-}
-
-/**
- * Environment variables passed into each step:
- * CONCIERGE_REPO: Git repository url
- * CONCIERGE_APP: Application name
- * CONCIERGE_LABEL: Application label (Used to generate image tag)
- * CONCIERGE_REF: Git ref - Branch or tag name
- * CONCIERGE_SHA: Git SHA
- * CONCIERGE_IMAGE_TAG?: Docker tag
- * CONCIERGE_IMAGE_ID?: Docker image ID
- * CONCIERGE_STATUS ("Successful", "Failed")
- */
