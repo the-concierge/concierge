@@ -1,6 +1,7 @@
 export enum State {
   NotDetermined = -1,
   Waiting = 0,
+  Started = 6,
   Building = 1,
   Failed = 2,
   Successful = 3,

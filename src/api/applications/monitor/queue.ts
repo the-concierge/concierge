@@ -1,6 +1,6 @@
 import { Branch, State } from '../types'
 import * as db from '../db'
-import buildImage from '../build-image'
+import { buildImage } from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
 
@@ -12,6 +12,10 @@ class BuildQueue {
   queue: QueueItem[] = []
 
   // TODO: Retrieve from DB configuration
+  // This will eventually be derived from "Hosts"
+  // Hosts config will determine how many concurrent builds they support
+  // "Host.capacity" will become ultimately mean "Host.concurrentBuildLimit"
+  // At the moment we just support builds on "localhost"
   maxConcurrent = 2
 
   constructor() {
@@ -52,7 +56,10 @@ class BuildQueue {
 
   private poll = async () => {
     try {
-      const inProgress = this.queue.filter(item => item.state === State.Building)
+      const inProgress = this.queue.filter(
+        item => item.state === State.Building || item.state === State.Started
+      )
+
       const waiting = this.queue.filter(item => item.state === State.Waiting)
       if (inProgress.length >= this.maxConcurrent) {
         return
@@ -71,25 +78,19 @@ class BuildQueue {
   }
 
   private build = async (item: QueueItem) => {
-    try {
-      const app = item.app
-      const refSlug = slug(item.ref)
-      const buildTag = `${app.label}:${refSlug}`
-      const buildJob = await buildImage(app, item.sha, buildTag)
+    const refSlug = slug(item.ref)
+    const buildTag = `${item.app.label}:${refSlug}`
 
-      await updateRemote(item, State.Building)
-      const result = await buildJob.build
-      await updateRemote(item, State.Successful, { imageId: result.imageId })
-    } catch (ex) {
-      if (ex.code === 'E_REPOBUSY') {
-        // If the repository on disk is busy, try this repo again in the next poll
-        await updateRemote(item, State.Waiting)
-        return
-      }
-
-      // The build has failed -- we won't re-add it to the queue
-      await updateRemote(item, State.Failed)
-    }
+    // Not awaiting is intentional here
+    // If we awaited, we would only perform one build at a time
+    await updateRemote(item, State.Started)
+    buildImage({
+      app: item.app,
+      ref: item.ref,
+      sha: item.sha,
+      tag: buildTag,
+      setState: (state, props) => updateRemote(item, state, props)
+    })
   }
 }
 

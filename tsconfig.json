@@ -1,26 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "target": "es5",
-        "sourceMap": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "strict": true,
-        "lib": [
-            "es2015",
-            "dom"
-        ],
-        "newLine": "LF"
-    },
-    "include": [
-        "src/*.ts",
-        "src/proxy/**/*.ts",
-        "src/api/**/*.ts",
-        "front/**/*.ts",
-        "src/data/**/*.ts",
-        "typings/**/*.ts",
-        "src/server/**/*.ts",
-        "src/configurations/**/*.ts"
-    ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "sourceMap": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "lib": ["es2015", "dom"],
+    "newLine": "LF"
+  },
+  "include": ["src/**/*.ts", "front/**/*.ts", "typings/**/*.ts"],
+  "exclude": ["src/__deprecated/**/*.ts"]
 }

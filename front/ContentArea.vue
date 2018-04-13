@@ -102,7 +102,7 @@ export default Vue.extend({
     })
     this.setTab(window.location.pathname)
 
-    socket.on('toast', (event: ConciergeEvent<ToastEvent>) => {
+    socket.on('toast', (event: ConciergeEvent<string>) => {
       switch (event.type) {
         case 'info':
           toast.primary(event.event)

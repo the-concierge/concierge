@@ -6,7 +6,7 @@ export default async function clone(application: Concierge.Application) {
   const workDir = __dirname
 
   const path = appPath(application)
-  const command = `git clone ${application.repository} ${path}`
+  const command = `git clone ${application.repository} ${path} --depth=1`
   const result = await cmd(application, workDir, command)
   return result
 }
