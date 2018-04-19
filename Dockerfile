@@ -1,13 +1,16 @@
 FROM node:8-wheezy
 
-ADD ./ /concierge
 WORKDIR /concierge
 
+ADD package.json ./
+ADD yarn.lock ./
 RUN mkdir -p archive \
 	&& mkdir -p db \
 	&& mkdir -p repositories \
-	&& yarn	\
-	&& yarn build
+	&& yarn	
+
+ADD ./ /concierge
+RUN yarn build
 
 VOLUME /concierge/db /concierge/repositories /concierge/logs
 
