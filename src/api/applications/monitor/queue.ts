@@ -6,10 +6,10 @@ import { buildStatus } from '../../stats/emitter'
 
 export type StrictBranch = Branch & { age: Date }
 
-type QueueItem = StrictBranch & { app: Concierge.Application; state: State }
+export type BuildQueueItem = StrictBranch & { app: Concierge.Application; state: State }
 
 class BuildQueue {
-  queue: QueueItem[] = []
+  queue: BuildQueueItem[] = []
 
   // TODO: Retrieve from DB configuration
   // This will eventually be derived from "Hosts"
@@ -77,7 +77,7 @@ class BuildQueue {
     }
   }
 
-  private build = async (item: QueueItem) => {
+  private build = async (item: BuildQueueItem) => {
     const refSlug = slug(item.ref)
     const buildTag = `${item.app.label}:${refSlug}`
 
@@ -94,12 +94,10 @@ class BuildQueue {
   }
 }
 
-const queue = new BuildQueue()
-
-export default queue
+export const queue = new BuildQueue()
 
 async function updateRemote(
-  item: QueueItem,
+  item: BuildQueueItem,
   state: State,
   props: Partial<Concierge.ApplicationRemote> = {}
 ) {
@@ -113,7 +111,7 @@ async function updateRemote(
   })
 }
 
-function emit(item: QueueItem, state: State, imageId?: string) {
+function emit(item: BuildQueueItem, state: State, imageId?: string) {
   buildStatus(item.app.id, {
     applicationId: item.app.id,
     sha: item.sha,

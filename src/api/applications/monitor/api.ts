@@ -1,4 +1,4 @@
-import queue from './queue'
+import { queue, BuildQueueItem } from './queue'
 import { State } from '../types'
 
 export function getQueue() {
@@ -15,8 +15,7 @@ export function getQueue() {
   }
 }
 
-type Item = typeof queue.queue[0]
-function toQueueItem(item: Item): Concierge.QueueItem {
+function toQueueItem(item: BuildQueueItem): Concierge.QueueItem {
   return {
     app: {
       id: item.app.id,
@@ -28,6 +27,7 @@ function toQueueItem(item: Item): Concierge.QueueItem {
     stateId: item.state
   }
 }
+
 export function cancelItem(_appId: number, _ref: string) {
   throw new Error('Not yet supported')
 }
@@ -40,6 +40,7 @@ function toString(state: State) {
   switch (state) {
     case State.NotDetermined:
       return 'Not Determined'
+
     default:
       return State[state]
   }
