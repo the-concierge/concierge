@@ -1,6 +1,6 @@
 import * as db from './db'
 import { RequestHandler } from 'express'
-import queue from './monitor/queue'
+import { queue } from './monitor/queue'
 
 type Body = {
   ref: string

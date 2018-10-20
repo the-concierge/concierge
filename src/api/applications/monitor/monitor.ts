@@ -1,7 +1,7 @@
 import getTags from '../../git/tags'
 import * as db from '../db'
 import { State, Branch } from '../types'
-import queue, { StrictBranch } from './queue'
+import { queue, StrictBranch } from './queue'
 import { insertRemote } from './util'
 import { buildStatus } from '../../stats/emitter'
 
