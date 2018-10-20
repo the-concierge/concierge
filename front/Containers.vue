@@ -54,3 +54,8 @@ export default Vue.extend({
 </template>
 
 
+<style scoped>
+td {
+  padding: 3px
+}
+</style>
