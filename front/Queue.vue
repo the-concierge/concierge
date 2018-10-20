@@ -10,7 +10,7 @@
     </thead>
 
     <tbody>
-      <tr v-for="(item, i) in queue.progress" :key="item.sha">
+      <tr v-for="(item) in queue.progress" :key="item.sha">
         <td>{{item.app.name}}</td>
         <td>{{item.ref}}</td>
         <td>{{item.sha.slice(0, 10)}}</td>
@@ -25,7 +25,7 @@
         </td>
       </tr>
 
-      <tr v-for="(item, i) in queue.done" :key="item.sha">
+      <tr v-for="(item) in queue.done" :key="item.sha">
         <td>{{item.app.name}}</td>
         <td>{{item.ref}}</td>
         <td>{{item.sha.slice(0, 10)}}</td>

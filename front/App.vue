@@ -1,7 +1,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import ContentArea from './ContentArea.vue'
-import { setInterval } from 'timers'
 import * as api from './api'
 import { onRefresh } from './common'
 
