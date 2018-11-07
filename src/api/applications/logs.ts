@@ -28,7 +28,7 @@ function getLogs(application: Concierge.Application) {
         return reject(err)
       }
 
-      resolve(files.filter(file => file.endsWith('.log')))
+      resolve(files.filter(file => file.endsWith('.json')))
     })
   })
 }

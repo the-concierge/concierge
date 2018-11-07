@@ -150,13 +150,11 @@ export default Vue.extend({
     showEditModal(app: Application) {
       showEdit(app)
     },
-    showLogsModal() {},
+    showLogsModal(_app: Application) {},
 
     async rebuildBranch(app: AppVM, remote: Remote) {
       const tag = toImageTag(app.label, remote.remote)
-      const url = `/api/applications/${app.id}/build?ref=${
-        remote.remote
-      }&tag=${tag}&type=branch&sha=${remote.sha}`
+      const url = `/api/applications/${app.id}/build?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
       const result = await fetch(url, { method: 'PUT' })
       const json = await result.json()
       if (result.status <= 400) {
