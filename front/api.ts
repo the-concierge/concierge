@@ -37,17 +37,11 @@ export type Monitor = {
 }
 
 export type Host = Schema.Host
-
 export type Credential = Schema.Credentials
-
 export type Configuration = Concierge.Configuration
-
 export type Application = Concierge.ApplicationDTO
-
 export type Remote = Schema.ApplicationRemote
-
 export type QueueItem = Concierge.QueueItem
-
 export type Queue = { progress: QueueItem[]; done: QueueItem[] }
 
 export const socket = io() as SocketIOClient.Socket

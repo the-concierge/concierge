@@ -35,7 +35,10 @@
                 <a v-bind:href="url.internal" target="_blank">{{url.internal}}</a>
               </td>
               <td>
-                <a v-bind:href="url.external.withoutPort" target="_blank">{{url.external.withoutPort}}</a>
+                <a
+                  v-bind:href="url.external.withoutPort"
+                  target="_blank"
+                >{{url.external.withoutPort}}</a>
               </td>
               <td>
                 <a v-bind:href="url.external.withPort" target="_blank">{{url.external.withPort}}</a>

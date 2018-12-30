@@ -28,8 +28,8 @@
       </tbody>
     </table>
 
-    <Create />
-    <Edit />
+    <Create/>
+    <Edit/>
   </div>
 </template>
 

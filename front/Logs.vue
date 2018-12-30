@@ -5,14 +5,11 @@
     <div class="container" v-if="monitors.length > 0">
       <div class="columns">
         <div class="col-12">
-
           <div class="form">
             <div class="form-group">
               <label class="form-label">Application Deployments</label>
               <select class="form-select" v-model="selected">
-                <option v-for="(m, i) in monitors" :key="i" v-bind:value="m">
-                  {{m.id}}
-                </option>
+                <option v-for="(m, i) in monitors" :key="i" v-bind:value="m">{{m.id}}</option>
               </select>
             </div>
           </div>
@@ -23,7 +20,6 @@
           <pre style="white-space: pre-wrap; margin: 5px">{{entry}}</pre>
         </div>
         <div class="col-1"></div>
-
       </div>
     </div>
   </div>

@@ -10,58 +10,69 @@
         <div class="content">
           <form>
             <div class="form-group">
-              <label class="form-label">Hostname
+              <label class="form-label">
+                Hostname
                 <sub>(Optional) Will use the local unix socket if not provided</sub>
               </label>
-              <input class="form-input" type="text" v-model="hostname" placeholder="127.0.0.1" />
+              <input class="form-input" type="text" v-model="hostname" placeholder="127.0.0.1">
             </div>
 
             <div class="form-group">
               <label class="form-label">Proxy IP</label>
-              <input class="form-input" type="text" v-model="proxyIp" placeholder="IP of the Docker Host for reverse proxy purposes" />
+              <input
+                class="form-input"
+                type="text"
+                v-model="proxyIp"
+                placeholder="IP of the Docker Host for reverse proxy purposes"
+              >
             </div>
 
             <div class="form-group">
               <label class="form-label">Vanity Hostname</label>
-              <input class="form-input" type="text" v-model="vanityHostname" placeholder="127.0.0.1 (Optional)" />
+              <input
+                class="form-input"
+                type="text"
+                v-model="vanityHostname"
+                placeholder="127.0.0.1 (Optional)"
+              >
             </div>
 
             <div class="form-group">
               <label class="form-label">SSH Authorisation Style</label>
               <label class="form-radio">
-                <input type="radio" value="Key" v-model="displayAuth" />
+                <input type="radio" value="Key" v-model="displayAuth">
                 <i class="form-icon" v-on:click="displayAuth = 'Key'"></i>Key
               </label>
               <label class="form-radio">
-                <input type="radio" value="Password" v-model="displayAuth" />
+                <input type="radio" value="Password" v-model="displayAuth">
                 <i class="form-icon" v-on:click="displayPath = 'Password'"></i>Password
               </label>
             </div>
 
             <div class="form-group">
               <label class="form-group">Username</label>
-              <input class="form-input" v-model="username" type="text" />
+              <input class="form-input" v-model="username" type="text">
             </div>
 
             <div class="form-group">
               <label class="form-label">{{displayAuth}}</label>
               <textarea class="form-input" type="text" v-model="privateKey" v-show="isKey"></textarea>
-              <input class="form-input" type="password" v-model="password" v-show="isPassword" />
+              <input class="form-input" type="password" v-model="password" v-show="isPassword">
             </div>
 
             <div class="form-group">
               <label class="form-label">Container Capacity</label>
-              <input class="form-input" type="text" v-model="capacity" placeholder="5" />
+              <input class="form-input" type="text" v-model="capacity" placeholder="5">
             </div>
 
             <div class="form-group">
               <label class="form-label">SSH Port</label>
-              <input class="form-input" type="text" v-model="sshPort" placeholder="22" />
+              <input class="form-input" type="text" v-model="sshPort" placeholder="22">
             </div>
 
             <div class="form-group">
               <label class="form-label">Docker Port</label>
-              <input class="form-input" type="text" v-model="dockerPort" placeholder="2375" />
+              <input class="form-input" type="text" v-model="dockerPort" placeholder="2375">
             </div>
           </form>
         </div>

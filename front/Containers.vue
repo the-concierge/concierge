@@ -19,7 +19,7 @@ export default Vue.extend({
       <div class="columns">
         <div class="col-2">
           <!-- <select class="form-select" data-bind="options: hosts, optionsText: 'hostname', value: selectedHost">
-          </select> -->
+          </select>-->
         </div>
         <div class="col-10"></div>
       </div>
@@ -39,7 +39,10 @@ export default Vue.extend({
       <tbody>
         <tr v-for="c in containers" v-bind:key="c.Id">
           <td style="padding: 3px">
-            <SafeLink v-bind:url="toUrl(c.Id)" className="btn btn-link">{{ (c.Names[0] || '/Unknown').slice(1) }}</SafeLink>
+            <SafeLink
+              v-bind:url="toUrl(c.Id)"
+              class="btn btn-link"
+            >{{ (c.Names[0] || '/Unknown').slice(1) }}</SafeLink>
           </td>
           <td style="padding: 3px">{{c.Id.slice(0, 10)}}</td>
           <td style="padding: 3px">{{c.Image}}</td>
@@ -56,6 +59,6 @@ export default Vue.extend({
 
 <style scoped>
 td {
-  padding: 3px
+  padding: 3px;
 }
 </style>

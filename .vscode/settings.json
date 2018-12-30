@@ -29,5 +29,24 @@
   "prettier.useTabs": false,
   "prettier.singleQuote": true,
   "prettier.trailingComma": "none",
-  "prettier.disableLanguages": ["json", "markdown", "vue"]
+  "prettier.disableLanguages": ["json", "markdown"],
+  "vetur.format.defaultFormatter.js": "prettier",
+  "vetur.format.defaultFormatter.ts": "prettier",
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "semi": false,
+      "singleQuote": true,
+      "printWidth": 100,
+      "trailingComma": "none"
+    },
+    "js-beautify-html": {
+      "wrap_attributes": "force-expand-multiline"
+    },
+    "prettyhtml": {
+      "printWidth": 100,
+      "singleQuote": false,
+      "wrapAttributes": false,
+      "sortAttributes": false
+    }
+  }
 }

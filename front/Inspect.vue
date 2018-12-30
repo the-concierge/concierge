@@ -5,12 +5,22 @@
       <h4>
         Details: {{ container.name }}
         <span style="float: right">
-          <button class="btn btn-md" v-on:click="stopContainer" v-if="showStopButton" :disabled="waiting">Stop</button>
-          <button class="btn btn-md" v-on:click="startContainer" v-if="showStartButton" :disabled="waiting">Start</button>
+          <button
+            class="btn btn-md"
+            v-on:click="stopContainer"
+            v-if="showStopButton"
+            :disabled="waiting"
+          >Stop</button>
+          <button
+            class="btn btn-md"
+            v-on:click="startContainer"
+            v-if="showStartButton"
+            :disabled="waiting"
+          >Start</button>
           <button class="btn btn-md" v-on:click="removeContainer" :disabled="waiting">Remove</button>
         </span>
       </h4>
-      <Details v-bind:container="container" v-bind:config="config" />
+      <Details v-bind:container="container" v-bind:config="config"/>
 
       <div class="divider"></div>
 
@@ -20,15 +30,14 @@
           <button class="btn btn-md" v-on:click="refreshStats" :disabled="waiting">Refresh Charts</button>
         </span>
       </h4>
-      <Stats v-bind:container="container" />
+      <Stats v-bind:container="container"/>
 
       <div class="divider"></div>
 
       <h4>Logs</h4>
-      <Logs v-bind:container="container" />
+      <Logs v-bind:container="container"/>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">

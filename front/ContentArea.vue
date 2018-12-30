@@ -176,8 +176,15 @@ export default Vue.extend({
               </h5>
             </span>
             <ul class="tab" v-for="item in navItems" v-bind:key="item.title">
-              <li v-if="item.visible !== false" class="tab-item" v-bind:class="{ active: item.active }">
-                <SafeLink v-bind:url="'/' + item.id" v-bind:className="'btn btn-link'">{{item.title}}</SafeLink>
+              <li
+                v-if="item.visible !== false"
+                class="tab-item"
+                v-bind:class="{ active: item.active }"
+              >
+                <SafeLink
+                  v-bind:url="'/' + item.id"
+                  v-bind:className="'btn btn-link'"
+                >{{item.title}}</SafeLink>
               </li>
             </ul>
           </section>
@@ -187,26 +194,44 @@ export default Vue.extend({
     </div>
 
     <div class="container">
-      <Containers v-if="view === 'containers'" v-bind:containers="state.containers" />
-      <Inspect v-if="view ==='inspect'" v-bind:container="inspectContainer" v-bind:config="state.config" />
-      <Applications v-if="view ==='applications'" v-bind:credentials="state.credentials" v-bind:applications="state.applications" v-bind:images="state.images" v-bind:remotes="state.remotes" v-bind:containers="state.containers" />
-      <Queue v-if="view === 'queue'" v-bind:queue="state.queue" />
-      <Images v-if="view ==='images' " v-bind:images="state.images" v-bind:containers="state.containers" />
-      <Hosts v-if="view ==='hosts' " v-bind:hosts="state.hosts" />
-      <Credentials v-if="view ==='credentials' " v-bind:credentials="state.credentials " />
-      <Config v-if="view ==='config' " v-bind:config="state.config" v-bind:credentials="state.credentials" />
-      <Logs v-show="view === 'logs'" v-bind:monitors="state.monitors" />
+      <Containers v-if="view === 'containers'" v-bind:containers="state.containers"/>
+      <Inspect
+        v-if="view ==='inspect'"
+        v-bind:container="inspectContainer"
+        v-bind:config="state.config"
+      />
+      <Applications
+        v-if="view ==='applications'"
+        v-bind:credentials="state.credentials"
+        v-bind:applications="state.applications"
+        v-bind:images="state.images"
+        v-bind:remotes="state.remotes"
+        v-bind:containers="state.containers"
+      />
+      <Queue v-if="view === 'queue'" v-bind:queue="state.queue"/>
+      <Images
+        v-if="view ==='images' "
+        v-bind:images="state.images"
+        v-bind:containers="state.containers"
+      />
+      <Hosts v-if="view ==='hosts' " v-bind:hosts="state.hosts"/>
+      <Credentials v-if="view ==='credentials' " v-bind:credentials="state.credentials "/>
+      <Config
+        v-if="view ==='config' "
+        v-bind:config="state.config"
+        v-bind:credentials="state.credentials"
+      />
+      <Logs v-show="view === 'logs'" v-bind:monitors="state.monitors"/>
     </div>
 
     <div v-for="(toast, i) in toasts" v-bind:key="i">
       <div style="position: fixed; bottom: 20px; right: 50px ">
         <div class="toast" v-bind:class="toast.type">
-          <button class="btn btn-clear float-right " v-on:click="removeToast(i)"></button>
+          <button class="btn btn-clear float-right" v-on:click="removeToast(i)"></button>
           <span>{{ toast.msg }}</span>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 

@@ -11,20 +11,21 @@
           <form>
             <div class="form-group">
               <label class="form-label">Name</label>
-              <input class="form-input" type="text" v-model="name" />
+              <input class="form-input" type="text" v-model="name">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Username
+              <label class="form-label">
+                Username
                 <cite>Optional: This can be provided in the Git repository</cite>
               </label>
-              <input class="form-input" type="text" v-model="username" placeholder="Optional" />
+              <input class="form-input" type="text" v-model="username" placeholder="Optional">
             </div>
 
             <b>Use either Password or Key -- Provide a password if you are using HTTP/HTTPS over SSH</b>
             <div class="form-group">
               <label class="form-label">Password</label>
-              <input class="form-input" type="password" v-model="password" />
+              <input class="form-input" type="password" v-model="password">
             </div>
 
             <div class="form-group">

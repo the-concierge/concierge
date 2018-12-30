@@ -3,25 +3,39 @@
     <div class="container">
       <div class="columns">
         <div class="col-1">
-          <button class="btn btn-md" v-on:click="editConfig" :disabled="isEditing" style="width: 100%">Edit</button>
+          <button
+            class="btn btn-md"
+            v-on:click="editConfig"
+            :disabled="isEditing"
+            style="width: 100%"
+          >Edit</button>
         </div>
 
         <div class="divider-vert"></div>
 
         <div class="col-1">
-          <button class="btn btn-md" v-on:click="cancelEditing" :disabled="!isEditing" style="width: 100%">Cancel</button>
+          <button
+            class="btn btn-md"
+            v-on:click="cancelEditing"
+            :disabled="!isEditing"
+            style="width: 100%"
+          >Cancel</button>
         </div>
 
         <div class="divider-vert"></div>
 
         <div class="col-1">
-          <button class="btn btn-md" v-on:click="saveConfig" :disabled="!isEditing" style="width: 100%">Save</button>
+          <button
+            class="btn btn-md"
+            v-on:click="saveConfig"
+            :disabled="!isEditing"
+            style="width: 100%"
+          >Save</button>
         </div>
 
         <div class="divider-vert"></div>
 
         <div class="col-9"></div>
-
       </div>
     </div>
 
@@ -31,14 +45,24 @@
           <label class="form-label">{{f.label}}</label>
         </div>
         <div class="col-4">
-          <input v-if="f.type === 'text'" :disabled="!isEditing" v-model="f.value" v-bind:class="f.value === f.original ? '' : 'is-success'" type="text" class="form-input" />
-
-          <select v-if="f.type === 'dropdown'" v-model="f.value.value" :disabled="!isEditing" v-bind:class="f.value.value === f.original.value ? '': 'is-success'" class="form-select">
-            <option v-for="o in f.options" v-bind:value="o.value" :key="o.value">
-              {{ o.text }}
-            </option>
+          <input
+            v-if="f.type === 'text'"
+            :disabled="!isEditing"
+            v-model="f.value"
+            v-bind:class="f.value === f.original ? '' : 'is-success'"
+            type="text"
+            class="form-input"
+          >
+          
+          <select
+            v-if="f.type === 'dropdown'"
+            v-model="f.value.value"
+            :disabled="!isEditing"
+            v-bind:class="f.value.value === f.original.value ? '': 'is-success'"
+            class="form-select"
+          >
+            <option v-for="o in f.options" v-bind:value="o.value" :key="o.value">{{ o.text }}</option>
           </select>
-
         </div>
         <div class="col-5"></div>
       </div>
@@ -94,6 +118,12 @@ export default Vue.extend({
         textInput('statsBinSize', 'Samples per Bin (1Hz)', this.config),
         textInput('statsRetentionDays', 'Stats Retention Time (days)', this.config),
         textInput('dockerRegistry', 'Docker Registry URL', this.config),
+        textInput('maxConcurrentBuilds', 'Maximum concurrent Docker builds', this.config),
+        textInput(
+          'gitPollingIntervalSecs',
+          'Application Git repository polling interval (seconds)',
+          this.config
+        ),
         dropdown('registryCredentials', 'Docker Registry Credentials', creds, this.config)
       ]
     },

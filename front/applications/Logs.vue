@@ -1,13 +1,13 @@
 <script lang="ts">
-import Vue from "vue";
-import { createEmitter } from "../common";
-import { Application } from "../api";
+import Vue from 'vue'
+import { createEmitter } from '../common'
+import { Application } from '../api'
 
 interface Data {
-  logs: Array<{ file: string }>;
-  loading: boolean;
-  modalActive: boolean;
-  app: Application;
+  logs: Array<{ file: string }>
+  loading: boolean
+  modalActive: boolean
+  app: Application
 }
 
 export default Vue.extend({
@@ -17,30 +17,30 @@ export default Vue.extend({
       loading: true,
       modalActive: false,
       app: {} as any
-    };
+    }
   },
   methods: {
     hideModal() {
-      this.modalActive = false;
+      this.modalActive = false
     }
   },
   mounted() {
     emitter.on(async app => {
-      this.loading = true;
-      this.app = app;
-      this.modalActive = true;
-      const url = `/api/applications/${app.id}/logs`;
-      const result = await fetch(url, { method: "GET" });
-      const logs: string[] = await result.json();
-      this.logs = logs.map(file => ({ file }));
-      this.loading = false;
-    });
+      this.loading = true
+      this.app = app
+      this.modalActive = true
+      const url = `/api/applications/${app.id}/logs`
+      const result = await fetch(url, { method: 'GET' })
+      const logs: string[] = await result.json()
+      this.logs = logs.map(file => ({ file }))
+      this.loading = false
+    })
   }
-});
+})
 
-const emitter = createEmitter<Application>();
+const emitter = createEmitter<Application>()
 export function showModal(app: Application) {
-  emitter.emit(app);
+  emitter.emit(app)
 }
 </script>
 

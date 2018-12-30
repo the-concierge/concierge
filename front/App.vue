@@ -24,7 +24,9 @@ export default Vue.extend({
         statsBinSize: 0,
         statsRetentionDays: 0,
         dockerRegistry: '',
-        registryCredentials: 0
+        registryCredentials: 0,
+        maxConcurrentBuilds: 2,
+        gitPollingIntervalSecs: 5
       }
     }
     return { state }
@@ -134,7 +136,7 @@ function updateRemotes(remotes: api.Remote[], { event }: RemoteEvt) {
 
 <template>
   <div>
-    <ContentArea v-bind:state="state" />
+    <ContentArea v-bind:state="state"/>
   </div>
 </template>
 

@@ -1,25 +1,18 @@
 <script lang="ts">
-import Vue from "vue";
-import {
-  Application,
-  Image,
-  Remote,
-  Credential,
-  State,
-  Container
-} from "./api";
-import Run, { showModal as showRun } from "./images/Run.vue";
-import Edit, { showModal as showEdit } from "./applications/Edit.vue";
-import Create, { showModal as showCreate } from "./applications/Create.vue";
-import Build, { showModal as showBuild } from "./applications/Build.vue";
-import Logs, { showModal as showLogs } from "./applications/Logs.vue";
-import { toImageTag } from "./applications/Build.vue";
-import { toast, refresh } from "./common";
+import Vue from 'vue'
+import { Application, Image, Remote, Credential, State, Container } from './api'
+import Run, { showModal as showRun } from './images/Run.vue'
+import Edit, { showModal as showEdit } from './applications/Edit.vue'
+import Create, { showModal as showCreate } from './applications/Create.vue'
+import Build, { showModal as showBuild } from './applications/Build.vue'
+import Logs, { showModal as showLogs } from './applications/Logs.vue'
+import { toImageTag } from './applications/Build.vue'
+import { toast, refresh } from './common'
 
 interface AppVM extends Application {
-  images: Image[];
-  remotes: Remote[];
-  display: boolean;
+  images: Image[]
+  remotes: Remote[]
+  display: boolean
 }
 
 export default Vue.extend({
@@ -33,102 +26,96 @@ export default Vue.extend({
   },
   data() {
     return {
-      apps: this.applications.map(app =>
-        toAppVM(app, [], this.images, this.remotes)
-      ) as AppVM[]
-    };
+      apps: this.applications.map(app => toAppVM(app, [], this.images, this.remotes)) as AppVM[]
+    }
   },
   watch: {
     applications: function(apps: Application[]) {
-      this.apps = apps.map(app =>
-        toAppVM(app, this.apps, this.images, this.remotes)
-      );
+      this.apps = apps.map(app => toAppVM(app, this.apps, this.images, this.remotes))
     },
     remotes: function(remotes: Remote[]) {
-      this.apps = this.apps.map(app =>
-        toAppVM(app, this.apps, this.images, remotes)
-      );
+      this.apps = this.apps.map(app => toAppVM(app, this.apps, this.images, remotes))
     }
   },
   methods: {
     refresh() {
-      return refresh.applications();
+      return refresh.applications()
     },
     runImage(remote: Remote) {
-      const img = this.images.find(img => img.Id === remote.imageId);
-      showRun(img!);
+      const img = this.images.find(img => img.Id === remote.imageId)
+      showRun(img!)
     },
     showCreateModal() {
-      showCreate();
+      showCreate()
     },
     showBuildModal(app: Application) {
-      showBuild(app);
+      showBuild(app)
     },
     showEditModal(app: Application) {
-      showEdit(app);
+      showEdit(app)
     },
     showLogsModal(app: Application) {
-      showLogs(app);
+      showLogs(app)
     },
 
     async rebuildBranch(app: AppVM, remote: Remote) {
-      const tag = toImageTag(app.label, remote.remote);
-      const url = `/api/applications/${app.id}/build?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`;
-      const result = await fetch(url, { method: "PUT" });
-      const json = await result.json();
+      const tag = toImageTag(app.label, remote.remote)
+      const url = `/api/applications/${app.id}/build?ref=${remote.remote}&tag=${tag}&type=branch&sha=${remote.sha}`
+      const result = await fetch(url, { method: 'PUT' })
+      const json = await result.json()
       if (result.status <= 400) {
-        toast.success(json.message);
-        return;
+        toast.success(json.message)
+        return
       }
 
-      toast.error(`Failed to queue build: ${json.message}`);
+      toast.error(`Failed to queue build: ${json.message}`)
     },
     removeApplication(app: AppVM) {
-      return fetch(`/api/applications/${app.id}`, { method: "DELETE" })
+      return fetch(`/api/applications/${app.id}`, { method: 'DELETE' })
         .then(res => res.json())
         .then(res => toast.primary(res.message))
-        .then(() => refresh.applications());
+        .then(() => refresh.applications())
     },
     toggleDisplay(app: AppVM) {
-      app.display = !app.display;
+      app.display = !app.display
     },
     cleanSha(sha: string) {
-      return (sha || "").replace("sha256:", "").slice(0, 10);
+      return (sha || '').replace('sha256:', '').slice(0, 10)
     },
     toStatus(state: State) {
       switch (state) {
         case State.Deleted:
-          return "deleted";
+          return 'deleted'
         case State.Building:
-          return "building";
+          return 'building'
         case State.Failed:
-          return "failed";
+          return 'failed'
         case State.Inactive:
-          return "inactive";
+          return 'inactive'
         case State.Successful:
-          return "success";
+          return 'success'
         default:
-          return "waiting";
+          return 'waiting'
       }
     },
     toStatusClass(state: State) {
       switch (state) {
         case State.Deleted:
-          return "";
+          return ''
         case State.Building:
-          return "label-warning";
+          return 'label-warning'
         case State.Failed:
-          return "label-error";
+          return 'label-error'
         case State.Inactive:
-          return "label-secondary";
+          return 'label-secondary'
         case State.Successful:
-          return "label-success";
+          return 'label-success'
         default:
-          return "label-primary";
+          return 'label-primary'
       }
     }
   }
-});
+})
 
 function toAppVM(
   app: Application,
@@ -136,18 +123,18 @@ function toAppVM(
   allImages: Image[],
   allRemotes: Remote[]
 ) {
-  const existing = existingApps.find(a => a.id === app.id);
-  const images = allImages.filter(i => i.name.indexOf(app.label) === 0);
+  const existing = existingApps.find(a => a.id === app.id)
+  const images = allImages.filter(i => i.name.indexOf(app.label) === 0)
   const remotes = allRemotes
     .filter(r => r.applicationId === app.id && r.state !== 4)
-    .filter(r => r.state !== State.Inactive);
+    .filter(r => r.state !== State.Inactive)
 
   return {
     ...app,
     display: existing ? existing.display : true,
     images,
     remotes
-  };
+  }
 }
 </script>
 

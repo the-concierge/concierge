@@ -60,7 +60,12 @@ export default Vue.extend({
     <div class="container">
       <div class="columns">
         <div class="col-2">
-          <input class="form-input" type="text" placeholder="Filter for images..." v-model="imageFilter" />
+          <input
+            class="form-input"
+            type="text"
+            placeholder="Filter for images..."
+            v-model="imageFilter"
+          >
         </div>
 
         <div class="divider-vert"></div>
@@ -98,8 +103,8 @@ export default Vue.extend({
       </tbody>
     </table>
 
-    <Run v-bind:containers="containers" />
-    <Pull />
+    <Run v-bind:containers="containers"/>
+    <Pull/>
   </div>
 </template>
 

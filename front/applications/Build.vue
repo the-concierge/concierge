@@ -54,9 +54,7 @@ export default Vue.extend({
       const ref = this.selectedRef
       const tag = this.finalImageTag
       const sha = ref.sha
-      const url = `/api/applications/${id}/build?ref=${ref.ref}&tag=${tag}&type=${
-        ref.type
-      }&sha=${sha}`
+      const url = `/api/applications/${id}/build?ref=${ref.ref}&tag=${tag}&type=${ref.type}&sha=${sha}`
 
       toast.primary(`Attempting to queue application build...`)
       this.hideModal()
@@ -125,7 +123,8 @@ export function slug(text: string) {
     <div class="modal-container">
       <div class="modal-header">
         <button class="btn btn-clear float-right" v-on:click="hideModal"></button>
-        <div class="modal-title">Build Application:
+        <div class="modal-title">
+          Build Application:
           <span>{{app.name}}</span>
         </div>
       </div>
@@ -135,14 +134,20 @@ export function slug(text: string) {
           <div class="loading" v-if="modalLoading"></div>
 
           <div v-if="!modalLoading">
-            <p>Image Tag:
+            <p>
+              Image Tag:
               <code>{{finalImageTag}}</code>
             </p>
             <form v-on:submit.prevent class="form-horizonal">
               <div class="form-group">
                 <div class="col-3">Docker image tag</div>
                 <div class="col-9">
-                  <input class="form-input" type="text" v-model="imageTag" placeholder="E.g. latest, v1.3, alpha, beta, test... Uses your ref by default" />
+                  <input
+                    class="form-input"
+                    type="text"
+                    v-model="imageTag"
+                    placeholder="E.g. latest, v1.3, alpha, beta, test... Uses your ref by default"
+                  >
                 </div>
               </div>
 
@@ -152,11 +157,11 @@ export function slug(text: string) {
                 </div>
                 <div class="col-9">
                   <label class="form-radio">
-                    <input type="radio" value="branch" v-model="refType" />
+                    <input type="radio" value="branch" v-model="refType">
                     <i class="form-icon"></i>Branch
                   </label>
                   <label class="form-radio">
-                    <input type="radio" value="tag" v-model="refType" />
+                    <input type="radio" value="tag" v-model="refType">
                     <i class="form-icon"></i>Tag
                   </label>
                 </div>
@@ -169,9 +174,11 @@ export function slug(text: string) {
 
                 <div class="col-9">
                   <select class="form-select" v-model="selectedBranch">
-                    <option v-for="branch in buildableBranches" v-bind:key="branch.sha" v-bind:value="branch">
-                      {{branch.ref}}
-                    </option>
+                    <option
+                      v-for="branch in buildableBranches"
+                      v-bind:key="branch.sha"
+                      v-bind:value="branch"
+                    >{{branch.ref}}</option>
                   </select>
                 </div>
               </div>
@@ -183,13 +190,14 @@ export function slug(text: string) {
 
                 <div class="col-9">
                   <select class="form-select" v-model="selectedTag">
-                    <option v-for="tag in buildableTags" v-bind:key="tag.sha" v-bind:value="tag">
-                      {{tag.ref}}
-                    </option>
+                    <option
+                      v-for="tag in buildableTags"
+                      v-bind:key="tag.sha"
+                      v-bind:value="tag"
+                    >{{tag.ref}}</option>
                   </select>
                 </div>
               </div>
-
             </form>
           </div>
         </div>

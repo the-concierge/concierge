@@ -11,31 +11,33 @@
           <form>
             <div class="form-group">
               <label class="form-label">Name</label>
-              <input class="form-input" type="text" v-model="name" />
+              <input class="form-input" type="text" v-model="name">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Dockerfile
+              <label class="form-label">
+                Dockerfile
                 <cite>The Dockerfile to use inside the repository</cite>
               </label>
-              <input class="form-input" type="text" v-model="dockerfile" />
+              <input class="form-input" type="text" v-model="dockerfile">
             </div>
 
             <div class="form-group">
-              <label class="form-label">Label
+              <label class="form-label">
+                Label
                 <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
               </label>
-              <input class="form-input" type="text" v-model="label" />
+              <input class="form-input" type="text" v-model="label">
             </div>
 
             <div class="form-group">
               <label class="form-label">Repository</label>
-              <input class="form-input" type="text" v-model="repository" />
+              <input class="form-input" type="text" v-model="repository">
             </div>
 
             <div class="form-group">
               <label class="form-switch">
-                <input type="checkbox" v-model="autoBuild" />
+                <input type="checkbox" v-model="autoBuild">
                 <i class="form-icon" v-on:click="toggleAutoBuild"></i>
                 Automatically build branches and tags
               </label>
@@ -44,30 +46,32 @@
             <div class="form-group" v-if="creds.length > 0">
               <label class="form-label">Credentials</label>
               <select class="form-select" v-model="selectedCredentials">
-                <option v-for="cred in creds" :key="cred.value" v-bind:value="selectedCredentials">
-                  {{cred.name}}
-                </option>
+                <option
+                  v-for="cred in creds"
+                  :key="cred.value"
+                  v-bind:value="selectedCredentials"
+                >{{cred.name}}</option>
               </select>
             </div>
 
             <div class="form-group" v-if="selectedCredentials.value > 0">
-              <label class="form-label">Username
+              <label class="form-label">
+                Username
                 <cite>Optional: This can be provided in the Git repository</cite>
               </label>
-              <input class="form-input" type="text" v-model="username" placeholder="Optional" />
+              <input class="form-input" type="text" v-model="username" placeholder="Optional">
             </div>
 
             <b>Use either Password or Key -- Provide a password if you are using HTTP/HTTPS over SSH</b>
             <div class="form-group">
               <label class="form-label">Password</label>
-              <input class="form-input" type="password" v-model="password" />
+              <input class="form-input" type="password" v-model="password">
             </div>
 
             <div class="form-group">
               <label class="form-label">Key</label>
               <textarea class="form-input" type="password" v-model="key"></textarea>
             </div>
-
           </form>
         </div>
       </div>

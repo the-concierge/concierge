@@ -7,8 +7,7 @@
           <button class="btn btn-md" v-on:click="refresh">Refresh</button>
         </div>
 
-        <div class="col-10">
-        </div>
+        <div class="col-10"></div>
       </div>
     </div>
 
@@ -17,9 +16,7 @@
         <tr>
           <th>Name</th>
           <th>Username</th>
-          <th>
-
-          </th>
+          <th></th>
         </tr>
       </thead>
       <tbody v-for="c in credentials" :key="c.id">
@@ -34,8 +31,8 @@
       </tbody>
     </table>
 
-    <Create />
-    <Edit />
+    <Create/>
+    <Edit/>
   </div>
 </template>
 
