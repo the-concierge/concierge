@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express'
-import { get } from './db'
+import { getConfig } from './db'
 
 const handler: RequestHandler = async (_, res) => {
   try {
-    const config = await get()
+    const config = await getConfig()
     res.json(config)
   } catch (ex) {
     res.status(500).json({ message: ex.message || ex })

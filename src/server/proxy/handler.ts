@@ -1,6 +1,6 @@
 import * as http from 'http'
 import * as HTTPProxy from 'http-proxy'
-import { get as getConfig } from '../../api/configuration/db'
+import { getConfig } from '../../api/configuration/db'
 import findContainer from './find-container'
 
 const proxyServer: http.Server & { web: any; ws: any } = HTTPProxy.createProxyServer({})

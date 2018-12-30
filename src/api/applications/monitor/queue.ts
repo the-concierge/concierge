@@ -3,6 +3,7 @@ import * as db from '../db'
 import { buildImage } from '../build-image'
 import slug from './slug'
 import { buildStatus } from '../../stats/emitter'
+import { getConfig } from '../../configuration/db'
 
 export type StrictBranch = Branch & { age: Date }
 
@@ -56,6 +57,9 @@ class BuildQueue {
 
   private poll = async () => {
     try {
+      const config = await getConfig()
+      this.maxConcurrent = config.maxConcurrentBuilds
+
       const inProgress = this.queue.filter(
         item => item.state === State.Building || item.state === State.Started
       )

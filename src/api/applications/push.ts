@@ -8,7 +8,7 @@ import { toast } from '../stats/emitter'
  */
 export default async function push(host: Schema.Host, imageName: string): Promise<any | void> {
   const client = docker(host)
-  const config = await db.get()
+  const config = await db.getConfig()
 
   if (!config.dockerRegistry) {
     return

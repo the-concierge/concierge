@@ -4,7 +4,7 @@ import { heartbeats } from '../../data'
 import docker from '../docker'
 import * as emitter from './emitter'
 import * as analysis from 'analysis'
-import { get as getConfig } from '../configuration/db'
+import { getConfig } from '../configuration/db'
 
 type Stats = {
   containerId: string

@@ -1,5 +1,6 @@
 import * as db from '../db'
 import { RemoteMonitor } from './monitor'
+import { getConfig } from '../../configuration/db'
 
 export default async function monitorAll() {
   await monitor.init()
@@ -19,7 +20,8 @@ class MonitorAll {
     await Promise.all(promises)
     this.initialised = true
 
-    setTimeout(() => this.poll(), 5000)
+    const { gitPollingIntervalSecs } = await getConfig()
+    setTimeout(() => this.poll(), gitPollingIntervalSecs * 1000)
   }
 
   poll = async () => {

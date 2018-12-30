@@ -1,6 +1,6 @@
 import * as DockerClient from 'dockerode'
 import * as process from 'process'
-import { get as getConfig } from './configuration/db'
+import { getConfig } from './configuration/db'
 import { one as getCreds } from './credentials/db'
 
 export default function getDockerClient(host: Schema.Host, timeout?: number) {

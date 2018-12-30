@@ -4,10 +4,13 @@ declare namespace Concierge {
     conciergePort: number
     proxyHostname?: string
     debug: number
-    statsBinSize: number // Samples per bin at 1Hert per container
+    statsBinSize: number // Samples per bin at 1Hz per container
     statsRetentionDays: number // Truncate stats records older than N day(s)
     dockerRegistry?: string
     registryCredentials?: number
+
+    maxConcurrentBuilds: number
+    gitPollingIntervalSecs: number
   }
 
   interface ApplicationDTO extends Schema.Application {
