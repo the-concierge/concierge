@@ -37,10 +37,37 @@ export async function setConfig(config: Partial<Concierge.Configuration>) {
     conciergePort: original.conciergePort
   }
 
+  const keys = Object.keys(config) as Array<keyof Concierge.Configuration>
+
+  const badKeys: string[] = []
+  for (const key of keys) {
+    const validator = validate[key]
+    if (!validator) {
+      continue
+    }
+
+    if (!validator(config[key])) {
+      badKeys.push(key)
+    }
+  }
+
+  if (badKeys.length > 0) {
+    const message = badKeys.join(', ')
+    throw new Error(`Invalid configuration, keys have invalid values: ${message}`)
+  }
+
   await db
     .configurations()
     .update({ config: next })
     .where('id', 1)
 
   return next
+}
+
+const validate: { [key in keyof Concierge.Configuration]?: (value: any) => boolean } = {
+  debug: val => typeof val === 'number',
+  gitPollingIntervalSecs: val => typeof val === 'number' && val > 0,
+  statsBinSize: val => typeof val === 'number' && val > 0,
+  maxConcurrentBuilds: val => typeof val === 'number' && val > 0,
+  statsRetentionDays: val => typeof val === 'number' && val > 0
 }
