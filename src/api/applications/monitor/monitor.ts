@@ -32,6 +32,13 @@ export class RemoteMonitor {
       this.poll()
     } catch (ex) {
       this.error(`Failed to initialise tracking. Retrying`)
+      if (ex.message) {
+        this.debug(`Message: ${ex.message || 'None provided'}`)
+      }
+
+      if (ex.stack) {
+        this.debug(ex.stack)
+      }
       setTimeout(() => this.initialise(isNewApplication, retryOffset + 5), retryOffset * 1000)
     }
   }

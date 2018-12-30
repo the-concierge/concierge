@@ -34,7 +34,7 @@ export default async function getRemoteTags(
       const age = getAge(ref)
       return { type, ref, sha, age } as Branch & { type: typeof type }
     })
-    .filter(ref => !!ref.ref)
+    .filter(ref => !!ref.ref && !!ref.age)
     .filter(ref => !ref.ref.endsWith('^{}'))
 
   return tags
