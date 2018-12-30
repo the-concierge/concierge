@@ -6,7 +6,7 @@ import * as getCreds from '../credentials/db'
  * Execute abritrary Git commands in an Application's git repository
  */
 export default async function execCommand(
-  application: Concierge.Application,
+  application: Schema.Application,
   workingDirectory: string,
   command: string,
   args?: string[]
@@ -58,7 +58,7 @@ export default async function execCommand(
   return result
 }
 
-function infixCredentials(app: Concierge.Application) {
+function infixCredentials(app: Schema.Application) {
   const { username, key } = app
 
   const repository = app.repository
@@ -157,7 +157,7 @@ function unlinkAsync(filename: string) {
 function spawnAsync(
   command: string,
   options: childProcess.SpawnOptions,
-  app: Concierge.Application,
+  app: Schema.Application,
   args?: string[]
 ) {
   const promise = new Promise<string>((resolve, reject) => {

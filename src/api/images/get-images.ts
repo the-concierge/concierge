@@ -17,7 +17,7 @@ export async function getOne(hostId: number) {
   return getImages(host)
 }
 
-async function getImages(host: Concierge.Host) {
+async function getImages(host: Schema.Host) {
   const client = docker(host)
   const images = await client.listImages()
 

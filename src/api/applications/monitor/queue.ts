@@ -6,7 +6,7 @@ import { buildStatus } from '../../stats/emitter'
 
 export type StrictBranch = Branch & { age: Date }
 
-export type BuildQueueItem = StrictBranch & { app: Concierge.Application; state: State }
+export type BuildQueueItem = StrictBranch & { app: Schema.Application; state: State }
 
 class BuildQueue {
   queue: BuildQueueItem[] = []
@@ -26,7 +26,7 @@ class BuildQueue {
     this.poll()
   }
 
-  async add(app: Concierge.Application, remote: StrictBranch) {
+  async add(app: Schema.Application, remote: StrictBranch) {
     const existingItem = this.queue.find(item => item.app.id === app.id && item.ref === remote.ref)
 
     if (!existingItem) {
@@ -99,7 +99,7 @@ export const queue = new BuildQueue()
 async function updateRemote(
   item: BuildQueueItem,
   state: State,
-  props: Partial<Concierge.ApplicationRemote> = {}
+  props: Partial<Schema.ApplicationRemote> = {}
 ) {
   emit(item, state, props.imageId)
   item.state = state

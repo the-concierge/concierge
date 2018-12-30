@@ -21,7 +21,7 @@ const handler: RequestHandler = async (req, res) => {
 export default handler
 
 const logFileBase = path.resolve(__dirname, '../../../logs')
-function getLogs(application: Concierge.Application) {
+function getLogs(application: Schema.Application) {
   return new Promise<string[]>((resolve, reject) => {
     fs.readdir(path.resolve(logFileBase, application.id.toString()), (err, files) => {
       if (err) {

@@ -1,16 +1,16 @@
 import * as db from '../../data'
 
 export async function one(id: number) {
-  const creds = (await db
+  const creds: Schema.Credentials = await db
     .credentials()
     .select()
     .where('id', id)
-    .first()) as Concierge.Credentials
+    .first()
   return creds
 }
 
 export async function all() {
-  const creds: Concierge.Credentials[] = await db
+  const creds: Schema.Credentials[] = await db
     .credentials()
     .select()
     .orderBy('id', 'asc')
@@ -18,10 +18,10 @@ export async function all() {
 }
 
 export async function remove(id: number) {
-  const apps = (await db
+  const apps: Schema.Application[] = await db
     .applications()
     .select()
-    .where('credentialsId', id)) as Concierge.Application[]
+    .where('credentialsId', id)
 
   if (apps.length > 0) {
     throw new Error('Unable to remove Credenitials: Applications reference these credentials')

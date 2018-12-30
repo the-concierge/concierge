@@ -3,7 +3,7 @@ import * as process from 'process'
 import { get as getConfig } from './configuration/db'
 import { one as getCreds } from './credentials/db'
 
-export default function getDockerClient(host: Concierge.Host, timeout?: number) {
+export default function getDockerClient(host: Schema.Host, timeout?: number) {
   // If no hostname is provided, try and use the local unix socket
   if (!host.hostname) {
     const socketPath =

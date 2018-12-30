@@ -10,7 +10,7 @@ const sentinal: { [appId: number]: boolean } = {}
  * - refs/tags/tag-name
  */
 export default async function refToStream(
-  application: Concierge.Application,
+  application: Schema.Application,
   sha: string
 ): Promise<NodeJS.ReadableStream> {
   const id = Number(application.id)

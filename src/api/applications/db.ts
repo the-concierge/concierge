@@ -44,7 +44,7 @@ export async function remove(id: number) {
 }
 
 export async function getRemotes(applicationId: number) {
-  const remotes: Concierge.ApplicationRemote[] = await db
+  const remotes: Schema.ApplicationRemote[] = await db
     .applicationRemotes()
     .select()
     .where('applicationId', applicationId)
@@ -67,7 +67,7 @@ export async function removeRemote(applicationId: number, remote: string) {
 export async function updateRemote(
   applicationId: number,
   ref: string,
-  props: Partial<Concierge.ApplicationRemote>
+  props: Partial<Schema.ApplicationRemote>
 ) {
   return db
     .applicationRemotes()
@@ -76,12 +76,12 @@ export async function updateRemote(
     .andWhere('remote', ref)
 }
 
-export async function insertRemote(remote: Concierge.ApplicationRemote) {
+export async function insertRemote(remote: Schema.ApplicationRemote) {
   return db.applicationRemotes().insert(remote)
 }
 
 export async function getRemote(applicationId: number, ref: string) {
-  const remote: Concierge.ApplicationRemote | undefined = await db
+  const remote: Schema.ApplicationRemote | undefined = await db
     .applicationRemotes()
     .select()
     .where('applicationId', applicationId)
@@ -91,6 +91,6 @@ export async function getRemote(applicationId: number, ref: string) {
 }
 
 export async function getAllRemotes() {
-  const remotes: Concierge.ApplicationRemote[] = await db.applicationRemotes().select()
+  const remotes: Schema.ApplicationRemote[] = await db.applicationRemotes().select()
   return remotes
 }

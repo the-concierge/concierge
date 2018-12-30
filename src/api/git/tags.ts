@@ -3,7 +3,7 @@ import appPath from './path'
 import { Branch } from '../applications/types'
 
 export default async function getRemoteTags(
-  application: Concierge.Application,
+  application: Schema.Application,
   branchesOnly: boolean = false
 ) {
   const workDir = appPath(application)
@@ -40,7 +40,7 @@ export default async function getRemoteTags(
   return tags
 }
 
-async function getRemoteAges(app: Concierge.Application) {
+async function getRemoteAges(app: Schema.Application) {
   const cwd = appPath(app)
 
   // We need to update our local version of remotes before using the for-each-ref command

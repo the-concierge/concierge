@@ -36,15 +36,15 @@ export type Monitor = {
   logs: string[]
 }
 
-export type Host = Concierge.Host
+export type Host = Schema.Host
 
-export type Credential = Concierge.Credentials
+export type Credential = Schema.Credentials
 
 export type Configuration = Concierge.Configuration
 
 export type Application = Concierge.ApplicationDTO
 
-export type Remote = Concierge.ApplicationRemote
+export type Remote = Schema.ApplicationRemote
 
 export type QueueItem = Concierge.QueueItem
 
@@ -144,13 +144,13 @@ function getTag(tags: string[]) {
   return tag || '<unknown>'
 }
 
-export async function getHosts(from: Concierge.Host[]) {
-  const to = await get<Concierge.Host[]>('/api/hosts')
+export async function getHosts(from: Schema.Host[]) {
+  const to = await get<Schema.Host[]>('/api/hosts')
   return merge(from, to, 'id')
 }
 
-export async function getCredentials(from: Concierge.Credentials[]) {
-  const to = await get<Concierge.Credentials[]>('/api/credentials')
+export async function getCredentials(from: Schema.Credentials[]) {
+  const to = await get<Schema.Credentials[]>('/api/credentials')
   return merge(from, to, 'id')
 }
 

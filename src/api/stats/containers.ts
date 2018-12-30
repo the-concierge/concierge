@@ -29,7 +29,7 @@ export default async function monitorAll() {
   }
 }
 
-export function watchContainer(host: Concierge.Host, containerId: string) {
+export function watchContainer(host: Schema.Host, containerId: string) {
   if (containerStats[containerId] !== undefined) {
     return
   }

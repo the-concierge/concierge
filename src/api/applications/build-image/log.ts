@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import App = Concierge.Application
+import App = Schema.Application
 
 /**
  * Returns the name of the log file
@@ -13,10 +13,14 @@ export async function createLogFile(app: App, tag: string): Promise<string> {
 
 const logBasePath = path.resolve(__dirname, '..', '..', '..', '..', 'logs')
 
-function getLogFilename(app: Concierge.Application, ref: string) {
+function getLogFilename(app: App, ref: string) {
   const now = new Date()
-  const date = `${now.getFullYear()}${now.getMonth()}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}`
-  const filename = `${date}__${ref}.json`.split('/').join('_')
+  const date = now.toISOString().slice(0, 10)
+  const time = now
+    .toISOString()
+    .slice(11, 19)
+    .replace(/:/g, '-')
+  const filename = `${date}_${time}__${ref}.json`.split('/').join('_')
 
   const logPath = path
     .resolve(logBasePath, app.id.toString(), filename)
@@ -27,7 +31,7 @@ function getLogFilename(app: Concierge.Application, ref: string) {
   return logPath
 }
 
-async function createApplicationLogPath(application: Concierge.Application) {
+async function createApplicationLogPath(application: App) {
   return mkdirAsync(path.resolve(logBasePath, application.id.toString()))
 }
 

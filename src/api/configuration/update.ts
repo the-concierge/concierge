@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import { update } from './db'
 
 const handler: RequestHandler = async (req, res) => {
-  const body = req.body as Partial<Concierge.Configuration>
+  const body: Partial<Concierge.Configuration> = req.body
 
   try {
     await update(body)

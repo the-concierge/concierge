@@ -3,7 +3,7 @@ import appPath from '../git/path'
 import { join, extname } from 'path'
 import { readFile } from 'fs'
 import { parseTaskFile, Task } from '../tasks'
-import Application = Concierge.Application
+import Application = Schema.Application
 
 type Checkout = { task: Task | null; stream: NodeJS.ReadableStream }
 
@@ -40,7 +40,7 @@ export async function checkout(app: Application, sha: string, attempt = 1): Prom
   }
 }
 
-async function getTaskFile(app: Concierge.Application) {
+async function getTaskFile(app: Schema.Application) {
   const base = appPath(app)
   const files = ['concierge.yml', 'concierge.yaml', 'concierge.json']
 

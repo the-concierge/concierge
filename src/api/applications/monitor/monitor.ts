@@ -10,7 +10,7 @@ type Action = 'new' | 'change' | 'done' | 'inactive' | 'deleted' | 'failed'
 export class RemoteMonitor {
   initialised = false
 
-  constructor(public app: Concierge.Application) {}
+  constructor(public app: Schema.Application) {}
 
   debug = (message: string) => log.debug(`[${this.app.name}] ${message}`)
   error = (message: string) => log.error(`[${this.app.name}] ${message}`)
@@ -135,7 +135,7 @@ export class RemoteMonitor {
   }
 }
 
-function updateBuildStatus(app: Concierge.Application, branch: StrictBranch, state: State) {
+function updateBuildStatus(app: Schema.Application, branch: StrictBranch, state: State) {
   buildStatus(app.id, {
     applicationId: app.id,
     sha: branch.sha,
@@ -146,7 +146,7 @@ function updateBuildStatus(app: Concierge.Application, branch: StrictBranch, sta
   })
 }
 
-async function insertNewRemote(app: Concierge.Application, remote: StrictBranch) {
+async function insertNewRemote(app: Schema.Application, remote: StrictBranch) {
   await insertRemote(app, {
     remote: remote.ref,
     sha: remote.sha,
@@ -163,7 +163,7 @@ interface BranchActionOpts {
 }
 
 function getBranchAction(
-  state: { existing?: Concierge.ApplicationRemote; current?: StrictBranch },
+  state: { existing?: Schema.ApplicationRemote; current?: StrictBranch },
   opts: BranchActionOpts
 ): Action {
   const existing = state.existing
@@ -215,7 +215,7 @@ function getBranchAction(
   return 'done'
 }
 
-function isBuildable(app: Concierge.Application, remote: Branch & { type?: string }) {
+function isBuildable(app: Schema.Application, remote: Branch & { type?: string }) {
   if (!app.autoBuild) {
     return false
   }

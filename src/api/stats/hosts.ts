@@ -30,7 +30,7 @@ export default async function watchHosts() {
   }
 }
 
-function handleHostEvent(host: Concierge.Host, rawEvent: string) {
+function handleHostEvent(host: Schema.Host, rawEvent: string) {
   const events = parseEvent(rawEvent)
   if (!events) {
     return

@@ -1,7 +1,7 @@
 import * as db from '../../data'
 
 export async function getOne(id: number) {
-  const host: Concierge.Host = await db
+  const host: Schema.Host = await db
     .hosts()
     .select()
     .where('id', id)
@@ -10,7 +10,7 @@ export async function getOne(id: number) {
 }
 
 export async function getAll() {
-  const hosts: Concierge.Host[] = await db
+  const hosts: Schema.Host[] = await db
     .hosts()
     .select()
     .orderBy('id', 'asc')

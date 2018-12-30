@@ -17,7 +17,7 @@ const handler: RequestHandler = async (req, res) => {
 
 export default handler
 
-function getActiveBranches(remotes: Concierge.ApplicationRemote[], filter: boolean) {
+function getActiveBranches(remotes: Schema.ApplicationRemote[], filter: boolean) {
   if (!filter) {
     return remotes
   }

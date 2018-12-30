@@ -1,7 +1,7 @@
 import cmd from './cmd'
 import appPath from './path'
 
-export default async function remove(application: Concierge.Application) {
+export default async function remove(application: Schema.Application) {
   // Working directory for removing is not relevant
   const workDir = __dirname
 

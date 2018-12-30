@@ -9,7 +9,7 @@ export type TaskResult = {
 }
 
 export interface TaskOpts {
-  app: Concierge.Application
+  app: Schema.Application
   ref: string
   sha: string
   imageId?: string

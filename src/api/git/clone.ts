@@ -1,7 +1,7 @@
 import cmd from './cmd'
 import appPath from './path'
 
-export default async function clone(application: Concierge.Application) {
+export default async function clone(application: Schema.Application) {
   // Working directory for cloning is not relevant
   const workDir = __dirname
 

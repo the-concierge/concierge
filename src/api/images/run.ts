@@ -90,7 +90,7 @@ async function getAvailableHost() {
   return leastLoaded
 }
 
-async function getHostLoads(host: Concierge.Host) {
+async function getHostLoads(host: Schema.Host) {
   const client = docker(host)
   const containers = await client.listContainers()
   const percentage = containers.length / host.capacity

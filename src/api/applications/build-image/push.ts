@@ -6,7 +6,7 @@ import { toast } from '../../stats/emitter'
  * Push a tag to the configured registry (if available)
  * @param tag Non-prefixed image tag -- I.e. Is not prefixed with the registry URL
  */
-export default async function push(host: Concierge.Host, imageName: string): Promise<any | void> {
+export default async function push(host: Schema.Host, imageName: string): Promise<any | void> {
   const client = docker(host)
   const config = await db.get()
 

@@ -7,7 +7,7 @@ import { checkout } from '../checkout'
 import push from './push'
 import { handleBuildStream, createLogFile } from './log'
 import { executeTask, getCommands, TaskOpts } from './task'
-import App = Concierge.Application
+import App = Schema.Application
 import { State } from '../types'
 
 /**
@@ -22,7 +22,7 @@ import { State } from '../types'
 type Emitter = (events: string[]) => void
 
 export interface BuildOptions {
-  app: Concierge.Application
+  app: Schema.Application
 
   /** Docker tag */
   tag: string
@@ -37,7 +37,7 @@ export interface BuildOptions {
   hostId?: number
 
   /** Notify the caller that the state of the build has changed */
-  setState: (state: State, props?: Partial<Concierge.ApplicationRemote>) => Promise<any>
+  setState: (state: State, props?: Partial<Schema.ApplicationRemote>) => Promise<any>
 }
 
 export async function buildImage(opts: BuildOptions) {
@@ -75,7 +75,7 @@ export async function buildImage(opts: BuildOptions) {
   const setState = (
     name: string,
     state: State | null,
-    props?: Partial<Concierge.ApplicationRemote>
+    props?: Partial<Schema.ApplicationRemote>
   ) => {
     logState.stage++
     logState.name = name
