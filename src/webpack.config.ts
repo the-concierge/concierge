@@ -5,7 +5,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 export = {
   mode: 'development',
-  devtool: '#eval-source-map',
+  devtool: 'eval-source-map',
   entry: './front/index.ts',
   output: {
     path: path.resolve(process.cwd(), 'front'),
@@ -48,7 +48,10 @@ export = {
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
+        loader: 'vue-loader',
+        options: {
+          esModule: true
+        }
       }
     ]
   },

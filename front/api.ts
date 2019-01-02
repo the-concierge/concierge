@@ -111,17 +111,25 @@ export async function getContainers(from: Container[]) {
     left.Status = right.Status
   }
 
+  const existingStats = (container: Container) => {
+    const existing = from.find(ex => ex.Id === container.Id)
+    return existing ? existing.stats : {}
+  }
+
   const mapped = to.map(container => ({
     ...container,
     stats: {
       mbIn: 'N/A',
       mbOut: 'N/A',
       cpu: '0%',
-      memory: '0%'
+      memory: '0%',
+      ...existingStats(container)
     }
   }))
 
-  return merge(from, mapped, 'Id')
+  const merged = merge(from, mapped, 'Id')
+  merged.sort((l, r) => (l.Status > r.Status ? -1 : l.Status === r.Status ? 0 : 1))
+  return merged
 }
 
 export async function getImages(from: Image[]) {
