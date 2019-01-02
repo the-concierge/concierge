@@ -7,7 +7,7 @@
       "type": "shell",
       "label": "Build",
       "command": "yarn",
-      "args": ["tsc"],
+      "args": ["tsc", "-p", "scripts/tsconfig.node.json"],
       "problemMatcher": ["$tsc"],
       "isBackground": true,
       "group": "build"
@@ -16,7 +16,7 @@
       "type": "shell",
       "label": "Watch",
       "command": "yarn",
-      "args": ["tsc", "--watch"],
+      "args": ["tsc", "--watch", "-p", "scripts/tsconfig.node.json"],
       "problemMatcher": ["$tsc-watch"],
       "isBackground": true,
       "group": {

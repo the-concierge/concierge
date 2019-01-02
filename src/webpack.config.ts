@@ -1,6 +1,8 @@
 import * as process from 'process'
 import * as path from 'path'
 
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
 export = {
   mode: 'development',
   devtool: '#eval-source-map',
@@ -18,6 +20,21 @@ export = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              // enable CSS Modules
+              modules: true,
+              // customize generated class names
+              localIdentName: '[local]_[hash:base64:8]'
+            }
+          }
+        ]
+      },
+      {
         test: /\.ts?$/,
         use: [
           {
@@ -31,9 +48,9 @@ export = {
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader',
-        options: {}
+        loader: 'vue-loader'
       }
     ]
-  }
+  },
+  plugins: [new VueLoaderPlugin()]
 }

@@ -1,23 +1,23 @@
 if (!window.addEventListener) {
   ;(function(
-    WindowPrototype,
-    DocumentPrototype,
-    ElementPrototype,
-    addEventListener,
-    removeEventListener,
-    dispatchEvent,
-    registry
+    WindowPrototype: any,
+    DocumentPrototype: any,
+    ElementPrototype: any,
+    addEventListener: any,
+    removeEventListener: any,
+    dispatchEvent: any,
+    registry: any
   ) {
     WindowPrototype[addEventListener] = DocumentPrototype[addEventListener] = ElementPrototype[
       addEventListener
-    ] = function(type, listener) {
+    ] = function(type: any, listener: any) {
       const target = this
 
       registry.unshift([
         target,
         type,
         listener,
-        function(event) {
+        function(event: any) {
           event.currentTarget = target
           event.preventDefault = function() {
             event.returnValue = false
@@ -36,7 +36,7 @@ if (!window.addEventListener) {
 
     WindowPrototype[removeEventListener] = DocumentPrototype[
       removeEventListener
-    ] = ElementPrototype[removeEventListener] = function(type, listener) {
+    ] = ElementPrototype[removeEventListener] = function(type: any, listener: any) {
       // tslint:disable-next-line
       for (let index = 0, register; (register = registry[index]); ++index) {
         if (register[0] === this && register[1] === type && register[2] === listener) {
@@ -47,7 +47,7 @@ if (!window.addEventListener) {
 
     WindowPrototype[dispatchEvent] = DocumentPrototype[dispatchEvent] = ElementPrototype[
       dispatchEvent
-    ] = function(eventObject) {
+    ] = function(eventObject: any) {
       return this.fireEvent('on' + eventObject.type, eventObject)
     }
   })(
