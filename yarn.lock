@@ -149,10 +149,10 @@ amp@0.3.1, amp@~0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/amp/-/amp-0.3.1.tgz#6adf8d58a74f361e82c1fa8d389c079e139fc47d"
 
-analysis@^0.4.1:
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/analysis/-/analysis-0.4.1.tgz#42126778d0c24c4a4d1878c70aaf5a154e40d237"
-  integrity sha512-47SZaN6xW4jSNlEnvvrp06jVahZ/zLnIGpsZus0aqXupQBskQrBvWfksPFr0rLCqLRHH+U5eR7GX1OuEcCNzaA==
+analysis@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/analysis/-/analysis-0.4.2.tgz#2a0b7456ba4d4624e73de90743ec6013db602403"
+  integrity sha512-pNf3EdHKIMepRdJ7k1FfLWjH+cvKaxtwsV2ZWGreyCzadifnXaVz/OveuaOLc1EqW2wsg2VTXgsYOoDson8Qfw==
 
 ansi-escapes@^1.0.0, ansi-escapes@^1.1.0:
   version "1.4.0"

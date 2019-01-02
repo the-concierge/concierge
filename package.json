@@ -38,7 +38,7 @@
   "dependencies": {
     "@types/dockerode": "^2.4.1",
     "@types/highcharts": "^5.0.5",
-    "analysis": "^0.4.1",
+    "analysis": "^0.4.2",
     "body-parser": "^1.16.1",
     "chalk": "^1.0.0",
     "compression": "^1.6.2",
