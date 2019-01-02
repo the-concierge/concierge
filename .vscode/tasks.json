@@ -1,19 +1,34 @@
 {
   // See https://go.microsoft.com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
-  "version": "0.1.0",
-  "command": "yarn",
-  "isShellCommand": true,
-  "showOutput": "always",
-  "suppressTaskName": true,
-  "problemMatcher": "$tsc-watch",
+  "version": "2.0.0",
   "tasks": [
     {
-      "isBuildCommand": true,
+      "type": "shell",
+      "label": "Build",
+      "command": "yarn",
+      "args": ["tsc"],
+      "problemMatcher": ["$tsc"],
       "isBackground": true,
-      "taskName": "build:back",
-      "args": ["build:back", "--watch"],
-      "problemMatcher": "$tsc-watch"
+      "group": "build"
+    },
+    {
+      "type": "shell",
+      "label": "Watch",
+      "command": "yarn",
+      "args": ["tsc", "--watch"],
+      "problemMatcher": ["$tsc-watch"],
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "type": "typescript",
+      "tsconfig": "tsconfig.json",
+      "option": "watch",
+      "problemMatcher": ["$tsc-watch"]
     }
   ]
 }
