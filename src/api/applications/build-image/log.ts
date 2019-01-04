@@ -51,6 +51,10 @@ export function handleBuildStream(stream: NodeJS.ReadableStream, log: (events: s
       buildResponses.push(...output)
 
       const toLog = output.map(o => o.stream || o.errorDetail).filter(o => {
+        if (!o) {
+          return false
+        }
+
         return !!(o.message || o || '').trim()
       })
 

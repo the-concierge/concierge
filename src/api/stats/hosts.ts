@@ -64,7 +64,7 @@ function parseEvent(rawEvent: string) {
       return events
     } catch (ex) {
       log.warn(`Failed to parse Host Event`)
-      log.debug(rawEvent)
+      log.debug(rawEvent.toString())
       return undefined
     }
   }
