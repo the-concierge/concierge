@@ -50,7 +50,11 @@ export function handleBuildStream(stream: NodeJS.ReadableStream, log: (events: s
 
       buildResponses.push(...output)
 
-      log(output.map(o => o.stream || o.errorDetail).filter(o => !!(o || '').trim()))
+      const toLog = output.map(o => o.stream || o.errorDetail).filter(o => {
+        return !!(o.message || o || '').trim()
+      })
+
+      log(toLog)
     })
 
     stream.on('end', () => {
@@ -68,7 +72,7 @@ export function handleBuildStream(stream: NodeJS.ReadableStream, log: (events: s
   return promise
 }
 
-type BuildEvent = { stream: string; aux?: { ID: string }; errorDetail: string }
+type BuildEvent = { stream: string; aux?: { ID: string }; errorDetail: any }
 
 type ParseResult = BuildEvent[] | string
 

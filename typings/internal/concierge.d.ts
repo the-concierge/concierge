@@ -57,6 +57,14 @@ declare namespace Concierge {
     state: string
     stateId: number
   }
+
+  interface LogEntry {
+    id: number
+    step: string
+    logs: Array<string | { code: number; message: string }>
+  }
+
+  type LogFile = Array<LogEntry>
 }
 
 interface ConciergeEvent<T> {

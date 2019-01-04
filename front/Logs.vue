@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h3 v-show="monitors.length === 0">No applications have been deployed during your session</h3>
+    <h3 v-show="!hasMonitors">No applications have been deployed during your session</h3>
 
-    <div class="container" v-if="monitors.length > 0">
+    <div class="container" v-if="hasMonitors">
       <div class="columns">
         <div class="col-12">
           <div class="form">
@@ -40,7 +40,7 @@ export default Vue.extend({
   },
   watch: {
     monitors: function(monitors: Monitor[]) {
-      if (monitors.length === 0) {
+      if (!monitors || monitors.length === 0) {
         return
       }
 
@@ -52,6 +52,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    hasMonitors: function() {
+      return Array.isArray(this.monitors)
+    },
     entries: function(): string[] {
       const monitor = this.monitors.find(mon => mon.id === this.selected.id)
       if (monitor) {

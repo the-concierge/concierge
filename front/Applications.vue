@@ -31,9 +31,19 @@ export default Vue.extend({
   },
   watch: {
     applications: function(apps: Application[]) {
+      if (!this.apps) {
+        this.apps = []
+        return
+      }
+
       this.apps = apps.map(app => toAppVM(app, this.apps, this.images, this.remotes))
     },
     remotes: function(remotes: Remote[]) {
+      if (!this.apps) {
+        this.apps = []
+        return
+      }
+
       this.apps = this.apps.map(app => toAppVM(app, this.apps, this.images, remotes))
     }
   },
@@ -217,11 +227,7 @@ function toAppVM(
                   </td>
                   <td style="padding: 3px">
                     <button class="btn btn-sm" v-on:click="rebuildBranch(app, r)">Re-Build</button>
-                    <button
-                      class="btn btn-sm"
-                      :disabled="r.imageId.length === 0"
-                      v-on:click="runImage(r)"
-                    >Run</button>
+                    <button class="btn btn-sm" :disabled="!r.imageId" v-on:click="runImage(r)">Run</button>
                     <button class="btn btn-sm" v-on:click="removeImage(r.image)">Remove Image</button>
                   </td>
                 </tr>

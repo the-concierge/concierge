@@ -176,6 +176,11 @@ export async function getQueue() {
   return json
 }
 
+export async function getLogFile(appId: number, file: string) {
+  const log = await get<Concierge.LogFile>(`/api/applications/${appId}/logs/${file}`)
+  return log
+}
+
 function get<T>(path: string) {
   return fetch(path).then(res => res.json()) as Promise<T>
 }
