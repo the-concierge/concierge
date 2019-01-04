@@ -4,8 +4,7 @@ WORKDIR /concierge
 
 ADD package.json ./
 ADD yarn.lock ./
-RUN git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*" && \
-	mkdir -p archive \
+RUN mkdir -p archive \
 	&& mkdir -p db \
 	&& mkdir -p repositories \
 	&& yarn
