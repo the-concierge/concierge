@@ -118,6 +118,10 @@ export async function getContainers(from: Container[]) {
 
   const mapped = to.map(container => ({
     ...container,
+    Image:
+      container.Image.indexOf('sha256:') === 0
+        ? container.Image.slice(0, 17) + '...'
+        : container.Image,
     stats: {
       mbIn: 'N/A',
       mbOut: 'N/A',

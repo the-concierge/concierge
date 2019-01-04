@@ -1,9 +1,31 @@
 <script lang="ts">
 import Vue from 'vue'
 import SafeLink from './SafeLink.vue'
+import { Container } from './api'
+
+interface Data {
+  onlyShowRunning: boolean
+}
 
 export default Vue.extend({
   props: ['containers'],
+  data: function(): Data {
+    return {
+      onlyShowRunning: true
+    }
+  },
+  computed: {
+    filteredContainers: function() {
+      const containers: Container[] = this.containers
+      return containers.filter(container => {
+        if (!this.onlyShowRunning) {
+          return true
+        }
+
+        return container.State === 'running'
+      })
+    }
+  },
   components: { SafeLink },
   methods: {
     toUrl(id: string) {
@@ -20,6 +42,18 @@ export default Vue.extend({
         <div class="col-2">
           <!-- <select class="form-select" data-bind="options: hosts, optionsText: 'hostname', value: selectedHost">
           </select>-->
+          <div class="dropdown">
+            <div class="btn-group">
+              <a href="#" class="btn dropdown-toggle">Options ▼</a>
+
+              <ul class="menu" style="min-width: 200px">
+                <label class="form-checkbox">
+                  <input type="checkbox" v-model="onlyShowRunning">
+                  <i class="form-icon"></i> Only Show Running
+                </label>
+              </ul>
+            </div>
+          </div>
         </div>
         <div class="col-10"></div>
       </div>
@@ -37,7 +71,7 @@ export default Vue.extend({
         </tr>
       </thead>
       <tbody>
-        <tr v-for="c in containers" v-bind:key="c.Id">
+        <tr v-for="c in filteredContainers" v-bind:key="c.Id">
           <td style="padding: 3px">
             <SafeLink
               v-bind:url="toUrl(c.Id)"
