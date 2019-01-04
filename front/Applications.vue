@@ -93,10 +93,12 @@ export default Vue.extend({
       return (sha || '').replace('sha256:', '').slice(0, 10)
     },
     toStatus(state: State) {
+      console.log(state)
       switch (state) {
         case State.Deleted:
           return 'deleted'
         case State.Building:
+        case State.Started:
           return 'building'
         case State.Failed:
           return 'failed'
@@ -113,6 +115,7 @@ export default Vue.extend({
         case State.Deleted:
           return ''
         case State.Building:
+        case State.Started:
           return 'label-warning'
         case State.Failed:
           return 'label-error'
