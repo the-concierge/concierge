@@ -27,7 +27,7 @@ export = {
             loader: 'css-loader',
             options: {
               // enable CSS Modules
-              modules: true,
+              // modules: true,
               // customize generated class names
               localIdentName: '[local]_[hash:base64:8]'
             }
