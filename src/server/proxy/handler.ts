@@ -19,7 +19,6 @@ proxyServer.on('proxyReq', (proxyReq: any, req: any) => {
 })
 
 export async function webSocketHandler(request: http.ServerRequest, socket: any, head: any) {
-  // const info = getDomainInfo(request.headers.host)
   const container = await findContainer(request.headers.host)
   if (!container) {
     errorResponse(socket, 'Container not found')

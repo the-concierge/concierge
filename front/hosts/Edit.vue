@@ -35,6 +35,10 @@
             </div>
 
             <div class="form-group">
+
+            </div>
+
+            <div class="form-group">
               <label class="form-label">SSH Authorisation Style</label>
               <label class="form-radio">
                 <input type="radio" value="Key" v-model="displayAuth">
@@ -102,7 +106,7 @@ export default Vue.extend({
     return {
       modalActive: false,
       displayAuth: 'Key' as 'Key' | 'Password',
-      edit: {} as Host & { password: string },
+      edit: {} as Host,
       host: {} as Host
     }
   },
@@ -110,7 +114,7 @@ export default Vue.extend({
     emitter.on(host => {
       this.modalActive = true
       this.displayAuth = 'Key'
-      this.edit = { ...host, password: '', privateKey: '' }
+      this.edit = { ...host }
       this.host = host
     })
   },
@@ -122,21 +126,12 @@ export default Vue.extend({
         hostname: edit.hostname,
         proxyIp: edit.proxyIp,
         vanityHostname: edit.vanityHostname,
-        sshUsername: edit.sshUsername,
         sshPort: Number(edit.sshPort) || 0,
         capacity: Number(edit.capacity) || 5,
-        key: edit.privateKey || edit.password,
         dockerPort: Number(edit.dockerPort) || 2375
       }
 
       for (const key of Object.keys(body) as Array<keyof typeof body>) {
-        if (key === 'key') {
-          if (!body.key) {
-            delete body.key
-          }
-          continue
-        }
-
         // If the original is empty and the "modified" is empty, the empty field isn't being modified
         // Therefore do not send the value (empty string) in the request body
         if (!body[key] && host[key]) {

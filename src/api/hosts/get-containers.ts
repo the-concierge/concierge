@@ -37,8 +37,6 @@ interface ConciergeContainerInfo extends ContainerInfo {
 export async function getContainers(host: Schema.Host) {
   const client = getClient(host)
   const hostDto = { ...host }
-  delete hostDto.privateKey
-  delete hostDto.sshUsername
   delete hostDto.sshPort
   const containers = await client.listContainers({
     all: 1

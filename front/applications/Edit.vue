@@ -9,65 +9,27 @@
       <div class="modal-body">
         <div class="content">
           <form v-on:submit.prevent>
-            <div class="form-group">
-              <label class="form-label">Name</label>
-              <input class="form-input" type="text" v-model="edit.name" />
-            </div>
+            <InputText v-model="edit.name">Name</InputText>
 
-            <div class="form-group">
-              <label class="form-label">Dockerfile
-                <cite>The Dockerfile to use inside the repository</cite>
-              </label>
-              <input class="form-input" type="text" v-model="edit.dockerfile" />
-            </div>
+            <InputText v-model="edit.dockerfile">
+              Dockerfile
+              <cite>The Dockerfile to use inside the repository</cite>
+            </InputText>
 
-            <div class="form-group">
-              <label class="form-label">Label
-                <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
-              </label>
-              <input class="form-input" type="text" v-model="edit.label" />
-            </div>
+            <InputText v-model="edit.label">
+              Label
+              <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
+            </InputText>
 
-            <div class="form-group">
-              <label class="form-switch">
-                <input type="checkbox" v-model="edit.autoBuild" />
-                <i class="form-icon"></i>
-                Automatically build branches and tags
-              </label>
-            </div>
+            <InputSwitch v-model="edit.autoBuild">Automatically build branches and tags</InputSwitch>
 
-            <div class="form-group">
-              <label class="form-label">Repository</label>
-              <input class="form-input" type="text" v-model="edit.repository" />
-            </div>
+            <InputText v-model="edit.repository">Repository</InputText>
 
-            <div v-if="credentials.length > 1" class="form-group">
-              <label class="form-label">Credentials</label>
-              <select class="form-select" v-model="selectedCredentials">
-                <options v-for="(c, i) in credentials" :key="i" v-bind:value="c">
-                  {{c.name}}
-                </options>
-              </select>
-            </div>
-
-            <div v-if="selectedCredentials.id > 0" class="form-group">
-              <label class="form-label">Username
-                <cite>Optional: This can be provided in the Git repository</cite>
-              </label>
-              <input class="form-input" type="text" v-model="edit.username" placeholder="Optional" />
-            </div>
-
-            <b>Use either Password or Key -- Provide a password if you are using HTTP/HTTPS over SSH</b>
-            <div class="form-group">
-              <label class="form-label">Password</label>
-              <input class="form-input" type="password" v-model="edit.password" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Key</label>
-              <textarea class="form-input" type="password" v-model="edit.key"></textarea>
-            </div>
-
+            <SelectList
+              v-if="creds.length > 1"
+              v-model="selectedCredentialsId"
+              v-bind:options="creds"
+            >Credentials</SelectList>
           </form>
         </div>
       </div>
@@ -82,24 +44,43 @@
 import Vue from 'vue'
 import { Application, Credential } from '../api'
 import { refresh, toast, createEmitter } from '../common'
+import InputSwitch from '../elements/InputSwitch.vue'
+import InputText from '../elements/InputText.vue'
+import SelectList from '../elements/SelectList.vue'
+import Modal from '../elements/Modal.vue'
+
+type ComputedCredential = Credential & { label: string }
 
 export default Vue.extend({
+  components: { InputSwitch, InputText, SelectList, Modal },
   props: {
     credentials: { type: Array as () => Credential[] }
   },
   data() {
     return {
       modalActive: false,
-      selectedCredentials: { id: -1, name: 'None', username: '', key: '' } as Credential,
+      selectedCredentialsId: -1,
+      creds: [] as ComputedCredential[],
       edit: {} as Application,
       app: {} as Application
     }
   },
+
+  watch: {
+    credentials: function() {
+      this.creds = [
+        { id: -1, label: 'None', name: 'None', username: '', key: '' },
+        ...this.credentials.map(cred => ({ ...cred, label: cred.name }))
+      ]
+    }
+  },
+
   methods: {
     async saveApplication() {
       const body = this.edit
-      const cred = this.selectedCredentials
-      body.credentialsId = cred.id > 0 ? cred.id : undefined
+      const cred = this.creds.find(cred => cred.id === this.selectedCredentialsId)
+      const credId = cred ? cred.id : -1
+      body.credentialsId = credId > 0 ? credId : undefined
 
       for (const key of Object.keys(body) as Array<keyof typeof body>) {
         const orig = this.app[key]
@@ -137,7 +118,7 @@ export default Vue.extend({
       if (Number(app.credentialsId) > 0) {
         const cred = this.credentials.find(c => c.id === app.credentialsId)
         if (cred) {
-          this.selectedCredentials = cred
+          this.selectedCredentialsId = cred.id
         }
       }
     })

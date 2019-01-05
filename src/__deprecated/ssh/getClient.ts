@@ -3,16 +3,16 @@ import * as SSH2 from 'ssh2'
 /**
  * Create an instance of a connect SSH client ready for consumption
  */
-export default function getClient(host: Concierge.Host): Promise<any> {
-  let client = new SSH2.Client()
+export default function getClient(host: Schema.Host): Promise<any> {
+  const client = new SSH2.Client()
 
-  let settings: any = {
+  const settings: any = {
     host: host.hostname,
     port: host.sshPort,
     username: host.sshUsername
   }
 
-  let hasPassword = host.privateKey.length < 30
+  const hasPassword = host.privateKey.length < 30
 
   if (hasPassword) {
     settings.password = host.privateKey
@@ -22,7 +22,7 @@ export default function getClient(host: Concierge.Host): Promise<any> {
 
   client.connect(settings)
 
-  let promise = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     client.on('ready', () => {
       resolve(client)
     })

@@ -32,9 +32,7 @@ async function createDefaultHost() {
     hostname: '',
     vanityHostname: 'localhost',
     proxyIp: '',
-    privateKey: '',
     sshPort: 22,
-    sshUsername: '',
     dockerPort: 2375,
     capacity: 5
   })

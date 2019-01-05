@@ -22,21 +22,14 @@ const handler: RequestHandler = async (req, res) => {
   const {
     repository,
     name,
-    key,
     label,
     dockerfile,
-    username,
     autoBuild = false,
     credentialsId = 0
   } = req.body as Body
 
   const id = await getNextId()
-  const body = { id, repository, name, key, label, dockerfile, username, credentialsId, autoBuild }
-
-  if (credentialsId > 0) {
-    body.username = ''
-    body.key = ''
-  }
+  const body = { id, repository, name, label, dockerfile, credentialsId, autoBuild }
 
   const errors = validate(body as any)
 
@@ -50,7 +43,6 @@ const handler: RequestHandler = async (req, res) => {
     await db.applications().insert(body)
 
     const app = { ...body }
-    delete app.key
 
     await clone(app)
     res.json(app)

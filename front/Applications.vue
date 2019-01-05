@@ -93,7 +93,6 @@ export default Vue.extend({
       return (sha || '').replace('sha256:', '').slice(0, 10)
     },
     toStatus(state: State) {
-      console.log(state)
       switch (state) {
         case State.Deleted:
           return 'deleted'

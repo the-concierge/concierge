@@ -29,12 +29,6 @@ declare namespace Schema {
     /** {namespace}/{repository} */
     repository: string
 
-    /** Username for http/https git repositories */
-    username: string
-
-    /** For fetching/cloning the repository */
-    key: string
-
     /** The Dockerfile to use in the repository when buidling the image */
     dockerfile: string
 
@@ -70,7 +64,6 @@ declare namespace Schema {
     capacity: number
     dockerPort: number
     sshPort: number
-    sshUsername: string
-    privateKey?: string
+    credentialsId?: number
   }
 }

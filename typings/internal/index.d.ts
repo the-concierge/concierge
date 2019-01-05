@@ -20,3 +20,9 @@ declare namespace NodeJS {
     log: Logger
   }
 }
+
+type Diff<T, U> = T extends U ? never : T
+
+type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>
+
+type ReturnOf<T> = T extends (...args: any[]) => infer R ? R : any

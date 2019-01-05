@@ -55,9 +55,7 @@ export class RemoteMonitor {
       name: app.name,
       label: app.label,
       repository: app.repository,
-      key: app.key,
       credentialsId: app.credentialsId,
-      username: app.username,
       autoBuild: app.autoBuild
     }
 

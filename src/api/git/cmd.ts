@@ -19,29 +19,22 @@ export default async function execCommand(
     ? await getCreds.one(application.credentialsId)
     : undefined
 
-  if (creds) {
-    application.key = creds.key
-    application.username = creds.username
-  }
-
-  const isPrivate = !!application.key
-
   // If the repository is not private, we do not need to use a SSH private key
-  if (!isPrivate) {
-    const result = await spawnAsync(command, { cwd: workingDirectory }, application, args)
+  if (!creds) {
+    const result = await spawnAsync(command, { cwd: workingDirectory }, undefined, args)
     return result
   }
 
   // A script needs to be created and passed to the Git command with instructions on how to consume SSH
   // This is a necessary evil for passing a SSH private key programmatically
-  if (isPrivateKey(application.key)) {
-    const filenames = await createFiles(application.key)
+  if (isPrivateKey(creds.key)) {
+    const filenames = await createFiles(creds.key)
     const GIT_SSH = filenames.script
     try {
       const result = await spawnAsync(
         command,
         { detached: true, cwd: workingDirectory, env: { GIT_SSH } },
-        application,
+        creds,
         args
       )
       await teardown(filenames)
@@ -52,14 +45,14 @@ export default async function execCommand(
     }
   }
 
-  const infixedRepo = infixCredentials(application)
+  const infixedRepo = infixCredentials(application, creds)
   const amendedCommand = command.replace(application.repository, infixedRepo)
-  const result = await spawnAsync(amendedCommand, { cwd: workingDirectory }, application, args)
+  const result = await spawnAsync(amendedCommand, { cwd: workingDirectory }, creds, args)
   return result
 }
 
-function infixCredentials(app: Schema.Application) {
-  const { username, key } = app
+function infixCredentials(app: Schema.Application, creds: Schema.Credentials) {
+  const { username, key } = creds
 
   const repository = app.repository
   const hasUsername = repository.split('@').length > 1
@@ -157,15 +150,15 @@ function unlinkAsync(filename: string) {
 function spawnAsync(
   command: string,
   options: childProcess.SpawnOptions,
-  app: Schema.Application,
+  creds?: Schema.Credentials,
   args?: string[]
 ) {
   const promise = new Promise<string>((resolve, reject) => {
     let buffer = ''
 
     const buf = (msg: any) => {
-      if (app.key) {
-        buffer += (msg || '').toString().replace(app.key, '**********')
+      if (creds) {
+        buffer += (msg || '').toString().replace(creds.key, '**********')
         return
       }
       buffer += (msg || '').toString()

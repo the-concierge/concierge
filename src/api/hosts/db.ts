@@ -22,10 +22,8 @@ export interface CreateHost {
   dockerPort: number
   sshPort: number
   capacity: number
-  sshUsername: string
   vanityHostname: string
   proxyIp: string
-  privateKey: string
 }
 
 export async function create(host: CreateHost) {
