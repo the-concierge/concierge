@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <slot name="footer">
+        <slot name="footer"></slot>
       </div>
     </div>
   </div>

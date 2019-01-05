@@ -1,43 +1,37 @@
+
+
 <template>
-  <div v-bind:class="{ active: modalActive }" v-if="modalActive" class="modal">
-    <div class="modal-overlay" v-on:click="hideModal"></div>
-    <div class="modal-container">
-      <div class="modal-header">
-        <button class="btn btn-clear float-right" v-on:click="hideModal"></button>
-        <div class="modal-title">Edit Application</div>
-      </div>
-      <div class="modal-body">
-        <div class="content">
-          <form v-on:submit.prevent>
-            <InputText v-model="edit.name">Name</InputText>
+  <Modal v-model="modalActive" v-bind:onHide="hideModal">
+    <template slot="header">Edit Application</template>
 
-            <InputText v-model="edit.dockerfile">
-              Dockerfile
-              <cite>The Dockerfile to use inside the repository</cite>
-            </InputText>
+    <form v-on:submit.prevent>
+      <InputText v-model="edit.name">Name</InputText>
 
-            <InputText v-model="edit.label">
-              Label
-              <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
-            </InputText>
+      <InputText v-model="edit.dockerfile">
+        Dockerfile
+        <cite>The Dockerfile to use inside the repository</cite>
+      </InputText>
 
-            <InputSwitch v-model="edit.autoBuild">Automatically build branches and tags</InputSwitch>
+      <InputText v-model="edit.label">
+        Label
+        <cite>The Docker image tag 'prefix'. E.g. myproject/myrepo</cite>
+      </InputText>
 
-            <InputText v-model="edit.repository">Repository</InputText>
+      <InputSwitch v-model="edit.autoBuild">Automatically build branches and tags</InputSwitch>
 
-            <SelectList
-              v-if="creds.length > 1"
-              v-model="selectedCredentialsId"
-              v-bind:options="creds"
-            >Credentials</SelectList>
-          </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-md" v-on:click="saveApplication">Save</button>
-      </div>
-    </div>
-  </div>
+      <InputText v-model="edit.repository">Repository</InputText>
+
+      <SelectList
+        v-if="creds.length > 1"
+        v-model="selectedCredentialsId"
+        v-bind:options="creds"
+      >Credentials</SelectList>
+    </form>
+
+    <template slot="footer">
+      <button class="btn btn-md" v-on:click="saveApplication">Save</button>
+    </template>
+  </Modal>
 </template>
 
 <script lang="ts">
