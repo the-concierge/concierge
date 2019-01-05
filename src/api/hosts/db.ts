@@ -18,6 +18,7 @@ export async function getAll() {
 }
 
 export interface CreateHost {
+  credentialsId: number | null
   hostname: string
   dockerPort: number
   sshPort: number

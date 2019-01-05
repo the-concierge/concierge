@@ -1,121 +1,81 @@
+
 <template>
-  <div class="modal" v-if="modalActive" v-bind:class="{ active: modalActive }">
-    <div class="modal-overlay" v-on:click="hideModal"></div>
-    <div class="modal-container">
-      <div class="modal-header">
-        <button class="btn btn-clear float-right" v-on:click="hideModal"></button>
-        <div class="modal-title">Edit Host</div>
-      </div>
-      <div class="modal-body">
-        <div class="content">
-          <form>
-            <div class="form-group">
-              <label class="form-label">Hostname</label>
-              <input class="form-input" type="text" v-model="edit.hostname" placeholder="127.0.0.1">
-            </div>
+  <Modal v-model="modalActive" v-bind:onHide="hideModal">
+    <template slot="header">Edit Host</template>
 
-            <div class="form-group">
-              <label class="form-label">Proxy IP</label>
-              <input
-                class="form-input"
-                type="text"
-                v-model="edit.proxyIp"
-                placeholder="IP of the Docker Host for reverse proxy purposes"
-              >
-            </div>
+    <form>
+      <InputText v-model="edit.hostname" :placeholder="'127.0.0.1'">Hostname</InputText>
 
-            <div class="form-group">
-              <label class="form-label">Vanity Hostname</label>
-              <input
-                class="form-input"
-                type="text"
-                v-model="edit.vanityHostname"
-                placeholder="127.0.0.1 (Optional)"
-              >
-            </div>
+      <InputText
+        v-model="edit.proxyIp"
+        placeholder="'IP of the Docker Host for reverse proxy purposes'"
+      >Proxy IP</InputText>
 
-            <div class="form-group">
+      <InputText v-model="edit.vanityHostname" :placeholder="'Optional'">Vanity Hostname</InputText>
 
-            </div>
+      <InputText v-model="edit.capacity" :placeholder="5">Container Capacity</InputText>
 
-            <div class="form-group">
-              <label class="form-label">SSH Authorisation Style</label>
-              <label class="form-radio">
-                <input type="radio" value="Key" v-model="displayAuth">
-                <i class="form-icon" v-on:click="displayAuth = 'Key'"></i>Key
-              </label>
-              <label class="form-radio">
-                <input type="radio" value="Password" v-model="displayAuth">
-                <i class="form-icon" v-on:click="displayAuth = 'Password'"></i>Password
-              </label>
-            </div>
+      <InputText v-model="edit.sshPort" :placeholder="22">SSH Port</InputText>
 
-            <div class="form-group">
-              <label class="form-group">Username</label>
-              <input class="form-input" type="text" v-model="edit.sshUsername">
-            </div>
+      <InputText v-model="edit.dockerPort" :placeholder="2375">Docker Port</InputText>
 
-            <div class="form-group">
-              <label class="form-label">{{displayAuth}}</label>
-              <textarea
-                class="form-input"
-                type="text"
-                v-model="edit.privateKey"
-                v-show="displayAuth === 'Key'"
-              ></textarea>
-              <input
-                class="form-input"
-                type="password"
-                v-model="edit.password"
-                v-show="displayAuth === 'Password'"
-              >
-            </div>
+      <SelectList v-if="creds.length > 1" v-model="credentialsId" :options="creds">Credentials</SelectList>
+    </form>
 
-            <div class="form-group">
-              <label class="form-label">Container Capacity</label>
-              <input class="form-input" type="text" v-model="edit.capacity" placeholder="5">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">SSH Port</label>
-              <input class="form-input" type="text" v-model="edit.sshPort" placeholder="22">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Docker Port</label>
-              <input class="form-input" type="text" v-model="edit.dockerPort" placeholder="2375">
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-md" v-on:click="hideModal">Cancel</button>
-        <button class="btn btn-md" v-on:click="saveHost">Save</button>
-      </div>
-    </div>
-  </div>
+    <template slot="footer">
+      <button class="btn btn-md" v-on:click="hideModal">Cancel</button>
+      <button class="btn btn-md" v-on:click="saveHost">Save</button>
+    </template>
+  </Modal>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Host } from '../api'
+import { Host, Credential } from '../api'
 import { createEmitter, refresh, toast } from '../common'
+import { InputSwitch, InputText, SelectList, Modal } from '../elements'
+
+type ComputedCredential = Credential & { label: string }
 
 export default Vue.extend({
+  components: {
+    InputSwitch,
+    InputText,
+    Modal,
+    SelectList
+  },
+  props: {
+    credentials: { type: Array as () => ComputedCredential[] }
+  },
   data() {
     return {
       modalActive: false,
-      displayAuth: 'Key' as 'Key' | 'Password',
       edit: {} as Host,
-      host: {} as Host
+      host: {} as Host,
+      credentialsId: -1,
+      creds: [] as ComputedCredential[]
+    }
+  },
+  watch: {
+    credentials: function() {
+      this.creds = [
+        { id: -1, label: 'None', name: 'None', username: '', key: '' },
+        ...this.credentials.map(cred => ({ ...cred, label: cred.name }))
+      ]
     }
   },
   mounted() {
     emitter.on(host => {
       this.modalActive = true
-      this.displayAuth = 'Key'
       this.edit = { ...host }
       this.host = host
+
+      if (Number(host.credentialsId) > 0) {
+        const cred = this.credentials.find(cred => cred.id === host.credentialsId)
+        if (cred) {
+          this.credentialsId = cred.id
+        }
+      }
     })
   },
   methods: {
@@ -128,7 +88,8 @@ export default Vue.extend({
         vanityHostname: edit.vanityHostname,
         sshPort: Number(edit.sshPort) || 0,
         capacity: Number(edit.capacity) || 5,
-        dockerPort: Number(edit.dockerPort) || 2375
+        dockerPort: Number(edit.dockerPort) || 2375,
+        credentialsId: this.credentialsId
       }
 
       for (const key of Object.keys(body) as Array<keyof typeof body>) {

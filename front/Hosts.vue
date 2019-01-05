@@ -8,6 +8,7 @@
           <th>Proxy IP</th>
           <th>Vanity Hostname</th>
           <th>Capacity</th>
+          <th>Credentials</th>
           <th>SSH Port</th>
           <th>Docker Port</th>
           <th></th>
@@ -19,6 +20,7 @@
           <td>{{ h.proxyIp }}</td>
           <td>{{ h.vanityHostname }}</td>
           <td>{{ h.capacity }}</td>
+          <td>{{ getCredential(h.credentialsId) }}</td>
           <td>{{ h.sshPort }}</td>
           <td>{{ h.dockerPort }}</td>
           <td>
@@ -29,20 +31,21 @@
     </table>
 
     <Create/>
-    <Edit/>
+    <Edit :credentials="credentials"/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import { Host } from './api'
+import { Host, Credential } from './api'
 import Create, { showModal as showCreate } from './hosts/Create.vue'
 import Edit, { showModal as showEdit } from './hosts/Edit.vue'
 
 export default Vue.extend({
   components: { Create, Edit },
   props: {
-    hosts: { type: Array as () => Host[] }
+    hosts: { type: Array as () => Host[] },
+    credentials: { type: Array as () => Credential[] }
   },
   methods: {
     showEditHost(host: Host) {
@@ -50,6 +53,10 @@ export default Vue.extend({
     },
     showCreateHost() {
       showCreate()
+    },
+    getCredential(id: number) {
+      const cred = this.credentials.find(cred => cred.id === id)
+      return cred ? cred.name : 'None'
     }
   }
 })

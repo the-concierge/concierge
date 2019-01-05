@@ -34,7 +34,8 @@ async function createDefaultHost() {
     proxyIp: '',
     sshPort: 22,
     dockerPort: 2375,
-    capacity: 5
+    capacity: 5,
+    credentialsId: null
   })
 
   log.info('Created default host')

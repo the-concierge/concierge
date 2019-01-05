@@ -9,26 +9,26 @@ const handler: RequestHandler = async (req, res) => {
   const dockerPort = req.body.dockerPort || 2375
   const sshPort = req.body.sshPort || 22
   const capacity = req.body.capacity || 5
-  const privateKey = req.body.privateKey
-  const sshUsername = req.body.sshUsername
+  let credentialsId: number | null = Number(req.body.credentialsId)
 
-  const hasHostname = !!hostname
-  const hasUsername = !!sshUsername
-  if (hasHostname && !hasUsername) {
-    res
-      .status(400)
-      .json({
-        message: 'Invalid SSH username provided: Must provided credentials if providing a hostname'
-      })
-    return
+  if (credentialsId < 1) {
+    credentialsId = null
   }
 
-  const body = { hostname, dockerPort, sshPort, capacity, sshUsername, vanityHostname, proxyIp }
+  const body: Omit<Schema.Host, 'id'> = {
+    hostname,
+    dockerPort,
+    sshPort,
+    capacity,
+    vanityHostname,
+    proxyIp,
+    credentialsId
+  }
 
   try {
     const result: number[] = await db
       .hosts()
-      .update({ ...body, privateKey })
+      .update({ ...body })
       .where('id', id)
     res.json({ ...body, id: result[0] })
   } catch (ex) {

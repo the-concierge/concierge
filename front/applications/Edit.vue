@@ -38,10 +38,7 @@
 import Vue from 'vue'
 import { Application, Credential } from '../api'
 import { refresh, toast, createEmitter } from '../common'
-import InputSwitch from '../elements/InputSwitch.vue'
-import InputText from '../elements/InputText.vue'
-import SelectList from '../elements/SelectList.vue'
-import Modal from '../elements/Modal.vue'
+import { InputSwitch, InputText, SelectList, Modal } from '../elements'
 
 type ComputedCredential = Credential & { label: string }
 

@@ -64,6 +64,6 @@ declare namespace Schema {
     capacity: number
     dockerPort: number
     sshPort: number
-    credentialsId?: number
+    credentialsId?: number | null
   }
 }

@@ -195,38 +195,26 @@ export default Vue.extend({
 
     <div class="container">
       <Containers v-show="view === 'containers'" v-bind:containers="state.containers"/>
-      <Inspect
-        v-if="view ==='inspect'"
-        v-bind:container="inspectContainer"
-        v-bind:config="state.config"
-      />
+      <Inspect v-if="view ==='inspect'" :container="inspectContainer" :config="state.config"/>
       <Applications
         v-show="view ==='applications'"
-        v-bind:credentials="state.credentials"
-        v-bind:applications="state.applications"
-        v-bind:images="state.images"
-        v-bind:remotes="state.remotes"
-        v-bind:containers="state.containers"
+        :credentials="state.credentials"
+        :applications="state.applications"
+        :images="state.images"
+        :remotes="state.remotes"
+        :containers="state.containers"
       />
-      <Queue v-show="view === 'queue'" v-bind:queue="state.queue"/>
-      <Images
-        v-show="view ==='images'"
-        v-bind:images="state.images"
-        v-bind:containers="state.containers"
-      />
-      <Hosts v-show="view ==='hosts'" v-bind:hosts="state.hosts"/>
-      <Credentials v-show="view ==='credentials' " v-bind:credentials="state.credentials "/>
-      <Config
-        v-show="view ==='config'"
-        v-bind:config="state.config"
-        v-bind:credentials="state.credentials"
-      />
-      <Logs v-show="view === 'logs'" v-bind:monitors="state.monitors"/>
+      <Queue v-show="view === 'queue'" :queue="state.queue"/>
+      <Images v-show="view ==='images'" :images="state.images" :containers="state.containers"/>
+      <Hosts v-show="view ==='hosts'" :hosts="state.hosts" :credentials="state.credentials"/>
+      <Credentials v-show="view ==='credentials' " :credentials="state.credentials "/>
+      <Config v-show="view ==='config'" :config="state.config" :credentials="state.credentials"/>
+      <Logs v-show="view === 'logs'" :monitors="state.monitors"/>
     </div>
 
-    <div v-for="(toast, i) in toasts" v-bind:key="i">
+    <div v-for="(toast, i) in toasts" :key="i">
       <div style="position: fixed; bottom: 20px; right: 50px">
-        <div class="toast" v-bind:class="toast.type">
+        <div class="toast" :class="toast.type">
           <button class="btn btn-clear float-right" v-on:click="removeToast(i)"></button>
           <span>{{ toast.msg }}</span>
         </div>

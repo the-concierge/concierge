@@ -8,6 +8,10 @@ const handler: RequestHandler = async (req, res) => {
   const proxyIp = req.body.proxyIp || ''
   const sshPort = req.body.sshPort || 22
   const capacity = req.body.capacity || 5
+  let credentialsId: number | null = Number(req.body.credentialsId)
+  if (credentialsId < 1) {
+    credentialsId = null
+  }
 
   const hasHostname = !!hostname.length
 
@@ -24,7 +28,8 @@ const handler: RequestHandler = async (req, res) => {
     sshPort,
     capacity,
     vanityHostname,
-    proxyIp
+    proxyIp,
+    credentialsId
   }
 
   try {
