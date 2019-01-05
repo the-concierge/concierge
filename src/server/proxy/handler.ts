@@ -41,7 +41,12 @@ export async function requestHandler(
   const info = getProxyInfo(request.headers.host || '')
   const config = await getConfig()
 
-  if ((config.proxyHostname || '').toLowerCase() !== info.hostname) {
+  if (!config.proxyHostname || !info) {
+    return next()
+  }
+
+  const proxyHostname = (config.proxyHostname || '').toLowerCase()
+  if (proxyHostname !== info.hostname) {
     return next()
   }
 

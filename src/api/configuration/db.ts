@@ -1,7 +1,8 @@
 import * as db from '../../data'
+import * as os from 'os'
 
 const defaultConfig: Concierge.Configuration = {
-  name: '',
+  name: os.hostname() || 'development',
   conciergePort: 3141,
   debug: 0,
   dockerRegistry: undefined,
@@ -58,16 +59,25 @@ export async function setConfig(config: Partial<Concierge.Configuration>) {
 
   await db
     .configurations()
-    .update({ config: next })
+    .update('config', JSON.stringify(next))
     .where('id', 1)
 
   return next
 }
 
 const validate: { [key in keyof Concierge.Configuration]?: (value: any) => boolean } = {
-  debug: val => typeof val === 'number',
-  gitPollingIntervalSecs: val => typeof val === 'number' && val > 0,
-  statsBinSize: val => typeof val === 'number' && val > 0,
-  maxConcurrentBuilds: val => typeof val === 'number' && val > 0,
-  statsRetentionDays: val => typeof val === 'number' && val > 0
+  debug: val => isNum(val),
+  gitPollingIntervalSecs: val => isNum(val, 0),
+  statsBinSize: val => isNum(val, 0),
+  maxConcurrentBuilds: val => isNum(val, 0),
+  statsRetentionDays: val => isNum(val, 0)
+}
+
+function isNum(value: any, greaterThan?: number): value is number {
+  const num = Number(value)
+  if (isNaN(num)) {
+    return false
+  }
+
+  return greaterThan === undefined ? true : num > greaterThan
 }

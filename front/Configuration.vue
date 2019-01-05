@@ -130,7 +130,7 @@ export default Vue.extend({
     async saveConfig() {
       const cfg = { ...this.config }
       for (const field of this.fields) {
-        cfg[field.name as TConf] = field.value.value || field.value
+        cfg[field.name as TConf] = field.value ? field.value.value || field.value : field.value
       }
 
       if (cfg.registryCredentials === -1) {
