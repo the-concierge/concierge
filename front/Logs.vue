@@ -58,7 +58,8 @@ export default Vue.extend({
     entries: function(): string[] {
       const monitor = this.monitors.find(mon => mon.id === this.selected.id)
       if (monitor) {
-        return monitor.logs.filter(log => !!(log || '').trim())
+        const logs = monitor.logs.filter(log => !!log)
+        return logs
       }
 
       return []

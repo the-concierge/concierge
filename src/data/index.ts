@@ -16,4 +16,6 @@ export const concierges = () => db(CONCIERGES)
 export const credentials = () => db(CREDENTIALS)
 export const applicationRemotes = () => db(APPLICATION_REMOTES)
 
+export { db }
+
 export default db

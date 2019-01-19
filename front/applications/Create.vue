@@ -53,30 +53,25 @@
                 >{{cred.name}}</option>
               </select>
             </div>
-
-            <div class="form-group" v-if="selectedCredentials.value > 0">
-              <label class="form-label">
-                Username
-                <cite>Optional: This can be provided in the Git repository</cite>
-              </label>
-              <input class="form-input" type="text" v-model="username" placeholder="Optional">
-            </div>
-
-            <b>Use either Password or Key -- Provide a password if you are using HTTP/HTTPS over SSH</b>
-            <div class="form-group">
-              <label class="form-label">Password</label>
-              <input class="form-input" type="password" v-model="password">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Key</label>
-              <textarea class="form-input" type="password" v-model="key"></textarea>
-            </div>
           </form>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-md" v-on:click="createApplication">Save</button>
+        <button
+          v-if="isLoading"
+          class="btn btn-md"
+          v-on:click="createApplication"
+          disabled="true"
+          style="width: 120px"
+        >
+          <div class="loading"></div>
+        </button>
+        <button
+          v-if="!isLoading"
+          class="btn btn-md"
+          v-on:click="createApplication"
+          style="width: 120px"
+        >Save</button>
       </div>
     </div>
   </div>
@@ -87,22 +82,31 @@ import Vue from 'vue'
 import { Credential } from '../api'
 import { toast, refresh } from '../common'
 
+interface Data {
+  isLoading: boolean
+  modalActive: boolean
+  selectedCredentials: { name: string; value: number }
+  name: string
+  dockerfile: string
+  label: string
+  repository: string
+  autoBuild: boolean
+}
+
 export default Vue.extend({
   props: {
     credentials: { type: Array as () => Credential[] }
   },
-  data() {
+  data(): Data {
     return {
+      isLoading: false,
       modalActive: false,
       selectedCredentials: { name: 'None', value: -1 },
       name: '',
       dockerfile: '',
       label: '',
       repository: '',
-      autoBuild: true,
-      username: '',
-      password: '',
-      key: ''
+      autoBuild: true
     }
   },
   mounted() {
@@ -120,26 +124,26 @@ export default Vue.extend({
       const app = {
         repository: this.repository,
         name: this.name,
-        username: this.username,
-        password: this.password,
-        key: this.key,
         label: this.label,
         dockerfile: this.dockerfile,
         credentialsId: this.selectedCredentials.value,
         autoBuild: this.autoBuild
       }
+
+      this.isLoading = true
       const result = await fetch('/api/applications', {
         method: 'POST',
         body: JSON.stringify(app),
         headers: { 'Content-Type': 'application/json' }
       })
-
+      this.isLoading = false
       if (result.status === 200) {
         refresh.applications()
         toast.success('Successfully created application')
         this.hideModal()
         return
       }
+
       const error = await result.json()
       toast.error(`Failed to create application: ${error.message}`)
     }
