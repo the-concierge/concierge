@@ -3,7 +3,7 @@ import { State } from './types'
 import * as get from './db'
 
 const handler: RequestHandler = async (req, res) => {
-  const appId = req.params.id
+  const appId = Number(req.params.id)
   const activeOnly = req.query.hasOwnProperty('active')
 
   if (!appId) {

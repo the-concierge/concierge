@@ -31,7 +31,7 @@ export async function all() {
   return applications
 }
 
-export async function remove(id: number) {
+export async function remove(id: number | string) {
   await db
     .applicationRemotes()
     .delete()

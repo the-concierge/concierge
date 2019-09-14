@@ -168,7 +168,7 @@ async function startDockerBuild(
   }
 
   return new Promise<{ responses: BuildEvent[]; imageId?: string }>((resolve, reject) => {
-    client.buildImage(stream, options, async (err, buildStream: NodeJS.ReadableStream) => {
+    client.buildImage(stream, options, async (err: any, buildStream) => {
       if (err) {
         reject(err)
         emit([`Failed to start build: ${err.message || err}`])
@@ -176,7 +176,7 @@ async function startDockerBuild(
       }
 
       try {
-        const responses = await handleBuildStream(buildStream, emit)
+        const responses = await handleBuildStream(buildStream!, emit)
         const imageId = getImageId(responses)
         resolve({ responses, imageId })
         push(host, tag)

@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import * as get from './db'
 
 export const one: RequestHandler = async (req, res) => {
-  const application = await get.one(req.params.id)
+  const application = await get.one(Number(req.params.id))
   if (!application) {
     return res.status(404).json({ message: 'Not found' })
   }

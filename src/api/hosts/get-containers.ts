@@ -4,7 +4,7 @@ import getClient from '../docker'
 import * as get from './db'
 
 export const getOne: RequestHandler = async (req, res) => {
-  const host: Schema.Host = await get.getOne(req.params.id)
+  const host: Schema.Host = await get.getOne(Number(req.params.id))
   const containers = await getContainers(host)
   res.json(containers)
 }

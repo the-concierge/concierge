@@ -4,7 +4,7 @@ import { RequestHandler } from 'express'
 
 const handler: RequestHandler = async (req, res) => {
   const imageId = req.params.id
-  const hostId = req.params.hostId
+  const hostId = Number(req.params.hostId)
 
   const host = await getHosts.getOne(hostId)
   const client = docker(host)

@@ -10,7 +10,7 @@ type Body = {
 }
 
 const handler: RequestHandler = async (req, res) => {
-  const { id } = req.params as { id: number }
+  const id = Number(req.params.id)
   const { tag, sha, ref } = req.query as Body
   const app = await db.one(id)
 

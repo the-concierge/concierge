@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import * as get from './db'
 
 export const one: RequestHandler = async (req, res) => {
-  const creds = await get.one(req.params.id)
+  const creds = await get.one(Number(req.params.id))
   creds.key = ''
   res.json(creds)
 }

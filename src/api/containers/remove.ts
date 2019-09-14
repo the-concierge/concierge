@@ -4,7 +4,7 @@ import docker from '../docker'
 
 const handler: RequestHandler = async (req, res) => {
   const containerId = req.params.id
-  const hostId = req.params.hostid
+  const hostId = Number(req.params.hostid)
 
   const host = await getHosts.getOne(hostId)
   if (!host) {

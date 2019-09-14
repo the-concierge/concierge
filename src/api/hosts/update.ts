@@ -26,11 +26,11 @@ const handler: RequestHandler = async (req, res) => {
   }
 
   try {
-    const result: number[] = await db
+    const result: number = await db
       .hosts()
       .update({ ...body })
       .where('id', id)
-    res.json({ ...body, id: result[0] })
+    res.json({ ...body, id: result })
   } catch (ex) {
     res.status(500)
     res.json({ message: ex.message || ex })

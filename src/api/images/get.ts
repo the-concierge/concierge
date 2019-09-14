@@ -7,7 +7,7 @@ export const all: RequestHandler = async (_, res) => {
 }
 
 export const one: RequestHandler = async (req, res) => {
-  const id = req.params.id
+  const id = Number(req.params.id)
   const images = await get.getOne(id)
   return res.json(images)
 }

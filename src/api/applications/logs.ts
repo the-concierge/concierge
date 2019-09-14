@@ -4,7 +4,7 @@ import { RequestHandler } from 'express'
 import * as db from './db'
 
 const handler: RequestHandler = async (req, res) => {
-  const id = req.params.id
+  const id = Number(req.params.id)
   const app = await db.one(id)
   if (!app) {
     res.status(400).json({ message: `Application '${id}' does not exist` })
