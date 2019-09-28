@@ -122,7 +122,7 @@ export async function buildImage(opts: BuildOptions) {
     }
   } catch (ex) {
     await setState('failed', State.Failed)
-    log.error(`Failed to build ${name}: ${ex.message || ex}`)
+    log.error(`Failed to build ${opts.app.name}: ${ex.message || ex}`)
     for (const cmd of failCommands) {
       await execCmd(cmd)
     }
