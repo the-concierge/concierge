@@ -105,7 +105,6 @@ export async function buildImage(opts: BuildOptions) {
       await execCmd(cmd)
     }
 
-    await setState('building', State.Building)
     const buildResult = await startDockerBuild(
       context.stream,
       opts.app,
@@ -123,6 +122,7 @@ export async function buildImage(opts: BuildOptions) {
     }
   } catch (ex) {
     await setState('failed', State.Failed)
+    log.error(`Failed to build ${name}: ${ex.message || ex}`)
     for (const cmd of failCommands) {
       await execCmd(cmd)
     }
@@ -170,11 +170,13 @@ async function startDockerBuild(
   return new Promise<{ responses: BuildEvent[]; imageId?: string }>((resolve, reject) => {
     client.buildImage(stream, options, async (err: any, buildStream) => {
       if (err) {
+        log.debug(`[${app.name}] ${err}`)
         reject(err)
         emit([`Failed to start build: ${err.message || err}`])
         return
       }
 
+      log.debug(`[${app.name}] `)
       try {
         const responses = await handleBuildStream(buildStream!, emit)
         const imageId = getImageId(responses)

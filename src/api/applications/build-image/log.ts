@@ -35,7 +35,10 @@ async function createApplicationLogPath(application: App) {
   return mkdirAsync(path.resolve(logBasePath, application.id.toString()))
 }
 
-export function handleBuildStream(stream: NodeJS.ReadableStream, log: (events: string[]) => void) {
+export function handleBuildStream(
+  stream: NodeJS.ReadableStream,
+  record: (events: string[]) => void
+) {
   const buildResponses: BuildEvent[] = []
 
   const promise = new Promise<BuildEvent[]>((resolve, reject) => {
@@ -44,31 +47,26 @@ export function handleBuildStream(stream: NodeJS.ReadableStream, log: (events: s
       const output = tryParse(msg)
 
       if (!Array.isArray(output)) {
-        log([output])
+        record([output])
         return
       }
 
       buildResponses.push(...output)
 
-      const toLog = output.map(o => o.stream || o.errorDetail).filter(o => {
-        if (!o) {
-          return false
-        }
+      const toLog = output
+        .map(ev => ev.stream || ev.errorDetail)
+        .filter(ev => {
+          if (!ev) return false
 
-        return !!(o.message || o || '').trim()
-      })
+          return !!(ev.message || ev || '').trim()
+        })
 
-      log(toLog)
+      record(toLog)
     })
 
     stream.on('end', () => {
-      const hasErrors = buildResponses.some(res => {
-        return res.hasOwnProperty('errorDetail')
-      })
-      if (hasErrors) {
-        return reject(buildResponses)
-      }
-
+      const hasErrors = buildResponses.some(res => res.hasOwnProperty('errorDetail'))
+      if (hasErrors) return reject(buildResponses)
       resolve(buildResponses)
     })
   })

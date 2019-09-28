@@ -9,6 +9,8 @@ export interface V1Task {
   /** After successfully checking out */
   checkout: string[]
 
+  containers?: string[]
+
   /** On build success */
   success: string[]
 
@@ -30,6 +32,7 @@ export function parse(content: any): V1Task | null {
   const version: 'v1' = content.version
   const use = content.use ? content.use.toString() : undefined
   const checkout = toCommands(content.checkout)
+  const containers = toCommands(content.containers)
   const success = toCommands(content.success)
   const fail = toCommands(content.fail)
   const complete = toCommands(content.complete)
@@ -40,7 +43,8 @@ export function parse(content: any): V1Task | null {
     checkout,
     success,
     fail,
-    complete
+    complete,
+    containers
   }
 }
 
