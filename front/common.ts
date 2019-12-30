@@ -42,6 +42,7 @@ export function onRefresh(cb: (resource: Refresh) => void) {
 }
 
 type Refresh = keyof typeof refresh
+
 export const refresh = {
   containers: () => refreshEmitter.emit('containers'),
   hosts: () => refreshEmitter.emit('hosts'),
@@ -60,4 +61,56 @@ export function createEmitter<T>() {
     emit: (value: T) => listeners.forEach(cb => cb(value))
   }
   return emitter
+}
+
+export function elapsedSince(date: string | Date) {
+  const elapsed = Math.floor((Date.now() - new Date(date).valueOf()) / 1000)
+  const suffix = elapsed > 0 ? ' ago' : ''
+  if (elapsed < 60 && elapsed > -60) return `a moment${suffix}`
+  return toDuration(Math.floor(elapsed)) + suffix
+}
+
+function toDuration(valueSecs: number, full?: boolean) {
+  const {
+    duration: [days, hours, minutes, seconds]
+  } = toRawDuration(valueSecs)
+
+  if (full) {
+    return [`${days}d`, `${hours}h`, `${minutes}m`, `${seconds}s`]
+      .filter(time => !time.startsWith('0'))
+      .join(':')
+  }
+
+  if (days) {
+    return `${days} days`
+  }
+
+  if (hours) {
+    return `${hours} hours`
+  }
+
+  if (minutes) {
+    return `${minutes} mins`
+  }
+
+  return `${seconds} seconds`
+}
+
+const ONE_HOUR = 3600
+const ONE_DAY = 86400
+
+type Duration = [number, number, number, number]
+
+function toRawDuration(valueSecs: number) {
+  const abs = Math.abs(valueSecs)
+  const days = Math.floor(abs / ONE_DAY)
+  const hours = Math.floor(abs / ONE_HOUR) % 24
+  const mins = Math.floor(abs / 60) % 60
+  const secs = Math.ceil(abs % 60)
+
+  return {
+    duration: [days, hours, mins, secs] as Duration,
+    seconds: abs,
+    text: abs <= 0 ? 'now' : `${days}d:${hours}h:${mins}m:${secs}s`.replace('0d:', '')
+  }
 }

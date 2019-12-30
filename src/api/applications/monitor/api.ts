@@ -21,6 +21,7 @@ function toQueueItem(item: BuildQueueItem): Concierge.QueueItem {
       id: item.app.id,
       name: item.app.name
     },
+    age: item.age.toISOString(),
     ref: item.ref,
     sha: item.sha,
     state: toString(item.state),

@@ -52,6 +52,7 @@ declare namespace Concierge {
       id: number
       name: string
     }
+    age: string
     ref: string
     sha: string
     state: string
