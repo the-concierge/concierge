@@ -13,15 +13,6 @@ const handler: RequestHandler = async (req, res) => {
     credentialsId = null
   }
 
-  const hasHostname = !!hostname.length
-
-  if (hasHostname) {
-    res.status(400).json({
-      message: 'Invalid SSH username provided: Must provided credentials if providing a hostname'
-    })
-    return
-  }
-
   const body: CreateHost = {
     hostname,
     dockerPort,
