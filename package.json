@@ -1,6 +1,6 @@
 {
   "name": "the-concierge",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "Concierge Service",
   "main": "dist/index.js",
   "keywords": [
