@@ -45,7 +45,7 @@
     "dockerode": "^2.5.4",
     "docktor": "^0.1.0",
     "express": "^4.17.1",
-    "highcharts": "^7.2.0",
+    "highcharts": "^9.0.0",
     "http-proxy": "^1.13.3",
     "js-yaml": "^3.11.0",
     "knex": "^0.19.4",
