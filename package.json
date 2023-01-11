@@ -48,7 +48,7 @@
     "highcharts": "^7.2.0",
     "http-proxy": "^1.13.3",
     "js-yaml": "^3.11.0",
-    "knex": "^0.19.4",
+    "knex": "^2.4.0",
     "mem": "^5.1.1",
     "minimist": "^1.2.0",
     "multiple-dispatch": "^0.3.7",
